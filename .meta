@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "api": "https://github.com/ibarretorey/api-ts",
+    "dashboard": "https://github.com/ibarretorey/dashboard-ts",
+  }
+}
