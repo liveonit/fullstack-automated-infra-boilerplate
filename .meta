@@ -2,6 +2,6 @@
   "projects": {
     "api-ts": "https://github.com/ibarretorey/api-ts",
     "dashboard-ts": "https://github.com/ibarretorey/dashboard-ts",
-    "k8s-cluster": "https://github.com/ibarretorey/k8s-cluster.git"
+    "k8s-cluster": "https://github.com/ibarretorey/k8s-cluster"
   }
 }
