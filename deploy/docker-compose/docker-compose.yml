@@ -3,7 +3,7 @@ version: '3.7'
 services:
   fs_db:
     image: "mysql:${mysql_version}"
-    container_name: fs_db
+    container_name: fs_db_${env}
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
@@ -23,13 +23,18 @@ services:
   fs_api:
     image: ibarretorey/fs-api-${env}
     build: 
-      context: ../../microservicios/api-ts
-      dockerfile: Dockerfile.${env}
-    container_name: fs_api
+      context: ../../microservicios/api
+      dockerfile: Dockerfile.compose
+    container_name: fs_api_${env}
     restart: always
     depends_on:
       - fs_db
+    command: sh -c "/wait && npm run ${env}"
     environment:
+      WAIT_HOSTS: fs_db:3306
+      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_SLEEP_INTERVAL: 30
+      WAIT_HOST_CONNECT_TIMEOUT: 30
       TZ: utc
       API_PORT: ${api_port}
       DB_HOST: fs_db
@@ -39,7 +44,7 @@ services:
       DB_USER: ${mysql_database_user}
       DB_PASSWORD: ${mysql_database_password}
     volumes:
-      - ../../microservicios/api-ts/src:/app/src
+      - ../../microservicios/api/src:/app/src
     networks:
         - fs_network
     ports:
@@ -48,29 +53,31 @@ services:
   fs_dashboard:
     image: ibarretorey/fs-dashboard-${env}
     build:
-      context: ../../microservicios/dashboard-ts
-      dockerfile: Dockerfile.${env}
+      context: ../../microservicios/dashboard
+      dockerfile: Dockerfile.compose
       args:
         REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
         REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}
     environment:
+      NODE_ENV: ${env}
       REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
       REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}        
-    container_name: fs_dashboard
+    container_name: fs_dashboard_${env}
     restart: unless-stopped
     ports:
       - "3000:80"
     stdin_open: true
     tty: true
     volumes:
-      - ../../microservicios/dashboard-ts/src:/usr/src/app/src
-      - ../../microservicios/dashboard-ts/public:/usr/src/app/public
-      - ../../microservicios/dashboard-ts/tsconfig.json:/usr/src/app/tsconfig.json
+      - ../../microservicios/dashboard/src:/usr/src/app/src
+      - ../../microservicios/dashboard/public:/usr/src/app/public
+      - ../../microservicios/dashboard/tsconfig.json:/usr/src/app/tsconfig.json
     networks:
       - fs_network
 
 networks:
   fs_network:
-    external: true
+    driver: bridge
+
 volumes:
   mysql_data:

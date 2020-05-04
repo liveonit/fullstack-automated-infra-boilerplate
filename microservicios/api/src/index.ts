@@ -30,14 +30,8 @@ async function main() {
 
 
   // Conexion con la base de datos
-  let connection;
-  try {
-    connection = await connectDb();
-  }
-  catch (err) {
-    console.log(err);
-  }
-  if (!connection) throw Error('Error al conectarse con la base de datos');
+  const connection = await connectDb();
+  
 
   // Compilado de graphql `schema` a partir de los resolver y clases con decoradores
   const schema = await buildSchema({

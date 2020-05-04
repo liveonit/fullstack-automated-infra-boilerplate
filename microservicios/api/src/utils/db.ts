@@ -19,5 +19,8 @@ export const connectDb: () => Promise<Connection> = async (): Promise<Connection
   }
   catch (err) {
     console.error(err)
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
+      throw new Error("Error al conectar con la base de datos, parametros de conexion: " + currentConfig);
+    }
   }
 }

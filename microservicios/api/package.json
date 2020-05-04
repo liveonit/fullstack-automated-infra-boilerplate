@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "clean": "if [ -d dist ]; then  rm -rf dist; fi",
-    "development": "NODE_ENV=dev nodemon -w src --ext ts --exec ts-node src/index.ts",
-    "staging": "NODE_ENV=staging nodemon -w src --ext ts --exec ts-node src/index.ts",
-    "production": "NODE_ENV=production node ./dist/index.js"
+    "build": "./node_modules/typescript/bin/tsc",
+    "development": "nodemon -w src --ext ts --exec ts-node src/index.ts",
+    "staging": "nodemon -w src --ext ts --exec ts-node src/index.ts",
+    "production": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
