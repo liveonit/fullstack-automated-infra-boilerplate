@@ -1,0 +1,29 @@
+version: '3'
+services:
+  fs_dashboard:
+    image: ibarretorey/fs-dashboard-${env}
+    build:
+      context: ../../dashboard-ts
+      dockerfile: Dockerfile.${env}
+      args:
+        REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
+        REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}
+    environment:
+      REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
+      REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}        
+    container_name: fs_dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../../dashboard-ts/src:/usr/src/app/src
+      - ../../dashboard-ts/public:/usr/src/app/public
+      - ../../dashboard-ts/tsconfig.json:/usr/src/app/tsconfig.json
+    networks:
+      - fs_network
+
+networks:
+  fs_network:
+    external: true

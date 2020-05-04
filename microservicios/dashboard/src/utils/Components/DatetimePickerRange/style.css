@@ -1,0 +1,15 @@
+
+.--date-and-button {
+  display: inline-block;
+  width: 100%;
+}
+
+.datepicker-one {
+  display: block;
+  width: 100%;  
+}
+
+.datepicker-two {
+  display: inline-block;
+  width: calc(100% - 48px);
+}

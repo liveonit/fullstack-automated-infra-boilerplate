@@ -1,0 +1,17 @@
+--toolbar-filter,
+.--toolbar-date-filter,
+.--toolbar-pagination {
+  min-width: 10rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+.--toolbar-pagination {
+  margin-left: auto;
+}
+
+
+.--filter-with-button {
+  width: calc(100% - 48px);
+  display: inline-block;
+}

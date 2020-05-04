@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        network/boilerplate_net: "true"
+        service: db
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_DATABASE
+          value: test_db
+        - name: MYSQL_USER
+          value: your_user
+        - name: MYSQL_PASSWORD
+          value: your_pass
+        - name: MYSQL_ROOT_PASSWORD
+          value: root_passoword
+        - name: TZ
+          value: utc
+        image: 'mysql:5.7'
+        imagePullPolicy: "IfNotPresent"
+        name: graphql-db
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-data
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-data
+status: {}

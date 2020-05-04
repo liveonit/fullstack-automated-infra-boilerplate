@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: graphql-ingress 
+spec:
+  tls:
+  - hosts:
+    - graphql.boilerplate.com
+    secretName: graphql-secret
+  rules:
+  - host: graphql.boilerplate.com
+    http:
+      paths:
+      - path: /graphql
+        pathType: Prefix
+        backend:
+          serviceName: api
+          servicePort: 9000
+      - path: /healthz
+        pathType: Prefix
+        backend:
+          serviceName: api
+          servicePort: 9000
