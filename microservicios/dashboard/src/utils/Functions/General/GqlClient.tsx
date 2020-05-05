@@ -5,17 +5,16 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 
-console.log("GQL_WS_URL", process.env.GQL_WS_URL)
 const wsLink = new WebSocketLink({
-  uri: process.env.REACT_APP_GQL_WS_URL || `ws://localhost:9000/graphql`,
+  uri: process.env.REACT_APP_API_URL ? `ws${process.env.REACT_APP_API_URL}/graphql` : `ws://localhost:9000/graphql`,
   options: {
     reconnect: true
   }
 });
 
-console.log("GQL_HTTP_URL", process.env.GQL_HTTP_URL)
+
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_GQL_HTTP_URL || 'http://localhost:9000/graphql',
+  uri: process.env.REACT_APP_API_URL ? `http${process.env.REACT_APP_API_URL}/graphql` : 'http://localhost:9000/graphql',
 });
 
 const link = split(

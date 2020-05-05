@@ -56,12 +56,10 @@ services:
       context: ../../microservicios/dashboard
       dockerfile: Dockerfile.compose
       args:
-        REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
-        REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}
+        REACT_APP_API_URL: ${react_app_api_url}
     environment:
       NODE_ENV: ${env}
-      REACT_APP_GQL_HTTP_URL: ${react_app_gql_http_url}
-      REACT_APP_GQL_WS_URL: ${react_app_gql_ws_url}        
+      REACT_APP_API_URL: ${react_app_api_url}
     container_name: fs_dashboard_${env}
     restart: unless-stopped
     ports:
