@@ -2,17 +2,22 @@ version: '3.7'
 
 services:
   fs_db:
-    image: "mysql:${mysql_version}"
+    image: mariadb:10.1
     container_name: fs_db_${env}
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "/usr/bin/mysql --host=localhost --port=3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e 'Select 1;'' || exit 1"]
+      timeout: 10s
+      retries: 15
     environment:
       TZ: utc
       MYSQL_ROOT_PASSWORD: root_passoword
       MYSQL_USER: ${mysql_database_user}
       MYSQL_PASSWORD: ${mysql_database_password}
       MYSQL_DATABASE: ${mysql_database_name}
+      DEPLOY_TYPE: docker-compose
     networks:
         - fs_network
     ports:
@@ -29,7 +34,6 @@ services:
     restart: always
     depends_on:
       - fs_db
-    command: sh -c "/wait && npm run ${env}"
     environment:
       WAIT_HOSTS: fs_db:3306
       WAIT_HOSTS_TIMEOUT: 300

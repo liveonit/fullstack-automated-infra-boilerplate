@@ -7,8 +7,7 @@
     "clean": "if [ -d dist ]; then  rm -rf dist; fi",
     "build": "./node_modules/typescript/bin/tsc",
     "development": "nodemon -w src --ext ts --exec ts-node src/index.ts",
-    "staging": "nodemon -w src --ext ts --exec ts-node src/index.ts",
-    "production": "node dist/index.js"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",

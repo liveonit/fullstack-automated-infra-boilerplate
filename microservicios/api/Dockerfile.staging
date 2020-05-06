@@ -8,4 +8,4 @@ RUN npm install
 
 COPY . .
 
-CMD [ "npm", "run", "staging" ]
+CMD [ "npm", "run", "start" ]

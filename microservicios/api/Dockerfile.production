@@ -8,4 +8,4 @@ RUN npm install --production
 
 COPY ./dist/* ./
 
-CMD [ "npm", "run", "production" ]
+CMD [ "npm", "run", "start" ]

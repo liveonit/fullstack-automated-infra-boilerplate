@@ -1,0 +1,94 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fs-api-ingress
+spec:
+  tls:
+  - hosts:
+    - fullstack.dc.gql
+    secretName: fullstack-secret
+  rules:
+  - host: fullstack.dc.gql
+    http:
+      paths:
+      - path: /graphql
+        pathType: Prefix
+        backend:
+          serviceName: fs-api
+          servicePort: 9000
+      - path: /healthz
+        pathType: Prefix
+        backend:
+          serviceName: fs-api
+          servicePort: 9000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: fs-api
+  name: fs-api-service
+spec:
+  type: NodePort
+  ports:
+  - port: 9000
+    targetPort: 9000
+    protocol: TCP
+    name: http
+  selector:
+    service: fs-api
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    service: fs-api
+  name: fs-api-deploy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      service: fs-api
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        service: fs-api
+    spec:
+      containers:
+      - env:
+        - name: API_PORT
+          value: "9000"
+        - name: DB_HOST
+          value: db
+        - name: DB_NAME
+          value: test_db
+        - name: DB_PASSWORD
+          value: your_pass
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USER
+          value: your_user
+        - name: NODE_ENV
+          value: test
+        - name: TZ
+          value: utc
+        image: ibarretorey/fs-api:staging
+        imagePullPolicy: "IfNotPresent"
+        name: api
+        ports:
+        - containerPort: 9000
+        resources:
+          limits:
+            cpu: "250m"
+            memory: "125Mi"
+          amount: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: []
+status: {}

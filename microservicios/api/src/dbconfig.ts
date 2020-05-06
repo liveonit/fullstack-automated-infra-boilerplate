@@ -22,12 +22,20 @@ const isDbType = (value: string = ""): value is DbType  => {
 
 const development: DbOptions = {
   name: "default",
-  type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'sqlite',
-  database: process.env.DB_NAME || path.resolve(__dirname, "../dev_db.sqlite3"),
+  type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
+  host: process.env.DB_HOST,
+  port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  database: process.env.DB_NAME || "default_db_name", 
   synchronize: true,
+  entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  migrations: [
+    'src/database/migrations/*.ts',
+  ],
+  cli: {
+    migrationsDir: 'src/database/migrations',
+  },
   logging: ["error", "query", "schema"]
 }
 
