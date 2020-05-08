@@ -9,19 +9,33 @@ dc_up_build:
 dc_down:
 	cd deploy/docker-compose && docker-compose down -v && cd -
 
-build_api_prod:
-	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api-production -f Dockerfile.production . && cd -
 
-k8s_db_up:
+build_api_prodduction:
+	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:production . && cd -
+
+build_api_staging:
+	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:staging . && cd -
+
+
+k8s_db:
 	kubectl apply -f deploy/k8s/db/galera-etcd-cluster.yaml
 	kubectl apply -f deploy/k8s/db/mariadb-pvc.yaml
 	kubectl apply -f deploy/k8s/db/mariadb-pv.yaml
-	kubectl apply -f deploy/k8s/db/mariadb-ss.yaml	
+	kubectl apply -f deploy/k8s/db/mariadb-ss.yaml
+
 k8s_db_down:
 	kubectl delete -f deploy/k8s/db/mariadb-ss.yaml
 	kubectl delete -f deploy/k8s/db/mariadb-pvc.yaml
 	kubectl delete -f deploy/k8s/db/mariadb-pv.yaml
 	kubectl delete -f deploy/k8s/db/galera-etd-cluster.yaml
+
+k8s_db_run_migrations:
+	cd ./microservicios/api && DB_HOST=fullstack.k8s.gql DB_PORT=30306 DB_USER=your_user DB_PASSWORD=your_pass DB_NAME=fullstack_db npm run typeorm migration:run && cd -
+
+dc_db_run_migrations:
+	cd ./microservicios/db && DB_HOST=fullstack.dc.gql DB_PORT=30306 DB_USER=your_user DB_PASSWORD=your_password DB_NAME=test_db npm run typeorm migration:run && cd -
+
+
 
 k8s_api_up:
 	kubectl apply -f deploy/k8s/api/api.yaml

@@ -1,10 +1,7 @@
 import * as path from 'path'
-import { Env, isEnv } from './utils/environment'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
-import { createConnection, getConnection, getConnectionManager, Connection } from 'typeorm'
-
 
 type DbOptions = PostgresConnectionOptions | MysqlConnectionOptions | SqliteConnectionOptions
 
@@ -29,12 +26,15 @@ const development: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
-  synchronize: false,
-  entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  database: process.env.DB_NAME || "default_db_name",
+  migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
+  cli: {
+    migrationsDir: path.resolve(__dirname, 'migrations/'),
+  },
   logging: ["error", "query", "schema"]
 }
 
+console.log("current migrations path", path.resolve(__dirname, 'migrations/'));
 const staging: DbOptions = {
   name: "default",
   type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
@@ -42,11 +42,12 @@ const staging: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
-  synchronize: false,
-  entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  database: process.env.DB_NAME || "default_db_name",
+  migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
+  cli: {
+    migrationsDir: path.resolve(__dirname, 'migrations/'),
+  },
 }
-
 const production: DbOptions = {
   name: "default",
   type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
@@ -54,12 +55,14 @@ const production: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
-  synchronize: false,
-  entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  database: process.env.DB_NAME || "default_db_name",
+  migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
+  cli: {
+    migrationsDir: path.resolve(__dirname, 'migrations/'),
+  },
 }
 
-const configs = (environment: Env): DbOptions => {
+const configs = (environment: string): DbOptions => {
   switch (environment) {
     case 'production':
       return production;
@@ -72,27 +75,14 @@ const configs = (environment: Env): DbOptions => {
   }
 }
 
-const currentConfig: DbOptions = configs(isEnv(process.env.NODE_ENV) ? process.env.NODE_ENV : 'development')  
+let connectionOptions = configs('development');
 
-export const connectDb: () => Promise<Connection> = async (): Promise<Connection> => {
-  try {
-    if (!getConnectionManager().has("default")) {
-      return await createConnection(currentConfig);
-    }
-    if (!getConnection().isConnected) {
-      return await getConnection().connect();
-    }
-    else {
-      return getConnection()
-    }
-  }
-  catch (err) {
-    console.error(err)
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') {
-      throw new Error("Error al conectar con la base de datos, parametros de conexion: " + currentConfig);
-    }
-    else {
-      throw new Error("Error al conectar con la base de datos");
-    }
+
+if (require.main === module) {
+  var myArgs = process.argv.slice(2);
+  if (myArgs.length > 0) {
+    connectionOptions = configs(myArgs[0]);
   }
 }
+
+module.exports = connectionOptions;

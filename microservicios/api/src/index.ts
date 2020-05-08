@@ -1,6 +1,6 @@
 import "reflect-metadata";
 
-import { connectDb } from './utils/db'
+import { connectDb } from './dbconfig'
 
 import { buildSchema } from "type-graphql";
 
@@ -73,7 +73,6 @@ async function main() {
       console.log(`\n🚀      GraphQL is now running on ws://localhost:${port}/graphql`);
     });
 }
-
 if (require.main === module) {
   main()
 }

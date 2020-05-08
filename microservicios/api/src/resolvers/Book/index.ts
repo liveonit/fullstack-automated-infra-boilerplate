@@ -3,6 +3,7 @@ import { Book } from "../../models/Book";
 import { CreateBookInput } from "./types/CreateBookInput";
 import { UpdateBookInput } from "./types/UpdateBookInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
+import { Author } from "../../models/Author";
 
 @Resolver()
 export class BookResolver {
@@ -22,6 +23,7 @@ export class BookResolver {
   async createBook(@Arg("data") data: CreateBookInput) {
     const book = Book.create(data);
     await book.save();
+    book.author = await Author.findOne({ where: { id: data.authorId } })
     return book;
   }
 

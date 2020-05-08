@@ -28,7 +28,7 @@ export class LogResolver {
     }
   }
 
-  @Subscription({topics: "NEW_LOG"})
+  @Subscription({ topics: "NEW_LOG" })
   logsSubscription(
     @Root() log: Log,
   ): Log {
