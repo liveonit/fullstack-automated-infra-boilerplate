@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "clean": "if [ -d dist ]; then  rm -rf dist; fi",
-    "build": "./node_modules/typescript/bin/tsc",
+    "build:staging": "./node_modules/typescript/bin/tsc && docker build -t ibarretorey/fs-api:staging .",
+    "build:production": "./node_modules/typescript/bin/tsc && docker build -t ibarretorey/fs-api:production .",
     "development": "nodemon -w src --ext ts --exec ts-node src/index.ts",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "typeorm": "ts-node ./node_modules/typeorm/cli -f ./src/utils/db_migrations_config.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,7 +24,6 @@
     "http": "0.0.1-security",
     "mysql2": "^2.1.0",
     "reflect-metadata": "^0.1.13",
-    "sqlite3": "^4.1.1",
     "type-graphql": "^0.17.6",
     "typeorm": "^0.2.24"
   },

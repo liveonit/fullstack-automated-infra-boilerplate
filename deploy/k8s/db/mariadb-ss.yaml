@@ -5,22 +5,27 @@ metadata:
   labels:
     app: galera-ss
 spec:
-  ports:
-  - port: 3306
-    name: mysql
-  clusterIP: None
+  type: NodePort
   selector:
     app: galera-ss
+  ports:
+    - port: 3306
+      name: mysql
+      targetPort: 3306
+      nodePort: 30306
 
 ---
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: galera-ss
 spec:
-  serviceName: "galera-ss"
+  serviceName: galera-ss
   replicas: 3
+  selector:
+    matchLabels:
+      app: galera-ss
   template:
     metadata:
       labels:
@@ -43,11 +48,11 @@ spec:
         - name: CLUSTER_NAME
           value: mariadb_galera_ss
         - name: MYSQL_DATABASE
-          value: mydatabase
+          value: fullstack_db
         - name: MYSQL_USER
-          value: myuser
+          value: your_user
         - name: MYSQL_PASSWORD
-          value: myuserpassword
+          value: your_pass
         readinessProbe:
           exec:
             command:

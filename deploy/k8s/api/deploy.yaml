@@ -1,47 +1,3 @@
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: fs-api-ingress
-spec:
-  tls:
-  - hosts:
-    - fullstack.dc.gql
-    secretName: fullstack-secret
-  rules:
-  - host: fullstack.dc.gql
-    http:
-      paths:
-      - path: /graphql
-        pathType: Prefix
-        backend:
-          serviceName: fs-api
-          servicePort: 9000
-      - path: /healthz
-        pathType: Prefix
-        backend:
-          serviceName: fs-api
-          servicePort: 9000
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    service: fs-api
-  name: fs-api-service
-spec:
-  type: NodePort
-  ports:
-  - port: 9000
-    targetPort: 9000
-    protocol: TCP
-    name: http
-  selector:
-    service: fs-api
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,7 +6,7 @@ metadata:
     service: fs-api
   name: fs-api-deploy
 spec:
-  replicas: 5
+  replicas: 3
   selector:
     matchLabels:
       service: fs-api
@@ -65,9 +21,9 @@ spec:
         - name: API_PORT
           value: "9000"
         - name: DB_HOST
-          value: db
+          value: galera-ss
         - name: DB_NAME
-          value: test_db
+          value: fullstack_db
         - name: DB_PASSWORD
           value: your_pass
         - name: DB_PORT
@@ -84,10 +40,8 @@ spec:
         ports:
         - containerPort: 9000
         resources:
-          limits:
-            cpu: "250m"
-            memory: "125Mi"
-          amount: {}
+          limits: {}
+          requests: {}
       restartPolicy: Always
       serviceAccountName: ""
       volumes: []

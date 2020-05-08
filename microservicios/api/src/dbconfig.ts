@@ -1,9 +1,8 @@
 import * as path from 'path'
-import { Env } from './utils/environment'
+import { Env, isEnv } from './utils/environment'
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions'
-
 export type DbOptions = PostgresConnectionOptions | MysqlConnectionOptions | SqliteConnectionOptions
 
 type DbType = "mysql" | "postgres" | "mariadb" | "sqlite"
@@ -30,11 +29,9 @@ const development: DbOptions = {
   database: process.env.DB_NAME || "default_db_name", 
   synchronize: true,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
-  migrations: [
-    'src/database/migrations/*.ts',
-  ],
   cli: {
-    migrationsDir: 'src/database/migrations',
+    migrationsDir: './src/database/migrations/',
+    entitiesDir: './src/models/'
   },
   logging: ["error", "query", "schema"]
 }
@@ -47,14 +44,12 @@ const staging: DbOptions = {
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
   database: process.env.DB_NAME || "default_db_name", 
-  synchronize: true,
+  synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
-  migrations: [
-    'src/database/migrations/*.ts',
-  ],
   cli: {
-    migrationsDir: 'src/database/migrations',
-  }
+    migrationsDir: './src/database/migrations/',
+    entitiesDir: './src/models/'
+  },
 }
 
 const production: DbOptions = {
@@ -65,14 +60,12 @@ const production: DbOptions = {
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
   database: process.env.DB_NAME || "default_db_name", 
-  synchronize: true,
+  synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
-  migrations: [
-    'src/database/migrations/*.ts',
-  ],
   cli: {
-    migrationsDir: 'src/database/migrations',
-  }
+    migrationsDir: './src/database/migrations/',
+    entitiesDir: './src/models/'
+  },
 }
 
 export const configs = (environment: Env): DbOptions => {
@@ -82,6 +75,8 @@ export const configs = (environment: Env): DbOptions => {
     case 'staging':
       return staging;
     case 'development':
+      return development;
+    default: 
       return development;
   }
 }

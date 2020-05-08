@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fs-api-ingress
+spec:
+  # tls:
+  # - hosts:
+  #   - fullstack.dc.gql
+  #   secretName: fullstack-secret
+  rules:
+  - host: fullstack.k8s.gql
+    http:
+      paths:
+      - path: /graphql
+        pathType: Prefix
+        backend:
+          serviceName: fs-api-service
+          servicePort: 9000
+      - path: /healthz
+        pathType: Prefix
+        backend:
+          serviceName: fs-api-service
+          servicePort: 9000

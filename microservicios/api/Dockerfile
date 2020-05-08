@@ -6,6 +6,6 @@ COPY package*.json ./
 
 RUN npm install --production
 
-COPY ./dist/* ./
+COPY dist dist
 
 CMD [ "npm", "run", "start" ]
