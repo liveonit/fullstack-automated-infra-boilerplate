@@ -31,3 +31,7 @@ group_vars/all.yml
 inventory
 output
 *.log
+
+ssh-key
+
+kubectl-config

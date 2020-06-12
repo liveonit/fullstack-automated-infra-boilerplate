@@ -1,0 +1,72 @@
+version: '3.7'
+
+services:
+  fs_db:
+    image: mariadb:10.1
+    container_name: fs_db_development
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "/usr/bin/mysql --host=localhost --port=3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e 'Select 1;'' || exit 1"]
+      timeout: 10s
+      retries: 15
+    env_file: .env
+    networks:
+        - fs_network
+    ports:
+      - "${EXTERNAL_DB_PORT}:${DB_PORT}"
+    expose:
+      - 3306
+
+  fs_api:
+    image: ibarretorey/fs-api-development
+    build: 
+      context: ./microservicios/api
+      dockerfile: Dockerfile.development
+    container_name: fs_api_development
+    restart: always
+    depends_on:
+      - fs_db
+    environment:
+      DB_HOST: fs_db
+      WAIT_HOSTS: fs_db:3306
+      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_SLEEP_INTERVAL: 30
+      WAIT_HOST_CONNECT_TIMEOUT: 30
+      TZ: utc
+    env_file: .env
+    volumes:
+      - ./microservicios/api/src:/app/src
+    networks:
+        - fs_network
+    ports:
+      - "${API_PORT}:${API_PORT}"
+
+  fs_dashboard:
+    image: ibarretorey/fs-dashboard-development
+    build:
+      context: ./microservicios/dashboard
+      dockerfile: Dockerfile.development
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+    env_file: .env
+    container_name: fs_dashboard_development
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./microservicios/dashboard/src:/usr/src/app/src
+      - ./microservicios/dashboard/public:/usr/src/app/public
+      - ./microservicios/dashboard/tsconfig.json:/usr/src/app/tsconfig.json
+    networks:
+      - fs_network
+
+networks:
+  fs_network:
+    driver: bridge
+
+volumes:
+  mysql_data:

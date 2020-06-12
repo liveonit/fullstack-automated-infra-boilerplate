@@ -17,9 +17,10 @@ Esto se recomienda porque la conexión externa ya esta con balanceo de carga y H
 para el ambiente de test, la configuración de `inventory.yml.example` y `group_vars/all.yml.example` ya esta acorde al archivo vagrant
 y es posible levantar el cluster con unos pocos comandos.
 
+
 ## Estructura del proyecto
 
-<!-- TODO: estructura del proyecto de k8s cluster -->
+
 
 ### Ansible roles
 
@@ -44,6 +45,7 @@ ansible-playbook -i inventory addon.yml
 
 ## Empezando
 
+
 ```bash
 git clone https://github.com/ibarretorey/multimaster-k8s-cluster
 cd multimaster-k8s-cluster
@@ -52,13 +54,12 @@ cp inventory.yml.example inventory.yml # editar las variables para su entorno es
 ansible-playbook -i inventory cluster.yml
 ```
 
+
+
 ## Base teórica y documentación
 
-<!-- TODO: base teorica y dockumentacion del proyecto k8s cluster -->
 
 ## Comandos útiles
-
-<!-- TODO: armar sistema de comandos y herramientas utiles para el proyecto de k8s-cluster -->
 
 [Instalar kubectl local]()
 [kubectl-autocomplete](https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-autocomplete)

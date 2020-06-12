@@ -1,14 +1,4 @@
-.PHONY: dc_up dc_up_build dc_down build_api_prod
-
-dc_up:
-	cd deploy/docker-compose && docker-compose up -d --force-recreate && cd -
-
-dc_up_build:
-	cd deploy/docker-compose && docker-compose up -d --build --force-recreate && cd -
-
-dc_down:
-	cd deploy/docker-compose && docker-compose down -v && cd -
-
+include .env
 
 build_api_prodduction:
 	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:production . && cd -
@@ -16,32 +6,45 @@ build_api_prodduction:
 build_api_staging:
 	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:staging . && cd -
 
+k8s_create_update_envs:
+	kubectl create configmap general-env-vars --from-file=./.env -o yaml --dry-run=client | kubectl replace -f - | true
 
-k8s_db:
-	kubectl apply -f deploy/k8s/db/galera-etcd-cluster.yaml
-	kubectl apply -f deploy/k8s/db/mariadb-pvc.yaml
-	kubectl apply -f deploy/k8s/db/mariadb-pv.yaml
-	kubectl apply -f deploy/k8s/db/mariadb-ss.yaml
+minikube_db_up:
+	make k8s_create_update_envs
+	kubectl apply -f k8s/db/galera-etcd-cluster.yaml
+	kubectl apply -f k8s/db/mariadb-pvc.yaml
+	kubectl apply -f k8s/db/mariadb-pv.yaml
+	kubectl apply -f k8s/db/mariadb-ss.yaml
 
-k8s_db_down:
-	kubectl delete -f deploy/k8s/db/mariadb-ss.yaml
-	kubectl delete -f deploy/k8s/db/mariadb-pvc.yaml
-	kubectl delete -f deploy/k8s/db/mariadb-pv.yaml
-	kubectl delete -f deploy/k8s/db/galera-etd-cluster.yaml
+minikube_db_down:
+	kubectl delete -f k8s/db/mariadb-ss.yaml
+	kubectl delete -f k8s/db/mariadb-pvc.yaml
+	kubectl delete -f k8s/db/mariadb-pv.yaml
+	kubectl delete -f k8s/db/galera-etcd-cluster.yaml
 
-k8s_db_run_migrations:
-	cd ./microservicios/api && DB_HOST=fullstack.k8s.gql DB_PORT=30306 DB_USER=your_user DB_PASSWORD=your_pass DB_NAME=fullstack_db npm run typeorm migration:run && cd -
+minikube_api_up:
+	make k8s_create_update_envs
+	kubectl apply -f k8s/api/deploy.yaml
+	kubectl apply -f k8s/api/service.yaml
+	kubectl apply -f k8s/api/ingress.yaml
 
-dc_db_run_migrations:
-	cd ./microservicios/db && DB_HOST=fullstack.dc.gql DB_PORT=30306 DB_USER=your_user DB_PASSWORD=your_password DB_NAME=test_db npm run typeorm migration:run && cd -
+minikube_api_down:
+	kubectl delete -f k8s/api/deploy.yaml
+	kubectl delete -f k8s/api/service.yaml
+	kubectl delete -f k8s/api/ingress.yaml
 
+build_db:
+	cd microservicios/db && docker build -t ibarretorey/mariadb:latest . && cd -
 
+minikube_db_run_migrations:
+	make k8s_create_update_envs
+	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} npm run typeorm migration:run && cd -
 
-k8s_api_up:
-	kubectl apply -f deploy/k8s/api/api.yaml
+develop_db_run_migrations:
+	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} npm run typeorm migration:run && cd -
 
-k8s_api_down:
-	kubectl delete -f deploy/k8s/api/api.yaml
+test_env:
+	echo "${REACT_APP_API_URL}"
 
 # TODO: k8s_keycloak_up:
 
@@ -54,3 +57,9 @@ k8s_api_down:
 # TODO: k8s_up:
 
 # TODO: k8s_down:
+
+minikube_deploy:
+	minikube start && minikube addons enable ingress
+
+minikube_tear_down:
+	minikube stop && minikube delete

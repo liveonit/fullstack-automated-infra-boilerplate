@@ -21,11 +21,11 @@ para utilizarlo y seguir desarrollando a partir de el.
 - [Correr modo test](#correr-modo-test)
   - [Correr test environment en docker-compose](#correr-test-environment-en-docker-compose)
   - [Correr test environment en kubernetes](#correr-test-environment-en-kubernetes)
-- [Configuración de typescript](#configuraci%c3%b3n-de-typescript)
-- [Configuracion de la conexión de typeorm con la base de datos](#configuracion-de-la-conexi%c3%b3n-de-typeorm-con-la-base-de-datos)
+- [Configuración de typescript](#configuración-de-typescript)
+- [Configuracion de la conexión de typeorm con la base de datos](#configuracion-de-la-conexión-de-typeorm-con-la-base-de-datos)
   - [Sqlite](#sqlite)
 - [Estructura del directorio](#estructura-del-directorio)
-- [Descripción del codigo base en index](#descripci%c3%b3n-del-codigo-base-en-index)
+- [Descripción del codigo base en index](#descripción-del-codigo-base-en-index)
 - [Descripcion del codigo](#descripcion-del-codigo)
   - [Resolvers](#resolvers)
   - [Models](#models)
@@ -145,7 +145,7 @@ directamente a los contenedores.
 
 ### Correr test environment en docker-compose
 
-Por lo tanto para levantar un entrono de test con las variables con valores por defecto **(debemos tener instalado docker y docker-compose)**, bastara con pararse en la carpeta compose y ejecutar
+Por lo tanto para levantar un entrono de test con las variables con valores por defecto **(debemos tener instalado docker y docker-compose)**, bastara ejecutar
 
 ```bash
 docker-compose up -d
@@ -153,8 +153,6 @@ docker-compose up -d
 
 y para configurar los datos de las variables de entorno, por ejemplo config de la DB y environment, hay que modificar el archivo  `.env`,
 del cual docker-compose las levanta.
-
-Para correr el docker-compose  ejecutamos el siguiente comando
 
 ### Correr test environment en kubernetes
 
