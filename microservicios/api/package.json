@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "if [ -d dist ]; then  rm -rf dist; fi",
     "build": "./node_modules/typescript/bin/tsc",
-    "development": "nodemon -w src --ext ts --exec ts-node src/index.ts",
+    "development": "sleep 10 && nodemon -w src --ext ts --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "typeorm": "node ./node_modules/typeorm/cli -f ./dist/utils/db_migrations.js"
   },
