@@ -16,7 +16,6 @@ export class LogResolver {
       logs = await Log.find({ skip: offset, take: limit, where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
     }
     else {
-
       logs = await Log.find({ where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
     }
     

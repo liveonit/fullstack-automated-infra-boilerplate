@@ -32,7 +32,7 @@ const development: DbOptions = {
   database: process.env.DB_NAME || "default_db_name", 
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
-  logging: ["error", "query", "schema"]
+  logging: ["error", "query", "schema"],
 }
 
 const staging: DbOptions = {
@@ -45,6 +45,7 @@ const staging: DbOptions = {
   database: process.env.DB_NAME || "default_db_name", 
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
+  
 }
 
 const production: DbOptions = {

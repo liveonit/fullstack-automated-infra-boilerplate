@@ -1,7 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, AfterInsert } from "typeorm";
 import { ObjectType, Field, ID } from "type-graphql";
 import PaginatedResponse from "../utils/PaginateEntity";
-import {pubsub} from '../'
+import { pubsub } from '../'
 @Entity()
 @ObjectType()
 export class Log extends BaseEntity {
@@ -22,7 +22,7 @@ export class Log extends BaseEntity {
   payload: string;
 
   @Field(() => Number)
-  @Column({ nullable: false })
+  @Column({ type: "bigint" })
   unixStartTime: number;
 
   @Field(() => Number)

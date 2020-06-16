@@ -31,7 +31,9 @@ const development: DbOptions = {
   cli: {
     migrationsDir: path.resolve(__dirname, 'migrations/'),
   },
-  logging: ["error", "query", "schema"]
+  logging: ["error", "query", "schema"],
+  timezone: "UTC",
+  dateStrings:  ["TIMESTAMP", "DATETIME", "DATE"]
 }
 
 console.log("current migrations path", path.resolve(__dirname, 'migrations/'));
