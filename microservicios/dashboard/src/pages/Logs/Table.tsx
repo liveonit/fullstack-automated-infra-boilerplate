@@ -8,7 +8,7 @@ import {
   TableBody,
   sortable,
 } from "@patternfly/react-table";
-import { onSort } from "../../utils/Functions/Tables";
+import { onSort } from "../../utils/Tables";
 
 const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },

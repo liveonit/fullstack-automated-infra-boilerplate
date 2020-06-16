@@ -5,9 +5,9 @@ import {
   PageSectionVariants
 } from '@patternfly/react-core';
 
-import Header from './Header';
-import Sidebar from './Sidebar';
-import Breadcrumb from './Breadcrumb';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
+import Breadcrumb from '../components/Breadcrumb';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface LayoutProps {

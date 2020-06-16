@@ -15,8 +15,8 @@ export function PageNav({ location }) {
         <NavItem itemId={0} isActive={pathname === '/'}>
           <Link to="/">Home</Link>
         </NavItem>
-        <NavItem itemId={1} isActive={pathname === '/page1'}>
-          <Link to="/page1">Page1</Link>
+        <NavItem itemId={1} isActive={pathname === '/demoGrid'}>
+          <Link to="/demoGrid">Demo Grid</Link>
         </NavItem>
         <NavItem itemId={1} isActive={pathname === '/page2'}>
           <Link to="/page2">Page2</Link>

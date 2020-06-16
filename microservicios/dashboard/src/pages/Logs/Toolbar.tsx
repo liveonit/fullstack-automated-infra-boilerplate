@@ -13,8 +13,8 @@ import {
 } from "@patternfly/react-core";
 import { FilterIcon } from "@patternfly/react-icons";
 
-import PaginationNav from "../../utils/Components/PaginationNav";
-import { DateTimeFilter } from "../../utils/Components/DatetimePickerRange";
+import PaginationNav from "../../components/PaginationNav";
+import { DateTimeFilter } from "../../components/DatetimePickerRange";
 
 interface ToolbarProps {
   pageNeighbours: number;
@@ -24,7 +24,6 @@ interface ToolbarProps {
   pageLimit: number;
   currentPage: number;
   posibleLimitsPerPage: number[];
-  isApplyDateTimeFilter: boolean,
   onPageLimitChanged: (newLimit: number) => void;
   onPageChanged: (newPage: number) => void;
   handleUpdateFilterInput: (filterText?: string) => void;
@@ -35,7 +34,7 @@ interface ToolbarProps {
     startDate?: number;
     endDate?: number;
   }) => void;
-  handleChangeApplyDateTimeFilter: (isApply: boolean) => void;
+  handleApplyDateFilter: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = (props) => {

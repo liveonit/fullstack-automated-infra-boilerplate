@@ -34,8 +34,7 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
     currentPage,
     pageLimit,
     startDate,
-    endDate,
-    isApplyDateTimeFilter
+    endDate
   } = state;
 
   const offset = (currentPage -1) * pageLimit;
@@ -69,19 +68,10 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
     });
   };
 
-  const handleChangeApplyDateTimeFilter = (isApplyFilter: boolean) => {
-    const startDateAux = Date.now() - 604800000
-    const endDateAux =  Date.now()
-    setState({ ...state, isApplyDateTimeFilter: isApplyFilter, startDate: startDateAux, endDate: endDateAux })
-    if (isApplyFilter) {
+  const handleApplyDateFilter = () => {
       getLogs({ variables: { timeStart: startDate, timeEnd: endDate } })
-      unsubscribe()
-    }
-    else {
-      getLogs({ variables: { timeStart: startDateAux, timeEnd: endDateAux } })
       subscribe()
-    }
-  };
+    };
 
   return (
     <>
@@ -94,12 +84,11 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
           pageLimit={pageLimit}
           currentPage={currentPage}
           posibleLimitsPerPage={POSIBLE_LIMITS_PER_PAGE}
-          isApplyDateTimeFilter={isApplyDateTimeFilter}
           onPageLimitChanged={onPageLimitChanged}
           onPageChanged={onPageChanged}
           handleUpdateFilterInput={handleUpdateFilterInput}
           handleChangeDateFilter={handleChangeDateFilter}
-          handleChangeApplyDateTimeFilter={handleChangeApplyDateTimeFilter}
+          handleApplyDateFilter={handleApplyDateFilter}
         />
       </PageSection>
       <PageSection variant={PageSectionVariants.light} className="Logs__Page">

@@ -4,7 +4,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import { ToolbarItem, Button, ButtonVariant } from "@patternfly/react-core";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarCheckIcon, CalendarTimesIcon } from "@patternfly/react-icons";
+import { CalendarCheckIcon } from "@patternfly/react-icons";
 import "@patternfly/react-icons";
 
 interface DateTimeFilterProps {
@@ -12,7 +12,6 @@ interface DateTimeFilterProps {
   style?: React.CSSProperties,
   startDate: number;
   endDate: number;
-  isApplyDateTimeFilter: boolean,
   handleChangeDateFilter: ({
     startDate,
     endDate,
@@ -20,15 +19,14 @@ interface DateTimeFilterProps {
     startDate?: number;
     endDate?: number;
   }) => void;
-  handleChangeApplyDateTimeFilter: (isApply: boolean) => void;
+  handleApplyDateFilter: () => void;
 }
 
 export const DateTimeFilter: React.FC<DateTimeFilterProps> = ({
   handleChangeDateFilter,
-  handleChangeApplyDateTimeFilter,
+  handleApplyDateFilter,
   startDate,
   endDate,
-  isApplyDateTimeFilter,
   style,
   className
 }) => {
@@ -72,13 +70,10 @@ export const DateTimeFilter: React.FC<DateTimeFilterProps> = ({
             style={{ display: "inline-block"}}
             variant={ButtonVariant.primary}
             aria-label="search button for filter input"
-            onClick={() => handleChangeApplyDateTimeFilter(!isApplyDateTimeFilter)}
-            title={`${isApplyDateTimeFilter ? "Cancelar": "Aplicar"} filtro de tiempo`}
+            onClick={() => handleApplyDateFilter()}
+            title="Aplicar filtro de tiempo"
           >
-            {isApplyDateTimeFilter
-            ? <CalendarTimesIcon />
-            : <CalendarCheckIcon />
-            }
+            <CalendarCheckIcon />
           </Button>
         </div>
       </ToolbarItem>
