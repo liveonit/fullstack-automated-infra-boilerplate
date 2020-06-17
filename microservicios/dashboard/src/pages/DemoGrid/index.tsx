@@ -1,58 +1,50 @@
-import "./style.css"
-import "./demo-style.css"
+import React from "react";
+import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 
-import React, { Dispatch, SetStateAction } from "react";
-import PropTypes from "prop-types";
-import _ from "lodash";
-import { Responsive, WidthProvider, Layout } from "react-grid-layout";
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+import _ from 'lodash'
 
-interface Props {
-  onLayoutChange: (layout: Layout[], layouts: ReactGridLayout.Layouts) => void;
-  className: string;
-  rowHeight: number;
-  cols: any;
-  initialLayout: Layout[];
-}
+import Toolbar from "./Toolbar";
+import { Layout } from "react-grid-layout";
 
+import ResponsiveGridLayout from '../../components/ReactResponsiveGridLayout'
 interface State {
-  currentBreakpoint: string;
+  cols: any;
+  layouts: Layout[];
   compactType?: "vertical" | "horizontal" | null | undefined;
-  mounted: boolean;
-  layouts: { lg: Layout[] };
+  currentBreakpoint: string;
+  rowsHeight: number;
 }
 
-const DemoGrid: React.FC<Props> = (props) => {
-  const [state, setState] = React.useState<State>({
-    currentBreakpoint: "lg",
+const DemoGrid = () => {
+  const [ state, setState ] = React.useState<State>({
+    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+    layouts: generateLayout(),
     compactType: "vertical",
-    mounted: false,
-    layouts: { lg: props.initialLayout },
-  });
+    currentBreakpoint: "",
+    rowsHeight: 30,
+  })
 
-  React.useEffect(() => {
-    setState({ ...state, mounted: true });
-  }, []);
-
-  const generateDOM = () => {
-    return _.map(state.layouts.lg, function (l, i) {
-      return (
-        <div key={i} className={l.static ? "static" : ""}>
-          {l.static ? (
-            <span
-              className="text"
-              title="This item is static and cannot be removed or resized."
-            >
-              Static - {i}
-            </span>
-          ) : (
-            <span className="text">{i}</span>
-          )}
-        </div>
-      );
+  const onCompactTypeChange = () => {
+    const compactType =
+      state.compactType === "horizontal"
+        ? "vertical"
+        : state.compactType === "vertical"
+        ? null
+        : "horizontal";
+    setState({ ...state, compactType });
+  };
+  
+  const onLayoutChange = (layouts: Layout[]) => {
+    setState({ ...state, layouts });
+  }
+  
+  const onNewLayout = () => {
+    setState({
+      ...state,
+      layouts: generateLayout(),
     });
   };
-
+  
   const onBreakpointChange = (newBreakpoint: string, newCols: number) => {
     setState({
       ...state,
@@ -60,61 +52,27 @@ const DemoGrid: React.FC<Props> = (props) => {
     });
   };
 
-  const onCompactTypeChange = () => {
-    const { compactType: oldCompactType } = state;
-    const compactType =
-      oldCompactType === "horizontal"
-        ? "vertical"
-        : oldCompactType === "vertical"
-        ? null
-        : "horizontal";
-    setState({ ...state, compactType });
-  };
-
-  const onLayoutChange = (
-    currentLayout: Layout[],
-    allLayouts: ReactGridLayout.Layouts
-  ) => {
-    props.onLayoutChange(currentLayout, allLayouts);
-  };
-
-  const onNewLayout = () => {
-    setState({
-      ...state,
-      layouts: { lg: generateLayout() },
-    });
-  };
-
   return (
-    <div>
-      <div>
-        Current Breakpoint: {state.currentBreakpoint} (
-        {props.cols[state.currentBreakpoint]} columns)
-      </div>
-      <div>
-        Compaction type: {_.capitalize(state.compactType || undefined) || "No Compaction"}
-      </div>
-      <button onClick={onNewLayout}>Generate New Layout</button>
-      <button onClick={onCompactTypeChange}>Change Compaction Type</button>
-      <ResponsiveReactGridLayout
-        {...props}
-        layouts={state.layouts}
-        onBreakpointChange={onBreakpointChange}
-        onLayoutChange={onLayoutChange}
-        // WidthProvider option
-        measureBeforeMount={false}
-        // I like to have it animate on mount. If you don't, delete `useCSSTransforms` (it's default `true`)
-        // and set `measureBeforeMount={true}`.
-        useCSSTransforms={state.mounted}
-        compactType={state.compactType}
-        preventCollision={!state.compactType}
-      >
-        {generateDOM()}
-      </ResponsiveReactGridLayout>
-    </div>
+    <>
+      <PageSection>
+        <Toolbar
+          onNewLayout={onNewLayout}
+          onCompactTypeChange={onCompactTypeChange}
+        />
+      </PageSection>
+      <PageSection variant={PageSectionVariants.light}>
+        <ResponsiveGridLayout
+          layouts={state.layouts}
+          rowHeight={state.rowsHeight}
+          cols={state.cols}
+          onLayoutChange={onLayoutChange}
+          onBreakpointChange={onBreakpointChange}
+          compactType={state.compactType}
+        />
+      </PageSection>
+    </>
   );
 };
-
 
 const generateLayout: () => Layout[] = () => {
   return _.map(_.range(0, 25), function (item, i) {
@@ -128,14 +86,6 @@ const generateLayout: () => Layout[] = () => {
       static: Math.random() < 0.05,
     };
   });
-};
-
-DemoGrid.defaultProps = {
-  className: "layout",
-  rowHeight: 30,
-  onLayoutChange: function () {},
-  cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-  initialLayout: generateLayout(),
 };
 
 export default DemoGrid;
