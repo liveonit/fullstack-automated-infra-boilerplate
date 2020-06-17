@@ -21,7 +21,7 @@ body {
   columns: 120px;
 }
 .react-grid-item {
-  box-sizing: border-box;
+  display: flexbox;
 }
 .react-grid-item:not(.react-grid-placeholder) {
   background: white;
@@ -30,9 +30,7 @@ body {
 .react-grid-item.resizing {
   opacity: 0.9;
 }
-.react-grid-item.static {
-  background: #cce;
-}
+
 .react-grid-item .text {
   font-size: 24px;
   text-align: center;

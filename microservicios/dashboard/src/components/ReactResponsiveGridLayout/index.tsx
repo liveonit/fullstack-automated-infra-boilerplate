@@ -38,7 +38,7 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
   const generateDOM = () => {
     return _.map(panels, function (l, i) {
       return (
-        <div key={i} className={l.static ? "static" : ""} style={{ overflow: "hidden" }}>
+        <div key={i} >
           {l.child}
         </div>
       );

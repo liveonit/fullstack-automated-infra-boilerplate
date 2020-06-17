@@ -7,10 +7,12 @@
   --pf-c-card--child--PaddingLeft: 0rem;
   --pf-c-card--child--PaddingBottom: 0rem;
   --pf-c-card__header--not-last-child--PaddingBottom: 0.5rem;
+  height: 100%;
 }
 
 .pf-c-card__body {
-  --pf-c-card--child--PaddingRight: 0rem;
+  --pf-c-card--child--PaddingRight: 0rem;     
+  height: 100%;
 }
 
 .--card-title {
@@ -22,4 +24,8 @@
 .--card-actions {
   width: 10%;
   display: inline-block;
+}
+
+#card-container {
+  height: 100%;
 }

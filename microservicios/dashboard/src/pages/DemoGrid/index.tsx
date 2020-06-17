@@ -87,8 +87,8 @@ const generateLayout: () => Panel[] = () => {
       w: 2,
       h: y,
       i: i.toString(),
-      static: Math.random() < 0.05,
-      child: <EditableCard id={i.toString()}/>
+      static: false,
+      child: <EditableCard id={i.toString()} title="unTitulo"><p> Hola lindo mundo </p></EditableCard>
     };
   });
 };

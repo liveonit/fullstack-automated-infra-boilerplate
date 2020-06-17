@@ -1,4 +1,4 @@
-import './style.css'
+import "./style.css";
 
 import React from "react";
 import {
@@ -10,17 +10,18 @@ import {
   DropdownItem,
   DropdownSeparator,
   KebabToggle,
-  Title
+  Title,
 } from "@patternfly/react-core";
 
 interface Properties {
   id: string;
+  title: string;
+  children: React.ReactChild;
 }
 
 interface State {
   isOpen: boolean;
 }
-
 
 const dropdownItems = [
   <DropdownItem key="link">Link</DropdownItem>,
@@ -37,7 +38,7 @@ const dropdownItems = [
   <DropdownItem key="separated link">Separated Link</DropdownItem>,
   <DropdownItem key="separated action" component="button">
     Separated Action
-  </DropdownItem>
+  </DropdownItem>,
 ];
 
 const EditableCard: React.FC<Properties> = (props) => {
@@ -57,28 +58,27 @@ const EditableCard: React.FC<Properties> = (props) => {
     });
   };
 
-  const { id } = props;
+  const { id, title, children } = props;
   return (
-    <div>
-    <Card id={id}  className="--editable-card" isSelectable={false} >
-      <CardHeader className="--editable-card-header">
-        <Title size="sm"  className="--card-title">Card</Title>
-        <CardActions className="--card-actions">
-          <Dropdown
-            onSelect={onSelect}
-            toggle={<KebabToggle onToggle={onToggle} />}
-            isOpen={state.isOpen}
-            isPlain
-            dropdownItems={dropdownItems}
-            position={"right"}
-          />
-        </CardActions>
-      </CardHeader>
-      <CardBody  className="--editable-card-body" >
-        This is a selectable card. Click me to select me. Click again to
-        deselect me.
-      </CardBody>
-    </Card>
+    <div id="card-container">
+      <Card id={id} isSelectable={false}>
+        <CardHeader>
+          <Title size="sm" className="--card-title">
+            {title}
+          </Title>
+          <CardActions className="--card-actions">
+            <Dropdown
+              onSelect={onSelect}
+              toggle={<KebabToggle onToggle={onToggle} />}
+              isOpen={state.isOpen}
+              isPlain
+              dropdownItems={dropdownItems}
+              position={"right"}
+            />
+          </CardActions>
+        </CardHeader>
+        <CardBody>{children}</CardBody>
+      </Card>
     </div>
   );
 };
