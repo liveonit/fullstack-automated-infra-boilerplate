@@ -24,7 +24,7 @@ body {
   box-sizing: border-box;
 }
 .react-grid-item:not(.react-grid-placeholder) {
-  background: #ccc;
+  background: white;
   border: 1px solid black;
 }
 .react-grid-item.resizing {

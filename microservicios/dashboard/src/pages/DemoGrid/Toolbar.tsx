@@ -6,10 +6,8 @@ import {
   ButtonVariant,
   Toolbar as PatternflyToolbar,
   ToolbarItem,
-  TextInput,
   ToolbarGroup,
 } from "@patternfly/react-core";
-import { FilterIcon } from "@patternfly/react-icons";
 
 interface ToolbarProps {
   onNewLayout: () => void;

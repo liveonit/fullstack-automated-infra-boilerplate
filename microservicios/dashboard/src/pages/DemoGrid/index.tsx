@@ -5,20 +5,23 @@ import _ from 'lodash'
 
 import Toolbar from "./Toolbar";
 import { Layout } from "react-grid-layout";
+import EditableCard from '../../components/Cards/EditableCard'
 
-import ResponsiveGridLayout from '../../components/ReactResponsiveGridLayout'
+import ResponsiveGridLayout, { Panel } from '../../components/ReactResponsiveGridLayout'
 interface State {
   cols: any;
-  layouts: Layout[];
+  panels: Panel[];
   compactType?: "vertical" | "horizontal" | null | undefined;
   currentBreakpoint: string;
   rowsHeight: number;
 }
 
+
+
 const DemoGrid = () => {
   const [ state, setState ] = React.useState<State>({
     cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-    layouts: generateLayout(),
+    panels: generateLayout(),
     compactType: "vertical",
     currentBreakpoint: "",
     rowsHeight: 30,
@@ -35,13 +38,14 @@ const DemoGrid = () => {
   };
   
   const onLayoutChange = (layouts: Layout[]) => {
-    setState({ ...state, layouts });
+    const panels: Panel[] = _.unionBy<Panel>(state.panels, layouts, "i");
+    setState({ ...state, panels });
   }
   
   const onNewLayout = () => {
     setState({
       ...state,
-      layouts: generateLayout(),
+      panels: generateLayout(),
     });
   };
   
@@ -62,7 +66,7 @@ const DemoGrid = () => {
       </PageSection>
       <PageSection variant={PageSectionVariants.light}>
         <ResponsiveGridLayout
-          layouts={state.layouts}
+          panels={state.panels}
           rowHeight={state.rowsHeight}
           cols={state.cols}
           onLayoutChange={onLayoutChange}
@@ -74,7 +78,7 @@ const DemoGrid = () => {
   );
 };
 
-const generateLayout: () => Layout[] = () => {
+const generateLayout: () => Panel[] = () => {
   return _.map(_.range(0, 25), function (item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
     return {
@@ -84,6 +88,7 @@ const generateLayout: () => Layout[] = () => {
       h: y,
       i: i.toString(),
       static: Math.random() < 0.05,
+      child: <EditableCard id={i.toString()}/>
     };
   });
 };

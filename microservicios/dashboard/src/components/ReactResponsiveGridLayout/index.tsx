@@ -6,11 +6,14 @@ import _ from 'lodash'
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
+export interface Panel extends Layout {
+  child?: React.ReactChild;
+}
 
 interface Props {
   rowHeight: number;
   cols: any;
-  layouts: Layout[];
+  panels: Panel[];
   compactType?: "vertical" | "horizontal" | null | undefined;
   onLayoutChange: (layout: Layout[], layouts: ReactGridLayout.Layouts) => void;
   onBreakpointChange: (newBreakpoint: string, newCols: number)  => void;
@@ -26,26 +29,17 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
     mounted: false
   });
 
-  const {layouts, compactType, onBreakpointChange, onLayoutChange} = props;
+  const {panels, compactType, onBreakpointChange, onLayoutChange} = props;
 
   React.useEffect(() => {
     setState({ ...state, mounted: true });
   }, []);
 
   const generateDOM = () => {
-    return _.map(layouts, function (l, i) {
+    return _.map(panels, function (l, i) {
       return (
-        <div key={i} className={l.static ? "static" : ""}>
-          {l.static ? (
-            <span
-              className="text"
-              title="This item is static and cannot be removed or resized."
-            >
-              Static - {i}
-            </span>
-          ) : (
-            <span className="text">{i}</span>
-          )}
+        <div key={i} className={l.static ? "static" : ""} style={{ overflow: "hidden" }}>
+          {l.child}
         </div>
       );
     });
@@ -54,7 +48,7 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
   return (
       <ResponsiveReactGridLayout
         {...props}
-        layouts={{ lg: layouts}}
+        layouts={{ lg: panels}}
         onBreakpointChange={onBreakpointChange}
         onLayoutChange={onLayoutChange}
         // WidthProvider option

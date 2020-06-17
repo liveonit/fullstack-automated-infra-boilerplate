@@ -1,0 +1,25 @@
+.pf-c-card {
+  --pf-c-card--BackgroundColor: "white";
+  --pf-c-card--m-hoverable--hover--BoxShadow: 0 0 0 0;
+  --pf-c-card--m-flat--BorderWidth: "0px";
+  --pf-c-card--m-flat--BorderColor: "white";
+  --pf-c-card--first-child--PaddingTop: 0.2rem;
+  --pf-c-card--child--PaddingLeft: 0rem;
+  --pf-c-card--child--PaddingBottom: 0rem;
+  --pf-c-card__header--not-last-child--PaddingBottom: 0.5rem;
+}
+
+.pf-c-card__body {
+  --pf-c-card--child--PaddingRight: 0rem;
+}
+
+.--card-title {
+  width: 85%;
+  display: inline-block;
+  text-align: center;
+}
+
+.--card-actions {
+  width: 10%;
+  display: inline-block;
+}
