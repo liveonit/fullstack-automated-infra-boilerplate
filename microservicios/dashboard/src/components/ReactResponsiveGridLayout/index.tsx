@@ -1,9 +1,10 @@
-import "./style.css"
-import "./demo-style.css"
+import "./style.css";
+import "./demo-style.css";
 
-import React from 'react'
-import _ from 'lodash'
+import React from "react";
+import _ from "lodash";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
+import EditableCard from "../Cards/EditableCard";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export interface Panel extends Layout {
@@ -11,65 +12,66 @@ export interface Panel extends Layout {
 }
 
 interface Props {
+  panels?: Panel[];
   rowHeight: number;
   cols: any;
-  panels: Panel[];
   compactType?: "vertical" | "horizontal" | null | undefined;
   onLayoutChange: (layout: Layout[], layouts: ReactGridLayout.Layouts) => void;
-  onBreakpointChange: (newBreakpoint: string, newCols: number)  => void;
+  onBreakpointChange: (newBreakpoint: string, newCols: number) => void;
 }
 
 interface State {
   mounted: boolean;
 }
 
-
 const ResponsiveGridLayout: React.FC<Props> = (props) => {
   const [state, setState] = React.useState<State>({
-    mounted: false
+    mounted: false,
   });
 
-  const {panels, compactType, onBreakpointChange, onLayoutChange} = props;
+  const { panels, compactType, onBreakpointChange, onLayoutChange } = props;
 
   React.useEffect(() => {
     setState({ ...state, mounted: true });
   }, []);
 
-  const generateDOM = () => {
-    return _.map(panels, function (l, i) {
+  const generateDom = () => {
+    return _.map(panels, (l: Panel, i: number) => {
       return (
-        <div key={i} style={{ overflow: "hidden" }}>
-          {l.child}
+        <div key={i} style={{ overflow: "hidden", position: "relative" }}>
+          <EditableCard id={i.toString()} title="unTitulo">
+            {l.child || <div/>}
+          </EditableCard>
         </div>
       );
     });
   };
 
+
   return (
+    <div
+      id="responsiveGridContainer"
+    >
       <ResponsiveReactGridLayout
         {...props}
-        layouts={{ lg: panels}}
+        layouts={{ lg: panels || [] }}
         onBreakpointChange={onBreakpointChange}
         onLayoutChange={onLayoutChange}
-        // WidthProvider option
         measureBeforeMount={false}
-        // I like to have it animate on mount. If you don't, delete `useCSSTransforms` (it's default `true`)
-        // and set `measureBeforeMount={true}`.
         useCSSTransforms={state.mounted}
         compactType={compactType}
         preventCollision={!compactType}
       >
-        {generateDOM()}
+        {generateDom()}
       </ResponsiveReactGridLayout>
+    </div>
   );
 };
 
 ResponsiveGridLayout.defaultProps = {
   rowHeight: 30,
   onLayoutChange: function () {},
-  cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
+  cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
 };
-
-
 
 export default ResponsiveGridLayout;

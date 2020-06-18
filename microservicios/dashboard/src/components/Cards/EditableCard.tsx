@@ -60,9 +60,15 @@ const EditableCard: React.FC<Properties> = (props) => {
 
   const { id, title, children } = props;
   
+
+  const bodyWidth = document.getElementById(`${id}__CardBody`)?.clientWidth;
+  const bodyHeight = document.getElementById(`${id}__CardBody`)?.clientHeight;
+  console.log("bodyWidth", bodyWidth)
+  console.log("bodyHeight", bodyHeight)
+  const ch = React.cloneElement(children as React.ReactElement, { width: bodyWidth, height: bodyHeight })
   return (
     <div id="card-container">
-      <Card id={id} isSelectable={false}>
+      <Card id={`${id}__card`} isSelectable={false}>
         <CardHeader>
           <Title size="sm" className="--card-title">
             {title}
@@ -78,7 +84,7 @@ const EditableCard: React.FC<Properties> = (props) => {
             />
           </CardActions>
         </CardHeader>
-        <CardBody>{children}</CardBody>
+        <CardBody id={`${id}__CardBody`}>{ch}</CardBody>
       </Card>
     </div>
   );

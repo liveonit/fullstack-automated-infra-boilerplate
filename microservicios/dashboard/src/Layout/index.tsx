@@ -15,7 +15,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps & RouteComponentProps> = ({children, location}) => {
-  const [ isNavOpen, setIsNavOpen] = React.useState(true);
+  const [ isNavOpen, setIsNavOpen] = React.useState(false);
   return (
     <Page
       header={<Header navToggle={ () => setIsNavOpen(!isNavOpen)} />}

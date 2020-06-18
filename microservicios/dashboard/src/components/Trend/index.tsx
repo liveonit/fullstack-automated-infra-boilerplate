@@ -1,10 +1,15 @@
+import './style.css'
 import React from 'react';
-import * as ReactDOM from "react-dom"
+
 import { Pie } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js'
 
-const Chart: React.FC = () => {
-  const [ state, setState ] = React.useState();
+interface Props {
+  width: number;
+  height: number;
+}
+
+const Chart: React.FC<Props> = (props) => {
     const data = {
       labels: [
         'Red',
@@ -29,11 +34,13 @@ const Chart: React.FC = () => {
     let options: ChartOptions = {
       legend: {
         position: 'bottom',
-      }
+      },
+      responsive: true,
+      maintainAspectRatio: false
     };
 
     return (
-      <Pie data={data} options={options} />
+      <Pie width={props.width} height={props.height} data={data} options={options} />
     );
 }
 

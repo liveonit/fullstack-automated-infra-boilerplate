@@ -82,9 +82,8 @@ const DemoGrid = () => {
     </>
   );
 };
-const editCardContainerRef: React.RefObject<HTMLDivElement> = React.createRef();
 const generateLayout: () => Panel[] = () => {
-  return _.map(_.range(0, 25), function (item, i) {
+  return _.map(_.range(0, 3), function (item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
     return {
       x: (_.random(0, 5) * 2) % 12,
@@ -94,9 +93,7 @@ const generateLayout: () => Panel[] = () => {
       i: i.toString(),
       static: false,
       child: (
-        <EditableCard id={i.toString()} title="unTitulo">
-          <MultiColorChart></MultiColorChart>
-        </EditableCard>
+        <MultiColorChart height={100} width={100}></MultiColorChart>
       ),
     };
   });
