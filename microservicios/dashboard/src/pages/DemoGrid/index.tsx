@@ -1,13 +1,15 @@
 import React from "react";
 import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 
-import _ from 'lodash'
-
+import _ from "lodash";
+import MultiColorChart from "../../components/Trend";
 import Toolbar from "./Toolbar";
-import { Layout } from "react-grid-layout";
-import EditableCard from '../../components/Cards/EditableCard'
+import { Layout, Layouts } from "react-grid-layout";
+import EditableCard from "../../components/Cards/EditableCard";
 
-import ResponsiveGridLayout, { Panel } from '../../components/ReactResponsiveGridLayout'
+import ResponsiveGridLayout, {
+  Panel,
+} from "../../components/ReactResponsiveGridLayout";
 interface State {
   cols: any;
   panels: Panel[];
@@ -17,15 +19,14 @@ interface State {
 }
 
 
-
 const DemoGrid = () => {
-  const [ state, setState ] = React.useState<State>({
+  const [state, setState] = React.useState<State>({
     cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
     panels: generateLayout(),
     compactType: "vertical",
     currentBreakpoint: "",
     rowsHeight: 30,
-  })
+  });
 
   const onCompactTypeChange = () => {
     const compactType =
@@ -36,11 +37,7 @@ const DemoGrid = () => {
         : "horizontal";
     setState({ ...state, compactType });
   };
-  
-  const onLayoutChange = (layouts: Layout[]) => {
-    const panels: Panel[] = _.unionBy<Panel>(state.panels, layouts, "i");
-    setState({ ...state, panels });
-  }
+
   
   const onNewLayout = () => {
     setState({
@@ -49,6 +46,14 @@ const DemoGrid = () => {
     });
   };
   
+  const onLayoutChange = (layout: Layout[], layouts: Layouts) => {
+    let panels = state.panels.map<Panel>((l: Layout, i: number) => ({
+      ...l,
+      ...layouts.lg[i],
+    }));
+    setState({ ...state, panels });
+  };
+
   const onBreakpointChange = (newBreakpoint: string, newCols: number) => {
     setState({
       ...state,
@@ -77,7 +82,7 @@ const DemoGrid = () => {
     </>
   );
 };
-
+const editCardContainerRef: React.RefObject<HTMLDivElement> = React.createRef();
 const generateLayout: () => Panel[] = () => {
   return _.map(_.range(0, 25), function (item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
@@ -88,7 +93,11 @@ const generateLayout: () => Panel[] = () => {
       h: y,
       i: i.toString(),
       static: false,
-      child: <EditableCard id={i.toString()} title="unTitulo"><p> Hola lindo mundo </p></EditableCard>
+      child: (
+        <EditableCard id={i.toString()} title="unTitulo">
+          <MultiColorChart></MultiColorChart>
+        </EditableCard>
+      ),
     };
   });
 };

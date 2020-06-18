@@ -59,6 +59,7 @@ const EditableCard: React.FC<Properties> = (props) => {
   };
 
   const { id, title, children } = props;
+  
   return (
     <div id="card-container">
       <Card id={id} isSelectable={false}>
