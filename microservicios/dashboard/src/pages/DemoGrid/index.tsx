@@ -7,7 +7,6 @@ import LineChart from '../../components/ReactResponsiveGridLayout/Trends/Line'
 
 import Toolbar from "./Toolbar";
 import { Layout, Layouts } from "react-grid-layout";
-import EditableCard from "../../components/ReactResponsiveGridLayout/Cards/EditableCard";
 
 import ResponsiveGridLayout, {
   Panel,
@@ -23,11 +22,11 @@ interface State {
 
 const DemoGrid = () => {
   const [state, setState] = React.useState<State>({
-    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+    cols: { lg: 36, md: 30, sm: 18, xs: 12, xxs: 6 },
     panels: generateLayout(),
     compactType: "vertical",
     currentBreakpoint: "",
-    rowsHeight: 30,
+    rowsHeight: 40,
   });
 
   const onCompactTypeChange = () => {
@@ -85,7 +84,7 @@ const DemoGrid = () => {
   );
 };
 const generateLayout: () => Panel[] = () => {
-  return _.map(_.range(0, 3), function (item, i) {
+  return _.map(_.range(0, 10), function (item, i) {
     var y = Math.ceil(Math.random() * 4) + 1;
     return {
       x: (_.random(0, 5) * 2) % 12,
@@ -94,9 +93,10 @@ const generateLayout: () => Panel[] = () => {
       h: y,
       i: i.toString(),
       static: false,
-      child: (
-        <LineChart height={123} width={100}></LineChart>
-      ),
+      child: 
+      _.random(0, 1) > 0.5 
+      ? <LineChart height={123} width={100}></LineChart>
+      : <PieChart height={123} width={100}></PieChart>,
     };
   });
 };

@@ -34,7 +34,7 @@ const PieChart: React.FC<Props> = (props) => {
       legend: {
         position: 'bottom',
       },
-      responsive: true,
+      responsive: false,
       maintainAspectRatio: false
     };
 

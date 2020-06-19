@@ -33,6 +33,7 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     setState({ ...state, mounted: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateDom = () => {

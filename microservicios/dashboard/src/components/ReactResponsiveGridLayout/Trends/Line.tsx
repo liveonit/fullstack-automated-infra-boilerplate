@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React from 'react'
 import { Line, ChartData } from "react-chartjs-2";
-import { DefaultSerializer } from "v8";
 import { ChartOptions } from "chart.js";
 
 const data1: ChartData<Chart.ChartData> = {
@@ -20,16 +19,16 @@ const data1: ChartData<Chart.ChartData> = {
       borderColor: "#742774",
     },
     {
-      label: "My First dataset",
+      label: "Third dataset",
       fill: false,
-      backgroundColor: "rgba(75,192,192,0.4)",
+      backgroundColor: "rgba(253,3,253,0.4)",
       lineTension: 0.1,
-      borderColor: "rgba(75,192,192,1)",
+      borderColor: "rgba(253,3,253,1)",
       borderCapStyle: "butt",
       borderDash: [],
       borderDashOffset: 0.0,
       borderJoinStyle: "miter",
-      pointBorderColor: "rgba(75,192,192,1)",
+      pointBorderColor: "rgba(253,3,253,1)",
       pointBackgroundColor: "#fff",
       pointBorderWidth: 1,
       pointHoverRadius: 5,

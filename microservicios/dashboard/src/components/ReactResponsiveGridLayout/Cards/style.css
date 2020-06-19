@@ -12,7 +12,10 @@
 
 .pf-c-card__body {
   --pf-c-card--child--PaddingRight: 0rem;     
-  height: 100%;
+  height: calc(100% - 42px);
+  width: 100%;
+  top: 42px;
+  position: absolute;
 }
 
 .--card-title {
