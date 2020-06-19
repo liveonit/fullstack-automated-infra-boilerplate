@@ -22,11 +22,11 @@ interface State {
 
 const DemoGrid = () => {
   const [state, setState] = React.useState<State>({
-    cols: { lg: 36, md: 30, sm: 18, xs: 12, xxs: 6 },
+    cols: { lg: 12, md: 12, sm: 12, xs: 1, xxs: 1 },
     panels: generateLayout(),
     compactType: "vertical",
     currentBreakpoint: "",
-    rowsHeight: 40,
+    rowsHeight: 30,
   });
 
   const onCompactTypeChange = () => {
@@ -89,7 +89,7 @@ const generateLayout: () => Panel[] = () => {
     return {
       x: (_.random(0, 5) * 2) % 12,
       y: Math.floor(i / 6) * y,
-      w: 2,
+      w: 6,
       h: y,
       i: i.toString(),
       static: false,

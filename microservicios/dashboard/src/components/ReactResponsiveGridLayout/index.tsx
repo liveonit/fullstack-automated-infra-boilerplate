@@ -36,6 +36,10 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onWidthChange = (containerWidth: number, margin: [number, number], cols: number, containerPadding: [number, number]) => {
+    
+  }
+
   const generateDom = () => {
     console.log("before generate dom")
     return _.map(panels, (l: Panel, i: number) => {
@@ -49,15 +53,12 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
     });
   };
 
-
   return (
-    <div
-      id="responsiveGridContainer"
-    >
       <ResponsiveReactGridLayout
         {...props}
         layouts={{ lg: panels || [] }}
         onBreakpointChange={onBreakpointChange}
+        onWidthChange={onWidthChange}
         onLayoutChange={onLayoutChange}
         measureBeforeMount={false}
         useCSSTransforms={state.mounted}
@@ -66,7 +67,6 @@ const ResponsiveGridLayout: React.FC<Props> = (props) => {
       >
         {generateDom()}
       </ResponsiveReactGridLayout>
-    </div>
   );
 };
 
