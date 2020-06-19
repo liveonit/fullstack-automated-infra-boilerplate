@@ -63,8 +63,7 @@ const EditableCard: React.FC<Properties> = (props) => {
 
   const bodyWidth = document.getElementById(`${id}__CardBody`)?.clientWidth;
   const bodyHeight = document.getElementById(`${id}__CardBody`)?.clientHeight;
-  console.log("bodyWidth", bodyWidth)
-  console.log("bodyHeight", bodyHeight)
+
   const ch = React.cloneElement(children as React.ReactElement, { width: bodyWidth, height: bodyHeight })
   return (
     <div id="card-container">

@@ -2,7 +2,9 @@ import React from "react";
 import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 
 import _ from "lodash";
-import MultiColorChart from "../../components/ReactResponsiveGridLayout/Trends";
+import PieChart from "../../components/ReactResponsiveGridLayout/Trends/Pie";
+import LineChart from '../../components/ReactResponsiveGridLayout/Trends/Line'
+
 import Toolbar from "./Toolbar";
 import { Layout, Layouts } from "react-grid-layout";
 import EditableCard from "../../components/ReactResponsiveGridLayout/Cards/EditableCard";
@@ -93,7 +95,7 @@ const generateLayout: () => Panel[] = () => {
       i: i.toString(),
       static: false,
       child: (
-        <MultiColorChart height={100} width={100}></MultiColorChart>
+        <LineChart height={123} width={100}></LineChart>
       ),
     };
   });

@@ -8,7 +8,7 @@ interface Props {
   height: number;
 }
 
-const Chart: React.FC<Props> = (props) => {
+const PieChart: React.FC<Props> = (props) => {
     const data = {
       labels: [
         'Red',
@@ -43,4 +43,4 @@ const Chart: React.FC<Props> = (props) => {
     );
 }
 
-export default Chart;
+export default PieChart;
