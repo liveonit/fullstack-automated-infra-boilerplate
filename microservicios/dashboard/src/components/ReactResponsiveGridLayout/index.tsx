@@ -4,7 +4,7 @@ import "./demo-style.css";
 import React from "react";
 import _ from "lodash";
 import { Responsive, WidthProvider, Layout } from "react-grid-layout";
-import EditableCard from "../Cards/EditableCard";
+import EditableCard from "./Cards/EditableCard";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export interface Panel extends Layout {

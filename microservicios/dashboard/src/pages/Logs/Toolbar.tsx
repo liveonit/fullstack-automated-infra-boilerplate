@@ -13,7 +13,7 @@ import {
 } from "@patternfly/react-core";
 import { FilterIcon } from "@patternfly/react-icons";
 
-import PaginationNav from "../../components/PaginationNav";
+import PaginationNav from "../../components/Layout/PaginationNav";
 import { DateTimeFilter } from "../../components/DatetimePickerRange";
 
 interface ToolbarProps {

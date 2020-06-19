@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbHeading } from '@patternfly/react-core';
 
-import toTitleCase from '../../utils/General/toTitleCase';
+import toTitleCase from '../../../utils/General/toTitleCase';
 
 interface LayoutBreadcrumbProps {
   location: RouteComponentProps["location"]

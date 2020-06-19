@@ -2,10 +2,10 @@ import React from "react";
 import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 
 import _ from "lodash";
-import MultiColorChart from "../../components/Trend";
+import MultiColorChart from "../../components/ReactResponsiveGridLayout/Trends";
 import Toolbar from "./Toolbar";
 import { Layout, Layouts } from "react-grid-layout";
-import EditableCard from "../../components/Cards/EditableCard";
+import EditableCard from "../../components/ReactResponsiveGridLayout/Cards/EditableCard";
 
 import ResponsiveGridLayout, {
   Panel,
