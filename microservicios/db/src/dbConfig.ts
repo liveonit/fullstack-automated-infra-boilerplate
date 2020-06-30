@@ -26,7 +26,7 @@ const development: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name",
+  database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {
     migrationsDir: path.resolve(__dirname, 'migrations/'),
@@ -44,7 +44,7 @@ const staging: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name",
+  database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {
     migrationsDir: path.resolve(__dirname, 'migrations/'),
@@ -57,7 +57,7 @@ const production: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name",
+  database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {
     migrationsDir: path.resolve(__dirname, 'migrations/'),

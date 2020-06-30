@@ -29,7 +29,7 @@ const development: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name", 
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
   logging: ["error", "query", "schema"],
@@ -42,7 +42,7 @@ const staging: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name", 
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
   
@@ -55,7 +55,7 @@ const production: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.DB_USER || "default_username",
   password: process.env.DB_PASSWORD || "default_pass",
-  database: process.env.DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name", 
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
 }

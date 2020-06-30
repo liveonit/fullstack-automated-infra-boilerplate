@@ -35,3 +35,5 @@ output
 ssh-key
 
 kubectl-config
+
+config_files

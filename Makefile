@@ -38,10 +38,10 @@ build_db:
 
 minikube_db_run_migrations:
 	make k8s_create_update_envs
-	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} npm run typeorm migration:run && cd -
+	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
 develop_db_run_migrations:
-	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} npm run typeorm migration:run && cd -
+	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
 test_env:
 	echo "${REACT_APP_API_URL}"

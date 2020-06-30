@@ -70,33 +70,37 @@ services:
       - ./microservicios/dashboard/tsconfig.json:/usr/src/app/tsconfig.json
     networks:
       - fs_network
-  
-  # keycloak:
-  #   image: jboss/keycloak:{{ keycloak_version }}
-  #   container_name: keycloak
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./standalone.xml:{{ jboss_home }}/standalone/configuration/standalone.xml
-  #     - ./realm-export.json:{{ keycloak_import }}
-  #     - ./patternfly/:/opt/jboss/keycloak/themes/patternfly/
-  #   environment:
-  #     - KEYCLOAK_USER={{ keycloak_admin_username }}
-  #     - KEYCLOAK_PASSWORD={{ keycloak_admin_password }}
-  #     - KEYCLOAK_IMPORT={{ keycloak_import }}
-  #     - DB_ADDR={{ pg_hostname }}
-  #     - DB_PORT={{ pg_port }}
-  #     - DB_DATABASE={{ keycloak_database_name }}
-  #     - DB_SCHEMA=public
-  #     - DB_USER={{ keycloak_admin_username }}
-  #     - DB_PASSWORD={{ keycloak_admin_password }}
-  #     - DB_VENDOR=postgres
-  #     - PROXY_ADDRESS_FORWARDING=true
-  #   ports:
-  #     - '8080:8080'
-  #     - '8443:8443'
-  #   networks:
-  #     - fs_network
-  
+
+  templating:
+    image: ibarretorey/templating
+    build:
+      context: ./microservicios/templating
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      TEMPLATES_DIR: /tmp/templates
+      RENDERED_DIR: /tmp/rendered
+    volumes:
+      - ./microservicios/templating/templates:/tmp/templates
+      - ./microservicios/templating/config_files:/tmp/rendered
+
+  keycloak:
+    image: jboss/keycloak:${KEYCLOAK_VERSION}
+    container_name: keycloak
+    restart: unless-stopped
+    depends_on:
+      - fs_db
+    volumes:
+      - ./microservicios/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
+      - ./microservicios/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
+      - ./microservicios/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
+    env_file: .env
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+    networks:
+      - fs_network
+
 
 networks:
   fs_network:
