@@ -1,6 +1,19 @@
 version: '3.7'
 
 services:
+  templating:
+    image: ibarretorey/templating
+    build:
+      context: ./microservicios/templating
+      dockerfile: Dockerfile
+    env_file: .env
+    environment:
+      TEMPLATES_DIR: /tmp/templates
+      RENDERED_DIR: /tmp/rendered
+    volumes:
+      - ./microservicios/templating/templates:/tmp/templates
+      - ./microservicios/templating/config_files:/tmp/rendered
+
   fs_db:
     image: mariadb:10.1
     container_name: fs_db_development
@@ -71,19 +84,6 @@ services:
     networks:
       - fs_network
 
-  templating:
-    image: ibarretorey/templating
-    build:
-      context: ./microservicios/templating
-      dockerfile: Dockerfile
-    env_file: .env
-    environment:
-      TEMPLATES_DIR: /tmp/templates
-      RENDERED_DIR: /tmp/rendered
-    volumes:
-      - ./microservicios/templating/templates:/tmp/templates
-      - ./microservicios/templating/config_files:/tmp/rendered
-
   keycloak:
     image: jboss/keycloak:${KEYCLOAK_VERSION}
     container_name: keycloak
@@ -91,9 +91,9 @@ services:
     depends_on:
       - fs_db
     volumes:
-      - ./microservicios/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
-      - ./microservicios/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
-      - ./microservicios/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
+      - ./microservicios/templating/config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
+      - ./microservicios/templating/config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
+      - ./microservicios/templating/config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
     env_file: .env
     ports:
       - '8080:8080'

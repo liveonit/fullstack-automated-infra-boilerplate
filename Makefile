@@ -1,5 +1,8 @@
 include .env
 
+create_config:
+	docker-compose up -d templates
+
 build_api_prodduction:
 	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:production . && cd -
 

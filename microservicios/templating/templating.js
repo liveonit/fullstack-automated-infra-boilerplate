@@ -18,7 +18,7 @@ const createTemplates = (templatesDir, renderedDir) => {
       const template = handlebars.compile(source);
       const result = template(process.env);
 
-      fs.mkdirSync(path.dirname(toPath), { recursive: true })
+      fs.mkdirSync(path.dirname(toPath), { recursive: true})
       fs.writeFileSync(toPath, result);
     } else if (stat.isDirectory()) {
       createTemplates(fromPath, toPath);
