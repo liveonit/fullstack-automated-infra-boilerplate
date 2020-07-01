@@ -4,11 +4,11 @@
 
 ## Resumen
 
-Este proyecto es un acumulado de varios proyectos que he ido implementando, para tener un codigo
-flexible que que sirva como cimientos para la construccion de diferentes sofrwares a medida.
-Algunas partes de este gran boilerplate, se encuentran en repositorios individuales formando
-boilerplates mas pequeños en donde se explica mas en detalle el funcionamiento de cada parte
-granular es este boilerplate.
+Este boilerplate es un acumulado de varios proyectos que he ido implementando en mi tiempo libre,
+para tener un codigo flexible que que sirva como cimientos para la construccion de diferentes
+sofrwares a medida.
+Algunas partes de este gran boilerplate, se encuentran en repositorios individuales mas pequeños
+en donde se explica mas en detalle el funcionamiento de cada parte granular es este boilerplate.
 
 Estos proyectos son:
 
@@ -41,7 +41,7 @@ en minikube y en [stage staging](###STAGE-STAGING) como desplegarlo en un kluste
 
 **Ademas en cualquiera de los modos que se corran, con** [GNU Make](https://www.gnu.org/software/make/) **se facilita la ejecucion de comandos**
 
-## Implementacio
+## Implementacion
 
 ### STAGE DEV
 
@@ -102,8 +102,8 @@ Ademas puede acceder directo a los servicios para probarlos independientemente d
 
 ### STAGE TESTING
 <!-- TODO: implementacion in minikube -->
-Pendiente ...
+Pendiente ..
 
 ### STAGE STAGING
 <!-- TODO: implementacion in k8s-cluster -->
-Pendiente ...
+Pendiente...
