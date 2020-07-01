@@ -20,6 +20,7 @@ services:
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./config_files/db:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "/usr/bin/mysql --host=localhost --port=3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e 'Select 1;'' || exit 1"]
       timeout: 10s
@@ -92,6 +93,12 @@ services:
       - ./config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}
       - ./config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/
     env_file: .env
+    environment:
+      DB_SCHEMA: public
+      DB_ADDR: ${DB_HOST}
+      DB_DATABASE: ${KEKCLOAK_DB_NAME}
+      DB_USER: ${KEKCLOAK_DB_USER}
+      DB_PASSWORD: ${KEKCLOAK_DB_PASSWORD}
     ports:
       - '8080:8080'
       - '8443:8443'

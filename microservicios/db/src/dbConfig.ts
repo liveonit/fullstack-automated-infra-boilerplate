@@ -21,11 +21,11 @@ const isDbType = (value: string = ""): value is DbType  => {
 
 const development: DbOptions = {
   name: "default",
-  type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
+  type: isDbType(process.env.DB_VENDOR) ? process.env.DB_VENDOR : 'mysql',
   host: process.env.DB_HOST,
   port: parseInt((process.env.DB_PORT || "3306"), 10),
-  username: process.env.DB_USER || "default_username",
-  password: process.env.DB_PASSWORD || "default_pass",
+  username: process.env.API_DB_USER || "default_username",
+  password: process.env.API_DB_PASSWORD || "default_pass",
   database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {
@@ -39,11 +39,11 @@ const development: DbOptions = {
 console.log("current migrations path", path.resolve(__dirname, 'migrations/'));
 const staging: DbOptions = {
   name: "default",
-  type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
+  type: isDbType(process.env.DB_VENDOR) ? process.env.DB_VENDOR : 'mysql',
   host: process.env.DB_HOST,
   port: parseInt((process.env.DB_PORT || "3306"), 10),
-  username: process.env.DB_USER || "default_username",
-  password: process.env.DB_PASSWORD || "default_pass",
+  username: process.env.API_DB_USER || "default_username",
+  password: process.env.API_DB_PASSWORD || "default_pass",
   database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {
@@ -52,11 +52,11 @@ const staging: DbOptions = {
 }
 const production: DbOptions = {
   name: "default",
-  type: isDbType(process.env.DB_TYPE) ? process.env.DB_TYPE : 'mysql',
+  type: isDbType(process.env.DB_VENDOR) ? process.env.DB_VENDOR : 'mysql',
   host: process.env.DB_HOST,
   port: parseInt((process.env.DB_PORT || "3306"), 10),
-  username: process.env.DB_USER || "default_username",
-  password: process.env.DB_PASSWORD || "default_pass",
+  username: process.env.API_DB_USER || "default_username",
+  password: process.env.API_DB_PASSWORD || "default_pass",
   database: process.env.API_DB_NAME || "default_db_name",
   migrations: [ path.resolve(__dirname, 'migrations/**/*{.js,.ts}')],
   cli: {

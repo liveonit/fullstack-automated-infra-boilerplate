@@ -41,10 +41,10 @@ build_db:
 
 minikube_db_run_migrations:
 	make k8s_create_update_envs
-	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
+	cd ./microservicios/db && DB_HOST=${DOMAIN} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
-develop_db_run_migrations:
-	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
+develop_db_run_api_migrations:
+	cd ./microservicios/db && DB_HOST=${DOMAIN} DB_PORT=${EXTERNAL_DB_PORT} API_DB_USER=${API_DB_USER} API_DB_PASSWORD=${API_DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
 # TODO: k8s_keycloak_up:
 
