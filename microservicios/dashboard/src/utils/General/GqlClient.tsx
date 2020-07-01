@@ -5,8 +5,15 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 
+
+let loc = window.location, new_uri;
+new_uri = loc.protocol === "https:" 
+    ? "wss:"
+    : "ws:";
+new_uri += "//" + loc.host + "/graphqlws";
+
 const wsLink = new WebSocketLink({
-  uri: '/graphql',
+  uri: new_uri,
   options: {
     reconnect: true
   }
@@ -14,7 +21,7 @@ const wsLink = new WebSocketLink({
 
 
 const httpLink = new HttpLink({
-  uri: `/graphql`
+  uri: `${loc.protocol}//${loc.host}/graphql`
 });
 
 const link = split(
