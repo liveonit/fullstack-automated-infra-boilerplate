@@ -88,9 +88,9 @@ services:
     depends_on:
       - db
     volumes:
-      - ./config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
-      - ./config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
-      - ./config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
+      - ./config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml
+      - ./config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}
+      - ./config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/
     env_file: .env
     ports:
       - '8080:8080'
