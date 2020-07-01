@@ -5,75 +5,105 @@
 ## Resumen
 
 Este proyecto es un acumulado de varios proyectos que he ido implementando, para tener un codigo
-flexible que que sirva como cimientos de la construccion de diferentes sofrwares a medida.
-Cada  sub-proyecto por si solo cuenta con su repositorio independiente y puede ser utilizado
-como una herramienta para integrar en un stack, el codigo esta desarrollado de tal forma que cada
-sub-proyecto pueda pueda ser utilizado sin depender directamente de los demas.
-Pero al integrar todos los proyectos se obtiene un toolkit, robusto y flexible que servira como
-base para construir soluciones completas.
+flexible que que sirva como cimientos para la construccion de diferentes sofrwares a medida.
+Algunas partes de este gran boilerplate, se encuentran en repositorios individuales formando
+boilerplates mas pequeños en donde se explica mas en detalle el funcionamiento de cada parte
+granular es este boilerplate.
 
-## Inicializar el proyecto
+Estos proyectos son:
 
-Para el boilterplate completo con todos los subproyectos es necesario contar con nodejs y npm.
-Teniendo instalado `node.js` y `npm` necesitamos instalar `meta` que servira para clonar y mantener
-syncronizados todos los repos de los subproyectos. Para instalarlo ejecutamos
+- [fullstack-ts-boilerplate](aunPorAgregar) - Cuenta solo con la parte de api y dashboard especificamente,
+sin agregar el servicio keycloak ni la infraestructura
+- [k8s-cluster](aunPorAgregar) - Cuenta con todo lo necesario para levantar el cluster de kubetes sobre el
+cual se puede correr esta aplicacion, mas alla de un ambiente de dev o testing para levantar un staging o prod
+es necesario levantar un cluster k8s, este repo automatiza el armado y despliegue de cada uno de los nodos del
+cluster, y en este repo en la seccion [stage testing](###STAGE-TESTING) se explica como desplegar este boilerplate 
+en minikube y en [stage staging](###STAGE-STAGING) como desplegarlo en un kluster k8s.
+
+## Requisitos de instalacion
+
+### Para poder correr este boilerplate en modo dev
+
+- [Nodejs](https://nodejs.org/en/about/) (>12.x)
+- [NPM](https://docs.npmjs.com/about-npm/)
+- [Docker](https://docs.docker.com/) (>18.06.0) y [docker-compose](https://docs.docker.com/compose/) (>1.25.3)
+
+### Para coorer en modo test
+
+- [Nodejs](https://nodejs.org/en/about/) (>12.x)
+- [NPM](https://docs.npmjs.com/about-npm/)
+- [Docker](https://docs.docker.com/) (>18.06.0) y [minikube](pendiente) <!-- TODO: agregar link minikube y establecer version junto co requisitos minikube -->
+
+### Para coorer en modo staging
+<!-- TODO: resolver requisitos para modo staging -->
+- [Ansible](https://docs.ansible.com/ansible/latest/index.html)
+- [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox), [vagrant](https://www.vagrantup.com/docs/index.html)
+
+**Ademas en cualquiera de los modos que se corran, con** [GNU Make](https://www.gnu.org/software/make/) **se facilita la ejecucion de comandos**
+
+## Implementacio
+
+### STAGE DEV
+
+Clonar este repo
 
 ```bash
-sudo npm install -g meta
+git clone https://github.com/ibarretorey/fullstack-automated-infra-boilerplate.git
+cd fullstack-automated-infra-boilerplate
 ```
 
-Luego para obtener todo el full-stack boilerplate incluidos los subproyectos ejecutamos
+Una vez dentro configura las vairables del archivo .env que se enuentra de ejemplo. Si se encuentra en un proyecto
+deberia encriptarlo y no publicarlo en git.
+**ACLARACION: este .env es para pruebas y lo dejo como ejemplo para ver las variables que se pueden configurar**
+
+Una vez configuradas las variables ejecutar
 
 ```bash
-meta git clone https://github.com/ibarretorey/fullstack-boilerplate.git
+docker-compose up templating #crea los archivos de configuracion de los servicios en base al .env y los guarda en config files
+docker-compose up -d db # levanta la base de datos y crea las bases para api y keycloak
+
+cd microservicios/db && npm install && \
+DB_HOST=${DOMAIN}\
+DB_PORT=${EXTERNAL_DB_PORT}\
+API_DB_USER=${API_DB_USER}\
+API_DB_PASSWORD=${API_DB_PASSWORD}\
+API_DB_NAME=${API_DB_NAME}\
+npm run typeorm migration:run && cd - # ejecuta las migraciones de la base de datos,
+# las mismas se encuentran en microservicios/db/src/migrtions/* y se crearon con typeorm
 ```
 
-Con el comando anterior se generara un proyecto con las siguiente estructura:
+Luego de tener los archivos de configuracion y la base con las migraciones de la api, ejecutar
+
+```
+docker-compose up -d
+```
+
+para levantar el resto de los servicios.
+
+Si dejo la variable en DOMAIN `localhost` deberia poder acceder:
+- Al dashboard: http://localhost/
+- A keycloak: http://localhost/auth
+- A graphql: http://localhost/graphql
+
+#### A modo de trubleshooting
+
+Puede diagnosticar los contendores con
 
 ```bash
-
-├── api-ts
-│   └── <Todo lo que compone el sub-proyecto de la api incluida su documentacion>
-├── dashboard-ts
-│   └── <Todo lo que compone el sub-proyecto del dashboard>
-├── security
-│   └── <Todo lo que compone el sub-proyecto para agregar autenticacion y https>
-└── k8s-cluster
-    └── <Todo lo que compone el sub-proyecto k8s para implementar la infraestructura>
+docker ps # ver el status de todos los contenedore, observar si alguno se reinica
+docker logs <nombre_del_contenedor> # puede ver la info y los errores que loguea cada contenedor
 ```
 
-## Fraemworks y herramientas utilizadas para los desarrollos
+Ademas puede acceder directo a los servicios para probarlos independientemente del proxy
 
-1. API y Dashboard
-   - Dev
-     - [Nodejs](https://nodejs.org/en/about/)
-     - [NPM](https://docs.npmjs.com/about-npm/)
-   - Test o Prod
-     - [Docker](https://docs.docker.com/)
-     - [docker-compose](https://docs.docker.com/compose/) ó ([Minikube](https://kubernetes.io/docs/setup/learning-environment/minikube/)/[k8s-cluster](https://kubernetes.io/))
-2. Autenticacion y seguridad
-   - Docker
-   - docker-compose ó (Minikube/k8s-cluster)
-3. k8s cluster
-   - All
-     - [Ansible](https://docs.ansible.com/ansible/latest/index.html)
-   - Test
-     - [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox), [vagrant](https://www.vagrantup.com/docs/index.html)
+- dashboard: [http://localhost:<DASHBOARD_EXTERNAL_PORT>](http://localhost:<DASHBOARD_EXTERNAL_PORT>)
+- api: [http://localhost:<API_PORT>/graphql](http://localhost:<API_PORT>/graphql)
+- keycloak: [http://localhost:<8080>](http://localhost:<8080>)
 
-Ademas con - [GNU Make](https://www.gnu.org/software/make/) pueden facilitar la ejecucion de comandos
+### STAGE TESTING
+<!-- TODO: implementacion in minikube -->
+Pendiente ...
 
-## Repos que conforman el proyecto
-
-- [api-ts](https://github.com/ibarretorey/api-ts)
-- [dashboard-ts](https://github.com/ibarretorey/dashboard-ts)
-- [security](https://github.com/pending)
-- [k8s-clluster](https://github.com/ibarretorey/k8s-cluster.git)
-
-## Implementar api y dashboard en dev
-<!-- TODO: hacer la implementacion del bolerplate fullstack general -->
-
-### Implementar todo con docker-compose
-
-### Implementar todo con k8s-minikube
-
-### Implementar todo con k8s-cluster
+### STAGE STAGING
+<!-- TODO: implementacion in k8s-cluster -->
+Pendiente ...
