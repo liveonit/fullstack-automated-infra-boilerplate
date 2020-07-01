@@ -124,7 +124,7 @@
         <subsystem xmlns="urn:jboss:domain:datasources:5.0">
             <datasources>
                 <datasource jndi-name="java:jboss/datasources/KeycloakDS" pool-name="KeycloakDS" enabled="true" use-java-context="true" use-ccm="true">
-                    <connection-url>jdbc:${env.DB_VENDOR:postgres}://${env.DB_ADDR:postgres}/${env.KEYCLOAK_DB_NAME:keycloak}${env.JDBC_PARAMS:}</connection-url>
+                    <connection-url>jdbc:${env.DB_VENDOR:postgres}://${env.DB_ADDR:postgres}/${env.DB_DATABASE:keycloak}${env.JDBC_PARAMS:}</connection-url>
                     <driver>mariadb</driver>
                     <pool>
                         <flush-strategy>IdleConnections</flush-strategy>
