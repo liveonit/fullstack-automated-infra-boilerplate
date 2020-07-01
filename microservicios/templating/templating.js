@@ -3,6 +3,10 @@ const path = require("path");
 const process = require("process");
 const handlebars = require("handlebars");
 
+handlebars.registerHelper('eq', function (value, value2) {
+  return value === value2;
+});
+
 const templatesDir = process.env.TEMPLATES_DIR;
 const renderedDir = process.env.RENDERED_DIR;
 // Make an async function that gets executed immediately
@@ -18,7 +22,8 @@ const createTemplates = (templatesDir, renderedDir) => {
       const template = handlebars.compile(source);
       const result = template(process.env);
 
-      fs.mkdirSync(path.dirname(toPath), { recursive: true})
+      fs.mkdirSync(path.dirname(toPath), { recursive: true })
+      console.log("beforeWrite toPath", toPath);
       fs.writeFileSync(toPath, result);
     } else if (stat.isDirectory()) {
       createTemplates(fromPath, toPath);

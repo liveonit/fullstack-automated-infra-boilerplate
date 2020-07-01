@@ -36,4 +36,5 @@ ssh-key
 
 kubectl-config
 
-config_files
+config_files/*
+!config_files/README.md

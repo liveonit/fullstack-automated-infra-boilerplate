@@ -46,9 +46,6 @@ minikube_db_run_migrations:
 develop_db_run_migrations:
 	cd ./microservicios/db && DB_HOST=${SERVICE_URL} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
-test_env:
-	echo "${REACT_APP_API_URL}"
-
 # TODO: k8s_keycloak_up:
 
 # TODO: k8s_keycloak_down:

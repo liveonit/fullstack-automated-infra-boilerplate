@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   templating:
-    image: ibarretorey/templating
+    image: ${OWNER}/templating
     build:
       context: ./microservicios/templating
       dockerfile: Dockerfile
@@ -11,12 +11,12 @@ services:
       TEMPLATES_DIR: /tmp/templates
       RENDERED_DIR: /tmp/rendered
     volumes:
-      - ./microservicios/templating/templates:/tmp/templates
-      - ./microservicios/templating/config_files:/tmp/rendered
+      - ./templates:/tmp/templates
+      - ./config_files:/tmp/rendered:rw
 
-  fs_db:
+  db:
     image: mariadb:10.1
-    container_name: fs_db_development
+    container_name: ${PROJECT_NAME}_db_development
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
@@ -40,18 +40,17 @@ services:
     networks:
         - fs_network
 
-  fs_api:
-    image: ibarretorey/fs-api-development
+  api:
+    image: ${OWNER}/${PROJECT_NAME}-api-development
     build: 
       context: ./microservicios/api
       dockerfile: Dockerfile.development
-    container_name: fs_api_development
+    container_name: ${PROJECT_NAME}_api_development
     restart: always
     depends_on:
-      - fs_db
+      - db
     environment:
-      DB_HOST: fs_db
-      WAIT_HOSTS: fs_db:3306
+      WAIT_HOSTS: db:3306
       WAIT_HOSTS_TIMEOUT: 300
       WAIT_SLEEP_INTERVAL: 30
       WAIT_HOST_CONNECT_TIMEOUT: 30
@@ -63,15 +62,13 @@ services:
     ports:
       - "${API_PORT}:${API_PORT}"
 
-  fs_dashboard:
-    image: ibarretorey/fs-dashboard-development
+  dashboard:
+    image: ${OWNER}/${PROJECT_NAME}-dashboard-development
     build:
       context: ./microservicios/dashboard
       dockerfile: Dockerfile.development
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
     env_file: .env
-    container_name: fs_dashboard_development
+    container_name: ${PROJECT_NAME}_dashboard_development
     restart: unless-stopped
     ports:
       - "3000:80"
@@ -89,15 +86,30 @@ services:
     container_name: keycloak
     restart: unless-stopped
     depends_on:
-      - fs_db
+      - db
     volumes:
-      - ./microservicios/templating/config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
-      - ./microservicios/templating/config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
-      - ./microservicios/templating/config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
+      - ./config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml:rw
+      - ./config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}:ro
+      - ./config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/:ro
     env_file: .env
     ports:
       - '8080:8080'
       - '8443:8443'
+    networks:
+      - fs_network
+
+  proxy:
+    image: nginx:1.15.1
+    container_name: proxy
+    restart: unless-stopped
+    volumes:
+      - ./config_files/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config_files/proxy/proxy.conf:/etc/nginx/proxy.conf:ro
+      # - ./favicon.ico:/etc/nginx/favicon.ico
+    ports:
+      - "80:80"
+      - '443:443'
+    command: [nginx-debug, '-g', 'daemon off;']
     networks:
       - fs_network
 

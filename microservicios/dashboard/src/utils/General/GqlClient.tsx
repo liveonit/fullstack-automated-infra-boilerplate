@@ -6,7 +6,7 @@ import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 
 const wsLink = new WebSocketLink({
-  uri: process.env.REACT_APP_API_URL ? `ws${process.env.REACT_APP_API_URL}/graphql` : `ws://localhost:9000/graphql`,
+  uri: '/graphql',
   options: {
     reconnect: true
   }
@@ -14,7 +14,7 @@ const wsLink = new WebSocketLink({
 
 
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_API_URL ? `http${process.env.REACT_APP_API_URL}/graphql` : 'http://localhost:9000/graphql',
+  uri: `/graphql`
 });
 
 const link = split(
