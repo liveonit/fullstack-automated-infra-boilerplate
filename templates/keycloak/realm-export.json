@@ -42,7 +42,7 @@
     "realm": [
       {
         "id": "b742897c-2d21-4c41-8a09-971c20818a2e",
-        "name": "operator",
+        "name": "user",
         "composite": false,
         "clientRole": false,
         "containerId": "sm",
@@ -514,9 +514,9 @@
     },
     {
       "id": "6d431d5f-e26d-4624-84d2-f08778daeb4b",
-      "clientId": "dashboard",
-      "name": "FS Dashboard",
-      "description": "Dashboard de administración del Conatel Switch Manager",
+      "clientId": "{{ KEYCLOAK_CLIENT_ID }}",
+      "name": "{{ KEYCLOAK_CLIENT_ID }} client",
+      "description": "Client to connect the main dashboard of the aplicación",
       "adminUrl": "https://{{ DOMAIN }}",
       "rootUrl": "https://{{ DOMAIN }}",
       "surrogateAuthRequired": false,
@@ -1814,35 +1814,35 @@
   "keycloakVersion": "7.0.0",
   "userManagedAccessAllowed": false,
   "users": [{
-    "email": "{{ email_address }}",
+    "email": "{{ KEYCLOAK_ADMIN_DEFAULT_EMAIL }}",
     "emailVerified": true,
     "enabled": true,
     "firstName": "Administrator",
     "lastName": "User",
-    "username": "admin",
+    "username": "{{ KEYCLOAK_ADMIN_DEFAULT_NAME }}",
     "clientRoles": {
       "dashboard": [ "administrator" ]
     },
     "realmRoles": [ "administrator" ],
     "credentials": [{
-        "value" : "password",
-        "temporary" : false,
+        "value" : "{{ KEYCLOAK_ADMIN_DEFAULT_PASS }}",
+        "temporary" : true,
         "type": "password"
     }]
   }, {
-    "email": "operator@test.com",
+    "email": "{{  KEYCLOAK_USER_DEFAULT_EMAIL }}",
     "emailVerified": true,
     "enabled": true,
-    "firstName": "Operator",
+    "firstName": "End",
     "lastName": "User",
-    "username": "operator",
+    "username": "{{ KEYCLOAK_USER_DEFAULT_NAME }}",
     "clientRoles": {
-      "dashboard": [ "operator" ]
+      "dashboard": [ "user" ]
     },
-    "realmRoles": [ "operator" ],
+    "realmRoles": [ "user" ],
     "credentials": [{
-        "value" : "password",
-        "temporary" : false,
+        "value" : "{{ KEYCLOAK_USER_DEFAULT_PASS }}",
+        "temporary" : true,
         "type": "password"
     }]
   }]
