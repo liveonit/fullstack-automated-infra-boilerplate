@@ -1820,9 +1820,6 @@
     "firstName": "Administrator",
     "lastName": "User",
     "username": "{{ KEYCLOAK_ADMIN_DEFAULT_NAME }}",
-    "clientRoles": {
-      "dashboard": [ "administrator" ]
-    },
     "realmRoles": [ "administrator" ],
     "credentials": [{
         "value" : "{{ KEYCLOAK_ADMIN_DEFAULT_PASS }}",
@@ -1836,9 +1833,6 @@
     "firstName": "End",
     "lastName": "User",
     "username": "{{ KEYCLOAK_USER_DEFAULT_NAME }}",
-    "clientRoles": {
-      "dashboard": [ "user" ]
-    },
     "realmRoles": [ "user" ],
     "credentials": [{
         "value" : "{{ KEYCLOAK_USER_DEFAULT_PASS }}",

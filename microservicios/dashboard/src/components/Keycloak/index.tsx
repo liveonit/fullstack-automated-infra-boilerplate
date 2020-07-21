@@ -1,4 +1,5 @@
 import React from 'react';
+import { updateToken } from '../../utils/General/keycloakUtils';
 
 let keycloak: any;
 
@@ -52,6 +53,7 @@ const Keycloak: React.FC<Props> = ({children}) => {
 				// We can continue rendering the app
 				// now that the user has been authenticated
 				setIsAuthenticated(authenticated)
+				if (authenticated) updateToken(60);
 			})
 			.error((err: Error) => {
 				// Log an error method if something went
