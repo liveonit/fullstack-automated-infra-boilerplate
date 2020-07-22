@@ -32,8 +32,6 @@ await kcAdminClient.clients.update({ id: clientAccount.id }, { ...clientAccount,
 await kcAdminClient.clients.update({ id: clientSecAdmCons.id }, { ...clientSecAdmCons, enabled: true })
 const updCls = await kcAdminClient.clients.find();
 
-
-
 console.log(updCls);
 
 kcAdminClient.setConfig({

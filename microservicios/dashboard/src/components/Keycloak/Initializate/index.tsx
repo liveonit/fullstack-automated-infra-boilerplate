@@ -18,7 +18,7 @@ export const init = () => {
 
   // Initialize a Keycloak object
   keycloak = new window.Keycloak({
-    url: process.env.REACT_APP_KEYCLOAK_URK || '/auth',
+    url: process.env.REACT_APP_KEYCLOAK_URL || '/auth',
     realm: process.env.REACT_APP_KEYCLOAK_REALM || 'Fullstack',
     clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID || 'dashboard'
   });

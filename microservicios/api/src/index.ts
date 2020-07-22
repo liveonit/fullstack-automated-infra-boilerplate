@@ -11,7 +11,6 @@ import { LogResolver } from './resolvers/Logs'
 import { Env, isEnv } from './utils/environment'
 
 import express, { Application } from 'express'
-import { verifyKeycloakToken } from './utils/middlewares/Auth'
 import cors from 'cors'
 import compression from 'compression';
 

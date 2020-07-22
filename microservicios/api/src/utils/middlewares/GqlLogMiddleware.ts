@@ -1,6 +1,6 @@
 import { MiddlewareFn } from "type-graphql";
 import { Log } from '../../models/Log'
-import { json } from "express";
+
 export const GqlLog: MiddlewareFn = async ({ context, info, args }, next) => {
   const start = Date.now();
   let result;
