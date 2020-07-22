@@ -11,8 +11,10 @@ import { LogResolver } from './resolvers/Logs'
 import { Env, isEnv } from './utils/environment'
 
 import express, { Application } from 'express'
+import { verifyKeycloakToken } from './utils/middlewares/Auth'
 import cors from 'cors'
 import compression from 'compression';
+
 import { createServer } from 'http';
 
 import { ApolloServer } from 'apollo-server-express'
@@ -31,7 +33,7 @@ async function main() {
 
   // Conexion con la base de datos
   const connection = await connectDb();
-  
+
 
   // Compilado de graphql `schema` a partir de los resolver y clases con decoradores
   const schema = await buildSchema({
@@ -42,14 +44,25 @@ async function main() {
 
   // Crea la app de express
   const app: Application = express();
+
+
   // Crea el servidor http
   const server = createServer(app);
 
   // Crea el servidor de apollo
-  const apolloServer = new ApolloServer({ schema, subscriptions: {
-    path: "/graphql",
-  },})
-  
+  const apolloServer = new ApolloServer({
+    schema, subscriptions: {
+      path: "/graphql",
+    },
+  })
+
+  // enpoint para verificar que el servidor http y express esta funcionando correctametne
+  app.get('/healthz', (req, res) => { res.send('Everything is fine!!!') })
+
+  // Add auth to api
+  app.use(verifyKeycloakToken);
+
+
   // Apollo server cuenta con la siguiente funcion que agrega a la app 
   // de express el servidor apollo en el path que le pasemos, este caso `/graphql`
   apolloServer.applyMiddleware({ app, path: '/graphql' });
@@ -60,9 +73,7 @@ async function main() {
   // cors and response compress middlewares
   app.use('*', cors());
   app.use(compression());
-  
-  // enpoint para verificar que el servidor http y express esta funcionando correctametne
-  app.get('/healthz', (req, res) => { res.send('Everything is fine!!!') })
+
 
   server.listen(
     { host: '0.0.0.0', port: parseInt(port) },
