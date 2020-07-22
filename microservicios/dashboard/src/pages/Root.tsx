@@ -2,7 +2,7 @@ import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import history from "../utils/General/history";
 
-import Keycloak from "../components/Keycloak";
+import Keycloak from "../components/Keycloak/Initializate";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { client } from "../utils/General/GqlClient";
 import Layout from "../Layout";

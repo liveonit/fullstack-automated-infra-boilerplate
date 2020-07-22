@@ -6,7 +6,7 @@ import '@patternfly/react-core/dist/styles/base.css';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Root from './pages/Root';
-import { init } from './components/Keycloak'
+import { init } from './components/Keycloak/Initializate'
 
 // Initialize the Keycloak client
 init();
