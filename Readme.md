@@ -17,7 +17,7 @@ sin agregar el servicio keycloak ni la infraestructura
 - [k8s-cluster](aunPorAgregar) - Cuenta con todo lo necesario para levantar el cluster de kubetes sobre el
 cual se puede correr esta aplicacion, mas alla de un ambiente de dev o testing para levantar un staging o prod
 es necesario levantar un cluster k8s, este repo automatiza el armado y despliegue de cada uno de los nodos del
-cluster, y en este repo en la seccion [stage testing](###STAGE-TESTING) se explica como desplegar este boilerplate 
+cluster, y en este repo en la seccion [stage testing](###STAGE-TESTING) se explica como desplegar este boilerplate
 en minikube y en [stage staging](###STAGE-STAGING) como desplegarlo en un kluster k8s.
 
 ## Requisitos de instalacion
@@ -26,7 +26,7 @@ en minikube y en [stage staging](###STAGE-STAGING) como desplegarlo en un kluste
 
 - [Nodejs](https://nodejs.org/en/about/) (>12.x)
 - [NPM](https://docs.npmjs.com/about-npm/)
-- [Docker](https://docs.docker.com/) (>18.06.0) y [docker-compose](https://docs.docker.com/compose/) (>1.25.3)
+- [Docker](https://docs.docker.com/) (>18.06.0) y [docker-compose](https://docs.docker.com/compose/) (>1.26.0)
 
 ### Para coorer en modo test
 

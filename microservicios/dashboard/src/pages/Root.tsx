@@ -8,8 +8,8 @@ import { client } from "../utils/General/GqlClient";
 import Layout from "../Layout";
 import Home from "./Home";
 import DemoGrid from "./DemoGrid";
-import Page2 from "./Page2";
-import Page3 from "./Page3";
+import Bookstore from "./Bookstore";
+import UsersAdmin from "./UsersAdmin";
 import LogsPage from "./Logs";
 
 export function Root() {
@@ -20,9 +20,9 @@ export function Root() {
           <Layout>
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route path="/demoGrid" component={DemoGrid} />
-              <Route path="/page2" component={Page2} />
-              <Route path="/page3" component={Page3} />
+              <Route path="/demogrid" component={DemoGrid} />
+              <Route path="/bookstore" component={Bookstore} />
+              <Route path="/usersadmin" component={UsersAdmin} />
               <Route path="/logs" component={LogsPage} />
             </Switch>
           </Layout>

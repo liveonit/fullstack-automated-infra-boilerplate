@@ -3,7 +3,11 @@ import React from 'react';
 import { Nav, NavList, NavItem, NavVariants } from '@patternfly/react-core';
 import { Link } from 'react-router-dom'
 
-export function PageNav({ location }) {
+interface Props {
+  location: Location
+}
+
+export const PageNav: React.FC<Props> = ({ location }) => {
 
   const pathname = React.useMemo(
     () => location.pathname.replace(`/macSearch/findbymac/`, ''),
@@ -16,16 +20,16 @@ export function PageNav({ location }) {
           <Link to="/">Home</Link>
         </NavItem>
         <NavItem itemId={1} isActive={pathname === '/demoGrid'}>
-          <Link to="/demoGrid">Demo Grid</Link>
+          <Link to="/demogrid">Demo Grid</Link>
         </NavItem>
         <NavItem itemId={1} isActive={pathname === '/page2'}>
-          <Link to="/page2">Page2</Link>
+          <Link to="/bookstore">Bookstore</Link>
         </NavItem>
         <NavItem itemId={2} isActive={pathname === '/page3'}>
-          <Link to="/page3">Page3</Link>
+          <Link to="/usersadmin">Users Admin</Link>
         </NavItem>
         <NavItem itemId={2} isActive={pathname === '/Logs'}>
-          <Link to="/Logs">Logs</Link>
+          <Link to="/logs">Logs</Link>
         </NavItem>
       </NavList>
     </Nav>

@@ -2,14 +2,14 @@ import React from 'react';
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
 
 
-export function Page2() {
+export function BookStore() {
   return (
     <>
       <PageSection variant={PageSectionVariants.light}>
-        <h1>Page2</h1>
+        <h1>Bookstore</h1>
       </PageSection>
     </>
   )
 }
 
-export default Page2;
+export default BookStore;

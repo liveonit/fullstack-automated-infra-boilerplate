@@ -6,7 +6,7 @@ export function Page3() {
   return (
     <>
       <PageSection variant={PageSectionVariants.light}>
-        <h1>Page3</h1>
+        <h1>Users Adminstration</h1>
       </PageSection>
     </>
   )

@@ -5,9 +5,9 @@ import {
   PageSectionVariants
 } from '@patternfly/react-core';
 
-import Header from '../components/Layout/Header';
-import Sidebar from '../components/Layout/Sidebar';
-import Breadcrumb from '../components/Layout/Breadcrumb';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import Breadcrumb from './Breadcrumb';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface LayoutProps {
@@ -23,9 +23,9 @@ export const Layout: React.FC<LayoutProps & RouteComponentProps> = ({children, l
       isManagedSidebar={false}
     >
       <>
-      <PageSection variant={PageSectionVariants.darker}>
+      {/* <PageSection variant={PageSectionVariants.darker}>
         <Breadcrumb location={location}/>
-      </PageSection>
+      </PageSection> */}
       {children}
       </>
     </Page>
