@@ -1,20 +1,20 @@
 import React from 'react';
-import { Toolbar,
-  ToolbarGroup,
-  ToolbarItem,
+import { 
   Button,
   ButtonVariant,
   KebabToggle,
   Dropdown,
   DropdownItem,
   DropdownSeparator,
-  DropdownToggle
+  DropdownToggle,
+  PageHeaderTools,
+  PageHeaderToolsGroup,
+  PageHeaderToolsItem,
+  Avatar
 } from '@patternfly/react-core';
-import { BellIcon, CogIcon } from '@patternfly/react-icons';
-import accessibleStyles from '@patternfly/react-styles/css/utilities/Accessibility/accessibility';
-import spacingStyles from '@patternfly/react-styles/css/utilities/Spacing/spacing';
-import { css } from '@patternfly/react-styles';
+import { BellIcon, CogIcon, HelpIcon } from '@patternfly/react-icons';
 
+import imgAvatar from './avatar.svg'
 export const userDropdownItems = [
   <DropdownItem key="1">Link</DropdownItem>,
   <DropdownItem key="2" component="button">Action</DropdownItem>,
@@ -41,43 +41,56 @@ export function PageToolbar() {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
   return (
-    <Toolbar>
-      <ToolbarGroup className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnLg)}>
-        <ToolbarItem>
-          <Button aria-label="Notifications actions" variant={ButtonVariant.plain}>
-            <BellIcon />
-          </Button>
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button aria-label="Settings actions" variant={ButtonVariant.plain}>
-            <CogIcon />
-          </Button>
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ToolbarItem className={css(accessibleStyles.hiddenOnLg, spacingStyles.mr_0)}>
-          <Dropdown
-            isPlain
-            position="right"
-            onSelect={onKebabDropdownSelect}
-            toggle={<KebabToggle onToggle={onKebabDropdownToggle} />}
-            isOpen={isKebabDropdownOpen}
-            dropdownItems={kebabDropdownItems}
-          />
-        </ToolbarItem>
-        <ToolbarItem className={css(accessibleStyles.screenReader, accessibleStyles.visibleOnMd)}>
-          <Dropdown
-            isPlain
-            position="right"
-            onSelect={onDropdownSelect}
-            isOpen={isDropdownOpen}
-            toggle={<DropdownToggle onToggle={onDropdownToggle}>GraphQL Boilerplate</DropdownToggle>}
-            dropdownItems={userDropdownItems}
-          />
-        </ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
-  );
+      <PageHeaderTools>
+        <PageHeaderToolsGroup
+          visibility={{
+            default: 'hidden',
+            lg: 'visible'
+          }} /** the settings and help icon buttons are only visible on desktop sizes and replaced by a kebab dropdown for other sizes */
+        >
+          <PageHeaderToolsItem>
+            <Button aria-label="Settings actions" variant={ButtonVariant.plain}>
+              <CogIcon />
+            </Button>
+          </PageHeaderToolsItem>
+          <PageHeaderToolsItem>
+            <Button aria-label="Help actions" variant={ButtonVariant.plain}>
+              <HelpIcon />
+            </Button>
+          </PageHeaderToolsItem>
+        </PageHeaderToolsGroup>
+        <PageHeaderToolsGroup>
+          <PageHeaderToolsItem
+            visibility={{
+              lg: 'hidden',
+              '2xl?': "hidden"
+            }} /** this kebab dropdown replaces the icon buttons and is hidden for desktop sizes */
+          >
+            <Dropdown
+              isPlain
+              position="right"
+              onSelect={onKebabDropdownSelect}
+              toggle={<KebabToggle onToggle={onKebabDropdownToggle} />}
+              isOpen={isKebabDropdownOpen}
+              dropdownItems={kebabDropdownItems}
+            />
+          </PageHeaderToolsItem>
+          <PageHeaderToolsItem
+            visibility={{ md: 'visible', '2xl?': "hidden" }} /** this user dropdown is hidden on mobile sizes */
+          >
+            <Dropdown
+              isPlain
+              position="right"
+              onSelect={onDropdownSelect}
+              isOpen={isDropdownOpen}
+              toggle={<DropdownToggle onToggle={onDropdownToggle}>John Smith</DropdownToggle>}
+              dropdownItems={userDropdownItems}
+            />
+          </PageHeaderToolsItem>
+        </PageHeaderToolsGroup>
+        <Avatar src={imgAvatar} alt="Avatar image" />
+      </PageHeaderTools>
+    );
 
   function onKebabDropdownSelect () {
     setIsKebabDropdownOpen(!isKebabDropdownOpen);

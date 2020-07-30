@@ -58,10 +58,6 @@ async function main() {
   // enpoint para verificar que el servidor http y express esta funcionando correctametne
   app.get('/healthz', (req, res) => { res.send('Everything is fine!!!') })
 
-  // Add auth to api
-  app.use(verifyKeycloakToken);
-
-
   // Apollo server cuenta con la siguiente funcion que agrega a la app 
   // de express el servidor apollo en el path que le pasemos, este caso `/graphql`
   apolloServer.applyMiddleware({ app, path: '/graphql' });

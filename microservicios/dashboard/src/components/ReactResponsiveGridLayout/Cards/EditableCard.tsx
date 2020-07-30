@@ -69,7 +69,7 @@ const EditableCard: React.FC<Properties> = (props) => {
     <div id="card-container">
       <Card id={`${id}__card`} isSelectable={false}>
         <CardHeader>
-          <Title size="sm" className="--card-title">
+          <Title headingLevel="h5" className="--card-title">
             {title}
           </Title>
           <CardActions className="--card-actions">

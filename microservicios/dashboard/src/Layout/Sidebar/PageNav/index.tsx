@@ -1,10 +1,10 @@
 import React from 'react';
-
-import { Nav, NavList, NavItem, NavVariants } from '@patternfly/react-core';
+import { Nav, NavList, NavItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom'
+import { Location, History } from 'history' 
 
 interface Props {
-  location: Location
+  location: Location<History.UnknownFacade>
 }
 
 export const PageNav: React.FC<Props> = ({ location }) => {
@@ -15,7 +15,7 @@ export const PageNav: React.FC<Props> = ({ location }) => {
   );
   return (
     <Nav aria-label="Nav" theme="dark">
-      <NavList variant={NavVariants.simple}>
+      <NavList>
         <NavItem itemId={0} isActive={pathname === '/'}>
           <Link to="/">Home</Link>
         </NavItem>

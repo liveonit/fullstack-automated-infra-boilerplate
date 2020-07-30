@@ -1,15 +1,19 @@
-import React from 'react';
-import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-
+import React from "react";
+import SimpleTabs from "../../components/SimpleTabs/SimpleTabs";
+import Books from "./Books";
+import Authors from "./Authors";
 
 export function BookStore() {
   return (
     <>
-      <PageSection variant={PageSectionVariants.light}>
-        <h1>Bookstore</h1>
-      </PageSection>
+      <SimpleTabs
+        tabObjects={[
+          { title: "Authors", page: <Authors /> },
+          { title: "Books", page: <Books /> },
+        ]}
+      />
     </>
-  )
+  );
 }
 
 export default BookStore;

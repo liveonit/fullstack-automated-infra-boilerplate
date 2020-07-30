@@ -5,7 +5,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 import { setContext } from 'apollo-link-context';
-import { getToken } from './keycloakUtils';
+import { getToken, updateToken } from './keycloakUtils';
 
 let loc = window.location, new_uri;
 new_uri = loc.protocol === "https:"
@@ -37,7 +37,8 @@ const link = split(
   httpLink,
 );
 
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
+  await updateToken(60);
   return {
     headers: {
       ...headers,

@@ -13,8 +13,8 @@ export const Header: React.FC<HeaderProps> = ({navToggle}) => {
   return (
     <PageHeader
       logo={<Brand src={logo} alt="React-GraphQL-Apollo Logo" />}
-      toolbar={<PageToolbar />}
-      avatar={<Avatar src={avatar} alt="Avatar image" />}
+      headerTools={PageToolbar}
+      // avatar={<Avatar src={avatar} alt="Avatar image" />}
       showNavToggle
       onNavToggle={navToggle}
     />
