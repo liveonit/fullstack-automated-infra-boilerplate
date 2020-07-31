@@ -40,4 +40,4 @@ kubectl-config
 # Environment vars and configuration files
 config_files/*
 !config_files/README.md
-# .env
+.env
