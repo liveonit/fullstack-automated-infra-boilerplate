@@ -1,10 +1,5 @@
 import React from "react";
 
-import {
-  PageSection,
-  PageSectionVariants,
-} from "@patternfly/react-core";
-
 // import { Spinner } from "@patternfly/react-core/dist/esm/experimental";
 import Table from "./Table";
 import { Toolbar } from "./Toolbar";
@@ -75,7 +70,6 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
 
   return (
     <>
-      <PageSection style={{ padding: "0.5rem 0.5rem 0.5rem 0.5rem" }}>
         <Toolbar
           pageNeighbours={0}
           startDate={startDate}
@@ -90,9 +84,7 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
           handleChangeDateFilter={handleChangeDateFilter}
           handleApplyDateFilter={handleApplyDateFilter}
         />
-      </PageSection>
-      <PageSection variant={PageSectionVariants.light} className="Logs__Page">
-        {loading ? (
+      {loading ? (
           <span
             className="pf-c-spinner"
             role="progressbar"
@@ -105,7 +97,6 @@ const LogsPage: React.FC<LogsPageProps> = ({ getLogs, loading, items, count, sub
         ) : (
           <Table items={tableItems} />
         )}
-      </PageSection>
     </>
   );
 };

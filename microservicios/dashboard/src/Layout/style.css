@@ -1,0 +1,13 @@
+.pf-c-page__main-section.pf-m-light {
+  padding: 0.1rem 0.2rem 0.1rem 0.1rem;
+}
+
+#page-sidebar {
+  width: 10rem;
+}
+
+
+.pf-c-toolbar.project__custom-toolbar {
+  --pf-c-toolbar--BackgroundColor: var(--pf-c-page__header-nav--BackgroundColor);
+  --pf-c-toolbar--RowGap: 0;
+}

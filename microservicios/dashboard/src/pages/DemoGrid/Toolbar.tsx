@@ -1,6 +1,4 @@
 import React from "react";
-import "@patternfly/react-styles";
-
 import {
   Button,
   ButtonVariant,
@@ -18,7 +16,7 @@ interface ToolbarProps {
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const { onNewLayout, onCompactTypeChange } = props;
   return (
-    <PatternflyToolbar>
+    <PatternflyToolbar className="project__custom-toolbar">
       <ToolbarGroup>
         <ToolbarItem>
           <Button
@@ -30,8 +28,6 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
             Nuevos paneles
           </Button>
         </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
         <ToolbarItem>
           <Button
             style={{ display: "inline-block" }}
@@ -42,6 +38,8 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
             Cambiar distribucion
           </Button>
         </ToolbarItem>
+      </ToolbarGroup>
+      <ToolbarGroup>
       </ToolbarGroup>
     </PatternflyToolbar>
   );

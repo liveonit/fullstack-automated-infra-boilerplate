@@ -36,7 +36,7 @@ export const kebabDropdownItems = [
   </DropdownItem>
 ];
 
-export function PageToolbar() {
+const  PageToolbar: React.FC = () => {
   const [isKebabDropdownOpen, setIsKebabDropdownOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 

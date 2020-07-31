@@ -1,13 +1,10 @@
-body {
-  background: white;
-  padding: 20px;
-  overflow: scroll;
-}
 #content {
   width: 100%;
 }
 .react-grid-layout {
+  position: absolute;
   background: #eee;
+  width: 98%;
 }
 .layoutJSON {
   background: #ddd;

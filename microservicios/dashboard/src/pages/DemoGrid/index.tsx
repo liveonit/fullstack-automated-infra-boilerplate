@@ -3,7 +3,7 @@ import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 
 import _ from "lodash";
 import PieChart from "../../components/ReactResponsiveGridLayout/Trends/Pie";
-import LineChart from '../../components/ReactResponsiveGridLayout/Trends/Line'
+import LineChart from "../../components/ReactResponsiveGridLayout/Trends/Line";
 
 import Toolbar from "./Toolbar";
 import { Layout, Layouts } from "react-grid-layout";
@@ -18,7 +18,6 @@ interface State {
   currentBreakpoint: string;
   rowsHeight: number;
 }
-
 
 const DemoGrid = () => {
   const [state, setState] = React.useState<State>({
@@ -39,14 +38,13 @@ const DemoGrid = () => {
     setState({ ...state, compactType });
   };
 
-  
   const onNewLayout = () => {
     setState({
       ...state,
       panels: generateLayout(),
     });
   };
-  
+
   const onLayoutChange = (layout: Layout[], layouts: Layouts) => {
     let panels = state.panels.map<Panel>((l: Layout, i: number) => ({
       ...l,
@@ -64,12 +62,10 @@ const DemoGrid = () => {
 
   return (
     <>
-      <PageSection>
-        <Toolbar
-          onNewLayout={onNewLayout}
-          onCompactTypeChange={onCompactTypeChange}
-        />
-      </PageSection>
+      <Toolbar
+        onNewLayout={onNewLayout}
+        onCompactTypeChange={onCompactTypeChange}
+      />
       <PageSection variant={PageSectionVariants.light}>
         <ResponsiveGridLayout
           panels={state.panels}
@@ -93,10 +89,12 @@ const generateLayout: () => Panel[] = () => {
       h: y,
       i: i.toString(),
       static: false,
-      child: 
-      _.random(0, 1) > 0.5 
-      ? <LineChart height={123} width={100}></LineChart>
-      : <PieChart height={123} width={100}></PieChart>,
+      child:
+        _.random(0, 1) > 0.5 ? (
+          <LineChart height={123} width={100}></LineChart>
+        ) : (
+          <PieChart height={123} width={100}></PieChart>
+        ),
     };
   });
 };

@@ -12,7 +12,7 @@ import Bookstore from "./Bookstore";
 import UsersAdmin from "./UsersAdmin";
 import LogsPage from "./Logs";
 
-export function Root() {
+const  Root: React.FC = () => {
   return (
     <Keycloak>
       <ApolloProvider client={client}>

@@ -1,9 +1,11 @@
+import { css } from '@patternfly/react-styles';
+
+import './index.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import '@patternfly/react-core/dist/styles/base.css';
 
-import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Root from './pages/Root';
 import { init } from './components/Keycloak/Initializate'
