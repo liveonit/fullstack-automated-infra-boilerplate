@@ -1,5 +1,13 @@
 include .env
 
+template:
+	docker-compose up -d templating
+
+up_dev:
+	make template
+	docker-compsoe up -d db
+	make develop_db_run_api_migrations
+	docker-compose up -d
 create_config:
 	docker-compose up -d templates
 

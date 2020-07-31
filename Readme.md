@@ -58,18 +58,28 @@ deberia encriptarlo y no publicarlo en git.
 
 Una vez configuradas las variables ejecutar
 
+1. En caso de contar con GNU MAKE
+
+Dentro del directorio raiz del proyecto ejecutar
+
+```bash
+make template
+```
+
+2. En caso de no contar con GNU MAKE
+
 ```bash
 docker-compose up templating #crea los archivos de configuracion de los servicios en base al .env y los guarda en config files
 docker-compose up -d db # levanta la base de datos y crea las bases para api y keycloak
 
 cd microservicios/db && npm install && \
-DB_HOST=${DOMAIN}\
-DB_PORT=${EXTERNAL_DB_PORT}\
-API_DB_USER=${API_DB_USER}\
-API_DB_PASSWORD=${API_DB_PASSWORD}\
-API_DB_NAME=${API_DB_NAME}\
-npm run typeorm migration:run && cd - # ejecuta las migraciones de la base de datos,
-# las mismas se encuentran en microservicios/db/src/migrtions/* y se crearon con typeorm
+    DB_HOST=${DOMAIN}\
+    DB_PORT=${EXTERNAL_DB_PORT}\
+    API_DB_USER=${API_DB_USER}\
+    API_DB_PASSWORD=${API_DB_PASSWORD}\
+    API_DB_NAME=${API_DB_NAME}\
+    npm run typeorm migration:run && cd - # ejecuta las migraciones de la base de datos,
+    # las mismas se encuentran en microservicios/db/src/migrtions/* y se crearon con typeorm
 ```
 
 Luego de tener los archivos de configuracion y la base con las migraciones de la api, ejecutar
