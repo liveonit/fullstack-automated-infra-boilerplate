@@ -4,7 +4,7 @@
 .react-grid-layout {
   position: absolute;
   background: #eee;
-  width: 98%;
+  width: calc(100% - 0.4rem);
 }
 .layoutJSON {
   background: #ddd;
