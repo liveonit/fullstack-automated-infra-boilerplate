@@ -32,6 +32,7 @@
     "react-grid-layout": "^0.18.3",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.4.1",
+    "rsuite": "^4.8.0",
     "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {

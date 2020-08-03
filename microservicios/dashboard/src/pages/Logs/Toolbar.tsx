@@ -7,9 +7,9 @@ import {
   Button,
   ButtonVariant,
   Toolbar as PatternflyToolbar,
-  ToolbarItem,
   TextInput,
   ToolbarGroup,
+  ToolbarItem,
 } from "@patternfly/react-core";
 import { FilterIcon } from "@patternfly/react-icons";
 
@@ -40,31 +40,31 @@ interface ToolbarProps {
 export const Toolbar: React.FC<ToolbarProps> = (props) => {
   const { handleUpdateFilterInput } = props;
   return (
-    <PatternflyToolbar >
+    <PatternflyToolbar>
       <ToolbarGroup className="--toolbar-filter">
         <ToolbarItem style={{ maxWidth: "13.25rem" }}>
           <div className="--filter-with-button">
-              <TextInput
-                onChange={(e) => handleUpdateFilterInput(e)}
-                name="filterInput"
-                type="search"
-                aria-label="filter input"
-              />
+            <TextInput
+              onChange={(e) => handleUpdateFilterInput(e)}
+              name="filterInput"
+              type="search"
+              aria-label="filter input"
+            />
           </div>
-            <Button
-              style={{ display: "inline-block" }}
-              variant={ButtonVariant.primary}
-              aria-label="search button for filter input"
-            >
-              <FilterIcon />
-            </Button>
+          <Button
+            style={{ display: "inline-block" }}
+            variant={ButtonVariant.primary}
+            aria-label="search button for filter input"
+          >
+            <FilterIcon />
+          </Button>
         </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup className="--toolbar-date-filter">
-        <DateTimeFilter {...props}/>
-      </ToolbarGroup>
-      <ToolbarGroup className="--toolbar-pagination" >
-        <PaginationNav {...props} />
+        <ToolbarItem className="--toolbar-date-filter">
+          <DateTimeFilter {...props} />
+        </ToolbarItem>
+        <ToolbarItem className="--toolbar-pagination">
+          <PaginationNav {...props} />
+        </ToolbarItem>
       </ToolbarGroup>
     </PatternflyToolbar>
   );

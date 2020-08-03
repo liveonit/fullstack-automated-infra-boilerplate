@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-export function Page3() {
+export function UsersAdmin() {
   return (
     <>
         <h1>Users Adminstration</h1>
@@ -9,4 +9,4 @@ export function Page3() {
   )
 }
 
-export default Page3;
+export default UsersAdmin;

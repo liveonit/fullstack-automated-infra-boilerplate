@@ -8,14 +8,12 @@ import Authors from "./Authors";
 export function BookStore() {
   return (
     <>
-      <PageSection>
         <SimpleTabs
           tabObjects={[
             { title: "Authors", page: <Authors /> },
             { title: "Books", page: <Books /> },
           ]}
         />
-      </PageSection>
     </>
   );
 }
