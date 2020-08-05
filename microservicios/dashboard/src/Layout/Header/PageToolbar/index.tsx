@@ -13,18 +13,18 @@ import {
   Avatar
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon, HelpIcon } from '@patternfly/react-icons';
-
+import { logout, getUserInfo } from '../../../utils/General/keycloak'
 import imgAvatar from './avatar.svg'
 export const userDropdownItems = [
   <DropdownItem key="1">Link</DropdownItem>,
-  <DropdownItem key="2" component="button">Action</DropdownItem>,
+  <DropdownItem key="2" onClick={e => console.log(getUserInfo())} component="button">Imprimir Info Usuario</DropdownItem>,
   <DropdownItem key="3" isDisabled>Disabled Link</DropdownItem>,
   <DropdownItem key="4" isDisabled component="button">
     Disabled Action
   </DropdownItem>,
   <DropdownSeparator key="5" />,
   <DropdownItem key="6">Separated Link</DropdownItem>,
-  <DropdownItem key="7" component="button">Separated Action</DropdownItem>
+  <DropdownItem key="7" onClick={e =>  logout()} component="button">Cerrar Sesión</DropdownItem>
 ];
 
 export const kebabDropdownItems = [
@@ -83,7 +83,7 @@ const  PageToolbar: React.FC = () => {
               position="right"
               onSelect={onDropdownSelect}
               isOpen={isDropdownOpen}
-              toggle={<DropdownToggle onToggle={onDropdownToggle}>John Smith</DropdownToggle>}
+          toggle={<DropdownToggle onToggle={onDropdownToggle}>{getUserInfo().name}</DropdownToggle>}
               dropdownItems={userDropdownItems}
             />
           </PageHeaderToolsItem>

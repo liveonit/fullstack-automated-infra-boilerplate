@@ -1,5 +1,3 @@
-import { css } from '@patternfly/react-styles';
-
 import './index.css';
 
 import React from 'react';

@@ -1,5 +1,4 @@
 import React from "react";
-import { PageSection } from "@patternfly/react-core";
 
 import SimpleTabs from "../../components/SimpleTabs/SimpleTabs";
 import Books from "./Books";

@@ -5,7 +5,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 import { setContext } from 'apollo-link-context';
-import { getToken, updateToken } from './keycloakUtils';
+import { getToken, updateToken } from './keycloak';
 
 let loc = window.location, new_uri;
 new_uri = loc.protocol === "https:"

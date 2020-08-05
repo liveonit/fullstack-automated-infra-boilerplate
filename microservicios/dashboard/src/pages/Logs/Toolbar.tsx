@@ -11,10 +11,11 @@ import {
   ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
+
 import { FilterIcon } from "@patternfly/react-icons";
 
+import { DateTimeFilter } from '../../components/DatetimePickerRange'
 import PaginationNav from "../../components/PaginationNav";
-import { DateTimeFilter } from "../../components/DatetimePickerRange";
 
 interface ToolbarProps {
   pageNeighbours: number;
@@ -34,7 +35,7 @@ interface ToolbarProps {
     startDate?: number;
     endDate?: number;
   }) => void;
-  handleApplyDateFilter: () => void;
+  handleApplyDateFilter: (isApply: boolean) => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = (props) => {
