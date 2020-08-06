@@ -2,32 +2,26 @@ import gql from "graphql-tag";
 import { useLazyQuery, useSubscription } from "@apollo/react-hooks";
 import React from "react";
 import { OnSubscriptionDataOptions } from "@apollo/react-common";
-const GET_LOGS = gql`
+const GET_ALERTS = gql`
   query Alerts() {
     alerts () {
       items {
         id
-        operation
-        operationType
-        payload
-        unixStartTime
-        executionTime
-        resultPayload
+        title
+        type
+        description
       }
     }
   }
 `;
 
-const LOGS_SUBSCRIPTION = gql`
+const ALERTS_SUBSCRIPTION = gql`
   subscription {
-    logsSubscription {
+    alertsSubscription {
       id
-      operation
-      operationType
-      payload
-      unixStartTime
-      executionTime
-      resultPayload
+      title
+      type
+      description
     }
   }
 `;
@@ -45,47 +39,41 @@ export const withAlterts = <P extends object>(
     isSubscribe: true,
   });
 
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => () => setState({...state, isSubscribe: false}),[])
+
   const onCompleted = (d: any) => {
     setState({ ...state, ...d.logs });
   };
 
-  let [getAlerts, { loading }] = useLazyQuery<{ alerts: { items: [] } }>(
-    GET_LOGS,
+  let [getAlerts, { loading }] = useLazyQuery<{ alerts: { items: [] }, count: number }>(
+    GET_ALERTS,
     {
       fetchPolicy: "cache-and-network",
       onCompleted,
     }
   );
 
-  const subscribe = () => {
-    setState({ ...state, isSubscribe: true });
-  };
-
-  const unsubscribe = () => {
-    setState({ ...state, isSubscribe: false });
-  };
-
   const onSubscriptionData = (options: OnSubscriptionDataOptions<any>) => {
     setState({
       ...state,
       items: [options.subscriptionData.data.logsSubscription, ...state.items],
-      count: count + 1,
+      count: state.count + 1,
     });
   };
 
-  useSubscription(LOGS_SUBSCRIPTION, {
+  useSubscription(ALERTS_SUBSCRIPTION, {
     onSubscriptionData,
     skip: !state.isSubscribe,
   });
 
-  const { alerts } = state;
+  const { items } = state;
   return (
     <Component
-      alerts={alerts}
+      alerts={items}
       getAlerts={getAlerts}
       loading={loading}
-      subscribe={subscribe}
-      unsubscribe={unsubscribe}
       {...(props as P)}
     />
   );
