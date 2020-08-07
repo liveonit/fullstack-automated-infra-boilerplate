@@ -27,7 +27,7 @@ interface ToolbarProps {
   posibleLimitsPerPage: number[];
   onPageLimitChanged: (newLimit: number) => void;
   onPageChanged: (newPage: number) => void;
-  handleUpdateFilterInput: (filterText?: string) => void;
+  handleUpdateFilterInput: (searchText?: string) => void;
   handleChangeDateFilter: ({
     startDate,
     endDate,
@@ -35,7 +35,6 @@ interface ToolbarProps {
     startDate?: number;
     endDate?: number;
   }) => void;
-  handleApplyDateFilter: (isApply: boolean) => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = (props) => {

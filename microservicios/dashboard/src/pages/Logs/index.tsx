@@ -1,9 +1,14 @@
 import React from "react";
 
-// import { Spinner } from "@patternfly/react-core/dist/esm/experimental";
 import Table from "./Table";
 import { Toolbar } from "./Toolbar";
 import { withLogs } from "./withLogs";
+
+import Fuse from 'fuse.js'
+
+const FUSE_OPTIONS = {
+  keys: ["operation", "operationType", "payload", "resultPayload"]
+};
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
 
@@ -33,18 +38,24 @@ const LogsPage: React.FC<LogsPageProps> = ({
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
     startDate: Date.now() - 604800000,
     endDate: Date.now(),
-    isApplyDateTimeFilter: false,
+    searchText: "",
   });
 
   const { currentPage, pageLimit, startDate, endDate } = state;
 
   const offset = (currentPage - 1) * pageLimit;
-  const tableItems = items.slice(offset, offset + pageLimit);
-
+  const fuse = new Fuse(items, FUSE_OPTIONS)
+  
+  console.log(fuse.search(state.searchText).slice(offset, offset + pageLimit))
+  const tableItems = state.searchText 
+    ? fuse.search(state.searchText).map(m => m.item).slice(offset, offset + pageLimit)
+    : items;
+    console.log("table items", tableItems)
+  
   React.useEffect(() => {
     getLogs({ variables: { timeStart: startDate, timeEnd: endDate } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [startDate, endDate]);
 
   const onPageLimitChanged = (n: number) => {
     setState({
@@ -58,7 +69,8 @@ const LogsPage: React.FC<LogsPageProps> = ({
     setState({ ...state, currentPage: page });
   };
 
-  const handleUpdateFilterInput = () => undefined; //TODO: colocar fuse y agregar filter input
+  const handleUpdateFilterInput = (searchText?: string) =>
+    setState({ ...state, searchText: searchText || "" });
 
   const handleChangeDateFilter = ({
     startDate,
@@ -67,22 +79,20 @@ const LogsPage: React.FC<LogsPageProps> = ({
     startDate?: number;
     endDate?: number;
   }) => {
-    setState({
-      ...state,
-      startDate: startDate || state.startDate,
-      endDate: endDate || state.endDate,
-    });
-  };
-
-  const handleApplyDateFilter = (isApply: boolean) => {
-    if (isApply) {
-      getLogs({ variables: { timeStart: startDate, timeEnd: endDate } });
+    if (startDate && endDate) {
+      // console.log("startDate", startDate + "--- ", new Date(startDate || 0));
+      // console.log("endDate", endDate + "---- ", new Date(endDate || 0));
+      setState({
+        ...state,
+        startDate: startDate || state.startDate,
+        endDate: endDate || state.endDate,
+      });
+      unsubscribe();
     } else {
-      getLogs({
-        variables: {
-          timeStart: Date.now() - 604800000,
-          timeEnd: Date.now(),
-        },
+      setState({
+        ...state,
+        startDate: Date.now() - 604800000,
+        endDate: Date.now(),
       });
       subscribe();
     }
@@ -102,7 +112,6 @@ const LogsPage: React.FC<LogsPageProps> = ({
         onPageChanged={onPageChanged}
         handleUpdateFilterInput={handleUpdateFilterInput}
         handleChangeDateFilter={handleChangeDateFilter}
-        handleApplyDateFilter={handleApplyDateFilter}
       />
       {loading ? (
         <span
