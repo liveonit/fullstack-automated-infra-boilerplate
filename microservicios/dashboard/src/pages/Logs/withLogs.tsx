@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
-import { useLazyQuery, useSubscription } from "@apollo/react-hooks";
+import { useLazyQuery, useSubscription, OnSubscriptionDataOptions } from "@apollo/client";
 import React from "react";
-import { OnSubscriptionDataOptions } from '@apollo/react-common'
 const GET_LOGS = gql`
   query Logs(
     $offset: Float
