@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon, HelpIcon } from '@patternfly/react-icons';
 import { logout, getUserInfo } from '../../../utils/General/keycloak'
-import imgAvatar from './avatar.svg'
+
 export const userDropdownItems = [
   <DropdownItem key="1">Link</DropdownItem>,
   <DropdownItem key="2" onClick={e => console.log(getUserInfo())} component="button">Imprimir Info Usuario</DropdownItem>,
@@ -88,7 +88,6 @@ const  PageToolbar: React.FC = () => {
             />
           </PageHeaderToolsItem>
         </PageHeaderToolsGroup>
-        <Avatar src={imgAvatar} alt="Avatar image" />
       </PageHeaderTools>
     );
 

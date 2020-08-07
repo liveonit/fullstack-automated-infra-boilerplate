@@ -4,7 +4,6 @@ import React from "react";
 import "@patternfly/react-styles";
 
 import {
-  Toolbar as PatternflyToolbar,
   ToolbarItem,
   Toolbar,
   ToolbarContent,
@@ -25,9 +24,8 @@ interface ToolbarProps {
 export const FooterToolbar: React.FC<ToolbarProps> = (props) => {
   const { posibleLimitsPerPage, pageLimit, onPageLimitChanged, currentPage, totalRecords, onPageChanged } = props;
   return (
-    <PatternflyToolbar className="--footer-toolbar">
-      <React.Fragment>
-        <Toolbar>
+
+      <Toolbar className="--footer-toolbar">
           <ToolbarContent>
               <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
                 <Pagination
@@ -43,8 +41,6 @@ export const FooterToolbar: React.FC<ToolbarProps> = (props) => {
                 />
               </ToolbarItem>
           </ToolbarContent>
-        </Toolbar>
-      </React.Fragment>
-    </PatternflyToolbar>
+    </Toolbar>
   );
 };

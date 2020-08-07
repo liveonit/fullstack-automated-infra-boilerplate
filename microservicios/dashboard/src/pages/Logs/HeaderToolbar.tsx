@@ -8,6 +8,7 @@ import {
   TextInput,
   ToolbarGroup,
   ToolbarItem,
+  ToolbarContent,
 } from "@patternfly/react-core";
 
 import { Input } from "rsuite";
@@ -31,8 +32,8 @@ export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
   const { handleUpdateFilterInput } = props;
   return (
     <PatternflyToolbar>
-      <ToolbarGroup className="--toolbar-header-filter">
-        <ToolbarItem >
+      <ToolbarContent style={{ paddingRight: 0 }}>
+        <ToolbarItem  className="--toolbar-header-filter">
           <Input
             onChange={(e) => handleUpdateFilterInput(e)}
             style={{ width: 200 }}
@@ -42,7 +43,7 @@ export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
         <ToolbarItem className="--toolbar-header-date-filter">
           <DateTimeFilter {...props} />
         </ToolbarItem>
-      </ToolbarGroup>
+      </ToolbarContent>
     </PatternflyToolbar>
   );
 };

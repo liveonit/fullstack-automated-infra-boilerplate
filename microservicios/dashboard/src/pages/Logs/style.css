@@ -1,9 +1,9 @@
 .--toolbar-header-filter,
 .--toolbar-header-date-filter {
-  min-width: 10rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   padding-left: 1rem;
+  display: inline-block;
 }
 
 .rs-picker-menu.placement-bottom-start.rs-picker-select-menu {
@@ -12,8 +12,8 @@
 }
 
 .pagination-footer {
-  background-color: red;
-  position: fixed;
+  background-color:white;
+  position: sticky;
   bottom: 0px;
   left: 0px;
   right: 0px;
@@ -25,5 +25,5 @@
 }
 
 .pf-c-toolbar.--footer-toolbar {
-  padding: 0 0 0.5rem 0;
+  padding: 0 0 0 0;
 }
