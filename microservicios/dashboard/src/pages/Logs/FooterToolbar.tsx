@@ -12,7 +12,6 @@ import {
   PerPageOptions
 } from "@patternfly/react-core";
 
-import { SelectPicker } from "rsuite";
 
 interface ToolbarProps {
   totalRecords: number;

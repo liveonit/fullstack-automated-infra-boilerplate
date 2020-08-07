@@ -4,16 +4,13 @@ import React from "react";
 import "@patternfly/react-styles";
 
 import {
-  Button,
-  ButtonVariant,
   Toolbar as PatternflyToolbar,
   TextInput,
   ToolbarGroup,
   ToolbarItem,
-  Text
 } from "@patternfly/react-core";
 
-import { FilterIcon } from "@patternfly/react-icons";
+import { Input } from "rsuite";
 
 import { DateTimeFilter } from "../../components/DatetimePickerRange";
 
@@ -35,13 +32,12 @@ export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
   return (
     <PatternflyToolbar>
       <ToolbarGroup className="--toolbar-header-filter">
-        <ToolbarItem style={{ maxWidth: "13.25rem" }}>
-          <TextInput
-              onChange={(e) => handleUpdateFilterInput(e)}
-              name="filterInput"
-              type="search"
-              aria-label="filter input"
-            />
+        <ToolbarItem >
+          <Input
+            onChange={(e) => handleUpdateFilterInput(e)}
+            style={{ width: 200 }}
+            placeholder="Search in Table"
+          />
         </ToolbarItem>
         <ToolbarItem className="--toolbar-header-date-filter">
           <DateTimeFilter {...props} />
