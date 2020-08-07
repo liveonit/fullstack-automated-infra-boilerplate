@@ -1,7 +1,6 @@
 import React from 'react';
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { client } from '../../utils/General/GqlClient';
-import gql from 'graphql-tag';
+
 import { getCachedItems } from '../../utils/General/GqlHelpers';
 
 

@@ -5,8 +5,6 @@ import "@patternfly/react-styles";
 
 import {
   Toolbar as PatternflyToolbar,
-  TextInput,
-  ToolbarGroup,
   ToolbarItem,
   ToolbarContent,
 } from "@patternfly/react-core";
