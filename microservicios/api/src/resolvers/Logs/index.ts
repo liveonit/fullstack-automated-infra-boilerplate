@@ -11,16 +11,20 @@ export class LogResolver {
     @Arg("offset", { nullable: true }) offset: number,
     @Arg("timeStart", { nullable: true }) timeStart: number,
     @Arg("timeEnd", { nullable: true }) timeEnd: number): Promise<PaginateLogs> {
-    let logs;
+    let logs: Log[];
+    let count: number;
     if (offset && limit) {
-      logs = await Log.find({ skip: offset, take: limit, where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
+      logs = await Log.find({ where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
+      count = logs.length
+      // logs = logs.slice(offset, offset + limit + 1)
     }
     else {
       logs = await Log.find({ where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
+      count = logs.length
     }
     
       return {
-      count: logs.length,
+      count: count,
       limit: limit ||  logs.length,
       offset: offset || 0,
       items: logs

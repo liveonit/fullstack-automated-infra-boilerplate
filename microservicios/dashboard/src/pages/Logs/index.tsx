@@ -1,13 +1,14 @@
 import React from "react";
 
 import Table from "./Table";
-import { Toolbar } from "./Toolbar";
+import { HeaderToolbar } from "./HeaderToolbar";
+import { FooterToolbar } from "./FooterToolbar";
 import { withLogs } from "./withLogs";
 
-import Fuse from 'fuse.js'
+import Fuse from "fuse.js";
 
 const FUSE_OPTIONS = {
-  keys: ["operation", "operationType", "payload", "resultPayload"]
+  keys: ["operation", "operationType", "payload", "resultPayload"],
 };
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
@@ -40,18 +41,9 @@ const LogsPage: React.FC<LogsPageProps> = ({
     endDate: Date.now(),
     searchText: "",
   });
-
   const { currentPage, pageLimit, startDate, endDate } = state;
+  
 
-  const offset = (currentPage - 1) * pageLimit;
-  const fuse = new Fuse(items, FUSE_OPTIONS)
-  
-  console.log(fuse.search(state.searchText).slice(offset, offset + pageLimit))
-  const tableItems = state.searchText 
-    ? fuse.search(state.searchText).map(m => m.item).slice(offset, offset + pageLimit)
-    : items;
-    console.log("table items", tableItems)
-  
   React.useEffect(() => {
     getLogs({ variables: { timeStart: startDate, timeEnd: endDate } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,8 +72,8 @@ const LogsPage: React.FC<LogsPageProps> = ({
     endDate?: number;
   }) => {
     if (startDate && endDate) {
-      // console.log("startDate", startDate + "--- ", new Date(startDate || 0));
-      // console.log("endDate", endDate + "---- ", new Date(endDate || 0));
+      console.log("startDate", startDate + "--- ", new Date(startDate || 0));
+      console.log("endDate", endDate + "---- ", new Date(endDate || 0));
       setState({
         ...state,
         startDate: startDate || state.startDate,
@@ -98,18 +90,21 @@ const LogsPage: React.FC<LogsPageProps> = ({
     }
   };
 
+  const offset = (currentPage - 1) * pageLimit;
+
+  const fuse = new Fuse(items, FUSE_OPTIONS);
+  const tableItems = state.searchText
+    ? fuse
+        .search(state.searchText)
+        .map((m) => m.item)
+        .slice(offset, offset + pageLimit)
+    : items.slice(offset, offset + pageLimit);
+
   return (
     <>
-      <Toolbar
-        pageNeighbours={0}
+      <HeaderToolbar
         startDate={startDate}
         endDate={endDate}
-        totalRecords={count}
-        pageLimit={pageLimit}
-        currentPage={currentPage}
-        posibleLimitsPerPage={POSIBLE_LIMITS_PER_PAGE}
-        onPageLimitChanged={onPageLimitChanged}
-        onPageChanged={onPageChanged}
         handleUpdateFilterInput={handleUpdateFilterInput}
         handleChangeDateFilter={handleChangeDateFilter}
       />
@@ -124,7 +119,19 @@ const LogsPage: React.FC<LogsPageProps> = ({
           <span className="pf-c-spinner__tail-ball"></span>
         </span>
       ) : (
-        <Table items={tableItems} />
+        <>
+          <Table items={tableItems} />
+          <div className="pagination-footer">
+            <FooterToolbar
+              totalRecords={count}
+              pageLimit={pageLimit}
+              currentPage={currentPage}
+              posibleLimitsPerPage={POSIBLE_LIMITS_PER_PAGE}
+              onPageLimitChanged={onPageLimitChanged}
+              onPageChanged={onPageChanged}
+            />
+          </div>
+        </>
       )}
     </>
   );

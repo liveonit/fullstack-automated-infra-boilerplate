@@ -1,17 +1,29 @@
---toolbar-filter,
-.--toolbar-date-filter,
-.--toolbar-pagination {
+.--toolbar-header-filter,
+.--toolbar-header-date-filter {
   min-width: 10rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
+  padding-left: 2rem;
 }
 
-.--toolbar-pagination {
-  margin-left: auto;
+.rs-picker-menu.placement-bottom-start.rs-picker-select-menu {
+  z-index: 100;
+  opacity: 1;
 }
 
+.pagination-footer {
+  background-color: red;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
+}
 
-.--filter-with-button {
-  width: calc(100% - 48px);
-  display: inline-block;
+.--toolbar-footer-limit {
+  left: 0;
+}
+
+.pf-c-toolbar.--footer-toolbar {
+  padding: 0 0 0.5rem 0;
 }

@@ -10,23 +10,16 @@ import {
   TextInput,
   ToolbarGroup,
   ToolbarItem,
+  Text
 } from "@patternfly/react-core";
 
 import { FilterIcon } from "@patternfly/react-icons";
 
-import { DateTimeFilter } from '../../components/DatetimePickerRange'
-import PaginationNav from "../../components/PaginationNav";
+import { DateTimeFilter } from "../../components/DatetimePickerRange";
 
 interface ToolbarProps {
-  pageNeighbours: number;
   startDate: number;
   endDate: number;
-  totalRecords: number;
-  pageLimit: number;
-  currentPage: number;
-  posibleLimitsPerPage: number[];
-  onPageLimitChanged: (newLimit: number) => void;
-  onPageChanged: (newPage: number) => void;
   handleUpdateFilterInput: (searchText?: string) => void;
   handleChangeDateFilter: ({
     startDate,
@@ -37,33 +30,21 @@ interface ToolbarProps {
   }) => void;
 }
 
-export const Toolbar: React.FC<ToolbarProps> = (props) => {
+export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
   const { handleUpdateFilterInput } = props;
   return (
     <PatternflyToolbar>
-      <ToolbarGroup className="--toolbar-filter">
+      <ToolbarGroup className="--toolbar-header-filter">
         <ToolbarItem style={{ maxWidth: "13.25rem" }}>
-          <div className="--filter-with-button">
-            <TextInput
+          <TextInput
               onChange={(e) => handleUpdateFilterInput(e)}
               name="filterInput"
               type="search"
               aria-label="filter input"
             />
-          </div>
-          <Button
-            style={{ display: "inline-block" }}
-            variant={ButtonVariant.primary}
-            aria-label="search button for filter input"
-          >
-            <FilterIcon />
-          </Button>
         </ToolbarItem>
-        <ToolbarItem className="--toolbar-date-filter">
+        <ToolbarItem className="--toolbar-header-date-filter">
           <DateTimeFilter {...props} />
-        </ToolbarItem>
-        <ToolbarItem className="--toolbar-pagination">
-          <PaginationNav {...props} />
         </ToolbarItem>
       </ToolbarGroup>
     </PatternflyToolbar>
