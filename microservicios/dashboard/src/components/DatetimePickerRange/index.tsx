@@ -8,9 +8,9 @@ import "@patternfly/react-icons";
 import { DateRangePicker } from "rsuite";
 const { afterToday } = DateRangePicker;
 interface DateTimeFilterProps {
-  startDate: number;
-  endDate: number;
-  handleChangeDateFilter: ({
+  startDate?: number;
+  endDate?: number;
+  handleChangeDateFilter?: ({
     startDate,
     endDate,
   }: {
@@ -27,7 +27,7 @@ export const DateTimeFilter: React.FC<DateTimeFilterProps> = ({
   return (
     <DateRangePicker
       disabledDate={afterToday()}
-      value={[new Date(startDate), new Date(endDate)]}
+      value={[new Date(startDate || 0), new Date(endDate || 0)]}
       ranges={[
         {
           label: "Today",
@@ -56,10 +56,10 @@ export const DateTimeFilter: React.FC<DateTimeFilterProps> = ({
       ]}
       onChange={(value) => {
         const [startDate, endDate] = value;
-        handleChangeDateFilter({
+        handleChangeDateFilter && handleChangeDateFilter({
           startDate: startDate?.getTime(),
           endDate: endDate ? endDate.getTime() + 86399999 : undefined,
-        });
+        })
       }}
     />
   );

@@ -11,13 +11,10 @@ import {
 import { onSort } from "../../../utils/Tables";
 
 const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
-  { key: "unixStartTime", title: "Timestamp", transforms: [sortable] },
-  { key: "operation", title: "Operation", transforms: [sortable] },
-  { key: "operationType", title: "Operation Type", transforms: [sortable] },
-  { key: "payload", title: "Payload", transforms: [sortable] },
-  { key: "executionTime", title: "Execution Time", transforms: [sortable] },
-  { key: "resultPayload", title: "Payload Result", transforms: [sortable] },
+  { key: "Id", title: "Id", transforms: [sortable] },
+  { key: "Name", title: "name", transforms: [sortable] },
+  { key: "Country", title: "country", transforms: [sortable] },
+  { key: "Age", title: "age", transforms: [sortable] }
 ];
 
 function Table({ items }: { items: any[] }) {
@@ -63,9 +60,9 @@ function calculateRows(items: any[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "unixStartTime") {
+      if (column.key === "xxx") {
         return {
-          title: new Date(item.unixStartTime).toLocaleString(),
+          title: "modify value of column",
         };
       } else return get(item, column.key);
     }),

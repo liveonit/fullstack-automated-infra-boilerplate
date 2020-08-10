@@ -21,7 +21,7 @@ const COLUMNS = [
 ];
 
 function Table({ items }: { items: any[] }) {
-  let [state, setState] = React.useState<{ rows: any[], sortBy: any}>({
+  let [state, setState] = React.useState<{ rows: any[]; sortBy: any }>({
     rows: [],
     sortBy: {},
   });

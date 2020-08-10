@@ -1,11 +1,12 @@
 import React from "react";
 
 import Table from "./Table";
-import { HeaderToolbar } from "./HeaderToolbar";
-import { FooterToolbar } from "./FooterToolbar";
+import { HeaderToolbar } from "../../components/Tables/HeaderToolbar";
+import { FooterToolbar } from "../../components/Tables/FooterToolbar";
 import { withLogs } from "./withLogs";
 
 import Fuse from "fuse.js";
+import { Spinner } from "@patternfly/react-core";
 
 const FUSE_OPTIONS = {
   keys: ["operation", "operationType", "payload", "resultPayload"],
@@ -103,21 +104,15 @@ const LogsPage: React.FC<LogsPageProps> = ({
   return (
     <>
       <HeaderToolbar
+        hasFilter={true}
+        hasDateTimeFilter={true}
         startDate={startDate}
         endDate={endDate}
         handleUpdateFilterInput={handleUpdateFilterInput}
         handleChangeDateFilter={handleChangeDateFilter}
       />
       {loading ? (
-        <span
-          className="pf-c-spinner"
-          role="progressbar"
-          aria-valuetext="Loading..."
-        >
-          <span className="pf-c-spinner__clipper"></span>
-          <span className="pf-c-spinner__lead-ball"></span>
-          <span className="pf-c-spinner__tail-ball"></span>
-        </span>
+        <Spinner />
       ) : (
         <>
           <Table items={tableItems} />
