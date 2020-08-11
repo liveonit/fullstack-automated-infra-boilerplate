@@ -49,12 +49,12 @@ export class AuthorResolver {
     return author;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Number)
   @UseMiddleware([GqlLog])
   async deleteAuthor(@Arg("id") id: number) {
     const author = await Author.findOne({ where: { id } });
     if (!author) throw new Error("Author not found!");
     await author.remove();
-    return true;
+    return id;
   }
 }

@@ -182,7 +182,6 @@ const SUBSCRIPTION_LOGS = gql`
   }
 `;
 
-// export default withLogs(LogsPage);
 export default gqlHoC({
   entityName: "Log",
   readGql: GET_LOGS,

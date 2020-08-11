@@ -83,7 +83,7 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
     };
 
     onSubscriptionData = (options: OnSubscriptionDataOptions<any>) => {
-      console.log("datasuvb", options)
+      console.log("datasuvb", options);
       setState({
         ...state,
         items: [
@@ -93,7 +93,7 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
         count: count + 1,
       });
     };
-    console.log("subs state", state.isSubscribe)
+    console.log("subs state", state.isSubscribe);
     useSubscription(subscriptionGql, {
       onSubscriptionData,
       skip: !state.isSubscribe,
@@ -124,8 +124,10 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   let update;
   if (updateGql) {
     const onCompletedUpdate = (data: any) => {
-      console.log("updateData", data);
-      setState({ ...state, items: [...state.items, data] });
+      setState({
+        ...state,
+        items: state.items.map((i) => (i === data.id ? data : i)),
+      });
     };
     [update] = useMutation(updateGql, {
       onCompleted: onCompletedUpdate,
@@ -135,10 +137,18 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   let remove;
   if (removeGql) {
     const onCompletedRemove = (data: any) => {
-      console.log("deleteData", data);
+      console.log("remove data", data)
       setState({
         ...state,
-        items: [...state.items.filter((i) => i.id !== data.id)],
+        items: state.items.filter(
+          i =>
+            parseInt(i.id)  !==
+            parseInt(data[
+              "delete" +
+                entityName.charAt(0).toUpperCase() +
+                entityName.slice(1).toLowerCase()
+            ])
+        ),
       });
     };
     [remove] = useMutation(removeGql, {
