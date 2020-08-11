@@ -4,7 +4,7 @@ import {
   useSubscription,
   OnSubscriptionDataOptions,
   DocumentNode,
-  useMutation,
+  useMutation
 } from "@apollo/client";
 
 import { Subtract } from 'utility-types';
@@ -13,33 +13,33 @@ interface InjectedGqlHoCProps {
   items: any[];
   count: number;
   loading: boolean;
-}
-
-interface MethodConfig {
-  enable: boolean;
-  gql: DocumentNode;
-  variables?: any;
+  get?: Function,
+  create?: Function,
+  update?: Function,
+  remove?: Function,
+  subscribe?: Function,
+  unsubscribe?: Function
 }
 
 interface HoCConfig {
   entityName: string;
-  subscriptionConf?: MethodConfig;
-  readConf?: MethodConfig;
-  createConf?: MethodConfig;
-  updateConf?: MethodConfig;
-  removeConf?: MethodConfig;
+  subscriptionGql?: DocumentNode;
+  readGql?: DocumentNode;
+  createGql?: DocumentNode;
+  updateGql?: DocumentNode;
+  removeGql?: DocumentNode;
 }
 
-export const withLogs = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
+export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   Component: React.ComponentType<P>
 ): React.FC<Subtract<P,InjectedGqlHoCProps>> => (props) => {
   const {
     entityName,
-    subscriptionConf,
-    readConf,
-    createConf,
-    updateConf,
-    removeConf,
+    subscriptionGql,
+    readGql,
+    createGql,
+    updateGql,
+    removeGql,
   } = config;
   const [state, setState] = React.useState<{
     items: any[];
@@ -48,28 +48,33 @@ export const withLogs = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   }>({
     items: [],
     count: 0,
-    isSubscribe: true,
+    isSubscribe: false,
   });
 
   const entities = entityName.toLowerCase() + "s";
+  
+  
   // =======================
   // Read from GQL API
   // =======================
   let get, loading;
-  if (readConf && readConf.enable && readConf?.gql) {
+  if (readGql !== undefined) {
     const onCompletedQuery = (d: any) => {
-      setState({ ...state, ...d[entities] });
+      console.log(d)
+      let c = 0;
+      const items = (d[entities]?.items || []).map((i: any) => ({ key: c++, ...i}))
+      const count = d[entities]?.count
+      setState({ ...state, items, count });
     };
 
-    [get, { loading }] = useLazyQuery(readConf?.gql, {
-      variables: readConf?.variables,
+    [get, { loading }] = useLazyQuery(readGql, {
       fetchPolicy: "cache-and-network",
       onCompleted: onCompletedQuery,
     });
   }
 
   let subscribe, unsubscribe, onSubscriptionData;
-  if (subscriptionConf && subscriptionConf.enable && subscriptionConf?.gql) {
+  if (subscriptionGql) {
     subscribe = () => {
       setState({ ...state, isSubscribe: true });
     };
@@ -88,61 +93,61 @@ export const withLogs = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
         count: count + 1,
       });
     };
-    useSubscription(subscriptionConf.gql, {
+    useSubscription(subscriptionGql, {
       onSubscriptionData,
       skip: !state.isSubscribe,
     });
   }
 
   let create;
-  if (createConf && createConf.enable && createConf?.gql) {
+  if (createGql) {
     const onCompletedCreate = (data: any) => {
       console.log("createData", data);
       setState({ ...state, items: [...state.items, data] });
     };
-    [create] = useMutation(createConf.gql, {
-      variables: createConf?.variables,
+    [create] = useMutation(createGql, {
       onCompleted: onCompletedCreate,
     });
   }
 
   let update;
-  if (updateConf && updateConf.enable && updateConf?.gql) {
+  if (updateGql) {
     const onCompletedUpdate = (data: any) => {
       console.log("updateData", data);
       setState({ ...state, items: [...state.items, data] });
     };
-    [update] = useMutation(updateConf.gql, {
-      variables: updateConf?.variables,
+    [update] = useMutation(updateGql, {
       onCompleted: onCompletedUpdate,
     });
   }
 
   let remove;
-  if (removeConf && removeConf.enable && removeConf?.gql) {
+  if (removeGql) {
     const onCompletedRemove = (data: any) => {
       console.log("deleteData", data);
       setState({ ...state, items: [...state.items.filter(i => i.id !== data.id) ] });
     };
-    [remove] = useMutation(removeConf.gql, {
-      variables: removeConf?.variables,
+    [remove] = useMutation(removeGql, {
       onCompleted: onCompletedRemove,
     });
   }
 
   const { items, count } = state;
+
   return (
     <Component
       {...(props as P)}
       items={items}
       count={count}
-      get={get}
-      create={create}
-      update={update}
-      remove={remove}
+      get={get || (() => console.log(`Can't execute "get" because isn't defined`))}
+      create={create  || (() => console.log(`Can't execute "create" because isn't defined`))}
+      update={update || (() => console.log(`Can't execute "update" because isn't defined`))}
+      remove={remove || (() => console.log(`Can't execute "remove" because isn't defined`))}
       loading={loading}
       subscribe={subscribe}
       unsubscribe={unsubscribe}
     />
   );
 };
+
+export default gqlHoC

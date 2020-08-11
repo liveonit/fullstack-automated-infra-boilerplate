@@ -1,21 +1,21 @@
 import React from "react";
-import {
-  Spinner,
-} from "@patternfly/react-core";
-import { withAuthors } from "./withAuthors";
+import { Spinner } from "@patternfly/react-core";
 
 import Table from "./Table";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
+import { gql } from "@apollo/client";
+
+import { gqlHoC } from "../../../utils/General/GqlHoC";
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 const FUSE_OPTIONS = {
   keys: ["name", "age", "country"],
 };
 interface AuthorsPageProps {
-  getAuthors: () => void;
-  createAuthor: ({
+  get: () => void;
+  create: ({
     variables: { name, age, country },
   }: {
     variables: { name: String; age?: number; country?: String };
@@ -26,8 +26,8 @@ interface AuthorsPageProps {
 }
 
 const AuthorsPage: React.FC<AuthorsPageProps> = ({
-  getAuthors,
-  createAuthor,
+  get,
+  create,
   loading,
   items,
   count,
@@ -40,7 +40,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   const { currentPage, pageLimit } = state;
 
   React.useEffect(() => {
-    getAuthors();
+    get();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -68,7 +68,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
     : items.slice(offset, offset + pageLimit);
-
+  console.log(tableItems)
   return (
     <>
       <HeaderToolbar
@@ -97,4 +97,34 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   );
 };
 
-export default withAuthors(AuthorsPage);
+const GET_AUTHORS = gql`
+  query Authors {
+    authors {
+      count
+      limit
+      offset
+      items {
+        id
+        name
+        country
+        age
+      }
+    }
+  }
+`;
+
+const CREATE_AUTHOR = gql`
+  mutation CreateAuthor($name: String!, $age: Number, $country: String) {
+    createAuthor(name: $name, age: $age, country: $country) {
+      id
+      name
+      country
+      age
+    }
+  }
+`;
+export default gqlHoC({
+  entityName: "Author",
+  readGql: GET_AUTHORS,
+  createGql: CREATE_AUTHOR,
+})(AuthorsPage);

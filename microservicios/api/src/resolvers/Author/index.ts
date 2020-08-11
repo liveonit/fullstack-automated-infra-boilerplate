@@ -1,14 +1,29 @@
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
-import { Author } from "../../models/Author";
+import { Author, PaginateAuthors } from "../../models/Author";
 import { CreateAuthorInput } from "./types/CreateAuthorInput";
 import { UpdateAuthorInput } from "./types/UpdateAuthorInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 
 @Resolver()
 export class AuthorResolver {
-  @Query(() => [Author])
-  authors() {
-    return Author.find({ relations: ['books'] })
+  @Query(() => PaginateAuthors)
+  async authors(@Arg("limit", { nullable: true }) limit: number,
+    @Arg("offset", { nullable: true }) offset: number): Promise<PaginateAuthors> {
+    let authors: Author[];
+    let count: number;
+    authors = await Author.find({ relations: ['books'] })
+    count = authors.length
+    if (offset && limit) {
+      authors = authors.slice(offset, offset + limit + 1)
+    }
+
+    return {
+      count: count,
+      limit: limit || authors.length,
+      offset: offset || 0,
+      items: authors
+    }
+
   }
 
   @Query(() => Author)

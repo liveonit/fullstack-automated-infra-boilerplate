@@ -1,6 +1,5 @@
-import gql from "graphql-tag";
-import { useLazyQuery } from "@apollo/client";
 import React from "react";
+import { useLazyQuery, gql } from "@apollo/client";
 
 const GET_AUTHORS = gql`
   query Authors(

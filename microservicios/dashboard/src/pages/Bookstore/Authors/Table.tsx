@@ -11,10 +11,10 @@ import {
 import { onSort } from "../../../utils/Tables";
 
 const COLUMNS = [
-  { key: "Id", title: "Id", transforms: [sortable] },
-  { key: "Name", title: "name", transforms: [sortable] },
-  { key: "Country", title: "country", transforms: [sortable] },
-  { key: "Age", title: "age", transforms: [sortable] }
+  { key: "id", title: "Id", transforms: [sortable] },
+  { key: "name", title: "Name", transforms: [sortable] },
+  { key: "country", title: "Country", transforms: [sortable] },
+  { key: "age", title: "Age", transforms: [sortable] }
 ];
 
 function Table({ items }: { items: any[] }) {
