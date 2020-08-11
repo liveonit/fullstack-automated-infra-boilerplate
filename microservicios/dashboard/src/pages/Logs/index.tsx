@@ -3,10 +3,12 @@ import React from "react";
 import Table from "./Table";
 import { HeaderToolbar } from "../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../components/Tables/FooterToolbar";
-import { withLogs } from "./withLogs";
+
+import { gql } from '@apollo/client'
 
 import Fuse from "fuse.js";
 import { Spinner } from "@patternfly/react-core";
+import gqlHoC from "../../utils/General/GqlHoC";
 
 const FUSE_OPTIONS = {
   keys: ["operation", "operationType", "payload", "resultPayload"],
@@ -15,7 +17,7 @@ const FUSE_OPTIONS = {
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
 
 interface LogsPageProps {
-  getLogs: ({
+  get: ({
     variables: { timeStart, timeEnd },
   }: {
     variables: { timeStart: number; timeEnd: number };
@@ -28,7 +30,7 @@ interface LogsPageProps {
 }
 
 const LogsPage: React.FC<LogsPageProps> = ({
-  getLogs,
+  get,
   loading,
   items,
   count,
@@ -44,9 +46,14 @@ const LogsPage: React.FC<LogsPageProps> = ({
   });
   const { currentPage, pageLimit, startDate, endDate } = state;
   
+  React.useEffect(() => {
+    subscribe()
+    return () => unsubscribe()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
 
   React.useEffect(() => {
-    getLogs({ variables: { timeStart: startDate, timeEnd: endDate } });
+    get({ variables: { timeStart: startDate, timeEnd: endDate } });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
@@ -132,4 +139,52 @@ const LogsPage: React.FC<LogsPageProps> = ({
   );
 };
 
-export default withLogs(LogsPage);
+const GET_LOGS = gql`
+  query Logs(
+    $offset: Float
+    $limit: Float
+    $timeStart: Float
+    $timeEnd: Float
+  ) {
+    logs(
+      offset: $offset
+      limit: $limit
+      timeStart: $timeStart
+      timeEnd: $timeEnd
+    ) {
+      count
+      limit
+      offset
+      items {
+        id
+        operation
+        operationType
+        payload
+        unixStartTime
+        executionTime
+        resultPayload
+      }
+    }
+  }
+`;
+
+const SUBSCRIPTION_LOGS = gql`
+  subscription {
+    logsSubscription {
+      id
+      operation
+      operationType
+      payload
+      unixStartTime
+      executionTime
+      resultPayload
+    }
+  }
+`;
+
+// export default withLogs(LogsPage);
+export default gqlHoC({
+  entityName: "Log",
+  readGql: GET_LOGS,
+  subscriptionGql: SUBSCRIPTION_LOGS,
+})(LogsPage);

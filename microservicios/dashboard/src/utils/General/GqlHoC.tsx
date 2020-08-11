@@ -83,6 +83,7 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
     };
 
     onSubscriptionData = (options: OnSubscriptionDataOptions<any>) => {
+      console.log("datasuvb", options)
       setState({
         ...state,
         items: [
@@ -92,6 +93,7 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
         count: count + 1,
       });
     };
+    console.log("subs state", state.isSubscribe)
     useSubscription(subscriptionGql, {
       onSubscriptionData,
       skip: !state.isSubscribe,
