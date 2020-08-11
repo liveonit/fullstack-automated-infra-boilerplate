@@ -4,21 +4,21 @@ import {
   useSubscription,
   OnSubscriptionDataOptions,
   DocumentNode,
-  useMutation
+  useMutation,
 } from "@apollo/client";
 
-import { Subtract } from 'utility-types';
+import { Subtract } from "utility-types";
 
 interface InjectedGqlHoCProps {
   items: any[];
   count: number;
   loading: boolean;
-  get?: Function,
-  create?: Function,
-  update?: Function,
-  remove?: Function,
-  subscribe?: Function,
-  unsubscribe?: Function
+  get?: Function;
+  create?: Function;
+  update?: Function;
+  remove?: Function;
+  subscribe?: Function;
+  unsubscribe?: Function;
 }
 
 interface HoCConfig {
@@ -32,7 +32,7 @@ interface HoCConfig {
 
 export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   Component: React.ComponentType<P>
-): React.FC<Subtract<P,InjectedGqlHoCProps>> => (props) => {
+): React.FC<Subtract<P, InjectedGqlHoCProps>> => (props) => {
   const {
     entityName,
     subscriptionGql,
@@ -52,19 +52,18 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   });
 
   const entities = entityName.toLowerCase() + "s";
-  
-  
+
   // =======================
   // Read from GQL API
   // =======================
   let get, loading;
   if (readGql !== undefined) {
     const onCompletedQuery = (d: any) => {
-      console.log(d)
-      let c = 0;
-      const items = (d[entities]?.items || []).map((i: any) => ({ key: c++, ...i}))
-      const count = d[entities]?.count
-      setState({ ...state, items, count });
+      setState({
+        ...state,
+        items: d[entities]?.items || [],
+        count: d[entities]?.count,
+      });
     };
 
     [get, { loading }] = useLazyQuery(readGql, {
@@ -103,7 +102,17 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   if (createGql) {
     const onCompletedCreate = (data: any) => {
       console.log("createData", data);
-      setState({ ...state, items: [...state.items, data] });
+      setState({
+        ...state,
+        items: [
+          ...state.items,
+          data[
+            "create" +
+              entityName.charAt(0).toUpperCase() +
+              entityName.slice(1).toLowerCase()
+          ],
+        ],
+      });
     };
     [create] = useMutation(createGql, {
       onCompleted: onCompletedCreate,
@@ -125,7 +134,10 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   if (removeGql) {
     const onCompletedRemove = (data: any) => {
       console.log("deleteData", data);
-      setState({ ...state, items: [...state.items.filter(i => i.id !== data.id) ] });
+      setState({
+        ...state,
+        items: [...state.items.filter((i) => i.id !== data.id)],
+      });
     };
     [remove] = useMutation(removeGql, {
       onCompleted: onCompletedRemove,
@@ -139,10 +151,21 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
       {...(props as P)}
       items={items}
       count={count}
-      get={get || (() => console.log(`Can't execute "get" because isn't defined`))}
-      create={create  || (() => console.log(`Can't execute "create" because isn't defined`))}
-      update={update || (() => console.log(`Can't execute "update" because isn't defined`))}
-      remove={remove || (() => console.log(`Can't execute "remove" because isn't defined`))}
+      get={
+        get || (() => console.log(`Can't execute "get" because isn't defined`))
+      }
+      create={
+        create ||
+        (() => console.log(`Can't execute "create" because isn't defined`))
+      }
+      update={
+        update ||
+        (() => console.log(`Can't execute "update" because isn't defined`))
+      }
+      remove={
+        remove ||
+        (() => console.log(`Can't execute "remove" because isn't defined`))
+      }
       loading={loading}
       subscribe={subscribe}
       unsubscribe={unsubscribe}
@@ -150,4 +173,4 @@ export const gqlHoC = (config: HoCConfig) => <P extends InjectedGqlHoCProps>(
   );
 };
 
-export default gqlHoC
+export default gqlHoC;

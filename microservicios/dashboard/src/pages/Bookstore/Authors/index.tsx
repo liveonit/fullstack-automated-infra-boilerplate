@@ -1,5 +1,5 @@
 import React from "react";
-import { Spinner } from "@patternfly/react-core";
+import { Spinner, Button } from "@patternfly/react-core";
 
 import Table from "./Table";
 import Fuse from "fuse.js";
@@ -68,7 +68,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
     : items.slice(offset, offset + pageLimit);
-  console.log(tableItems)
+  
   return (
     <>
       <HeaderToolbar
@@ -80,6 +80,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
         <Spinner />
       ) : (
         <>
+        <Button onClick={() => create({variables: { name: "ibarreto", age: 123, country: "tres cruces"}})}></Button>
           <Table items={tableItems} />
           <div className="pagination-footer">
             <FooterToolbar
@@ -114,8 +115,8 @@ const GET_AUTHORS = gql`
 `;
 
 const CREATE_AUTHOR = gql`
-  mutation CreateAuthor($name: String!, $age: Number, $country: String) {
-    createAuthor(name: $name, age: $age, country: $country) {
+  mutation CreateAuthor($name: String!, $age: Float!, $country: String) {
+    createAuthor(data: { name: $name, age: $age, country: $country }) {
       id
       name
       country
