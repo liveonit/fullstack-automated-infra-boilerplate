@@ -1,4 +1,4 @@
-import { InputType, Field } from "type-graphql";
+import { InputType, Field, Int } from "type-graphql";
 import { Author } from "../../../models/Author";
 import { Edition } from "../../../models/Edition";
 
@@ -11,6 +11,6 @@ export class CreateAuthorInput {
   @Field({ nullable: true })
   country?: string;
 
-  @Field()
+  @Field(type => Int)
   age: number;
 }

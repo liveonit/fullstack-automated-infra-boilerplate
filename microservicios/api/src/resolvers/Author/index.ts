@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, UseMiddleware, Int } from "type-graphql";
 import { Author, PaginateAuthors } from "../../models/Author";
 import { CreateAuthorInput } from "./types/CreateAuthorInput";
 import { UpdateAuthorInput } from "./types/UpdateAuthorInput";
@@ -41,7 +41,7 @@ export class AuthorResolver {
 
   @Mutation(() => Author)
   @UseMiddleware([GqlLog])
-  async updateAuthor(@Arg("id") id: number, @Arg("data") data: UpdateAuthorInput) {
+  async updateAuthor(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateAuthorInput) {
     const author = await Author.findOne({ where: { id } });
     if (!author) throw new Error("Author not found!");
     Object.assign(author, data);
@@ -51,7 +51,7 @@ export class AuthorResolver {
 
   @Mutation(() => Number)
   @UseMiddleware([GqlLog])
-  async deleteAuthor(@Arg("id") id: number) {
+  async deleteAuthor(@Arg("id", type => Int) id: number) {
     const author = await Author.findOne({ where: { id } });
     if (!author) throw new Error("Author not found!");
     await author.remove();

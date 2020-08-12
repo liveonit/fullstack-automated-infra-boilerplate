@@ -1,6 +1,6 @@
 import React from "react";
 import { Spinner } from "@patternfly/react-core";
-import { Button, IconButton, Icon } from "rsuite";
+import { IconButton, Icon } from "rsuite";
 
 import Table from "./Table";
 import Fuse from "fuse.js";
@@ -9,21 +9,41 @@ import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 
 import CreateUpdateModal from "./CreateUpdateModal";
 import DeleteModal from "./DeleteModal";
-import { gql } from "@apollo/client";
+
 import { gqlHoC } from "../../../utils/General/GqlHoC";
 import _ from "lodash";
+import {
+  createQueryToGetItems,
+  createMutationToCreateItem,
+  createMutationToUpdateItem,
+  createMutationToDeleteItem,
+  EntityProp,
+} from "../../../utils/General/GqlHelpers";
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 const FUSE_OPTIONS = {
   keys: ["name", "age", "country"],
 };
 
+//=============================================================================
+//#region Entity definition
+
+const ENTITY_NAME = "Author"
 export type Author = {
   id: number;
   name: string;
   age: number;
   country?: string;
 };
+
+const ENTITY_PROPS: EntityProp[] = [
+  { name: "name", type: "String", required: true },
+  { name: "age", type: "Int", required: true },
+  { name: "country", type: "String", required: false },
+]
+
+//#endregion
+//=============================================================================
 
 interface AuthorsPageProps {
   get: () => void;
@@ -77,9 +97,9 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //===========================================================
+  //===========================================================================
   //#region events
-  //===========================================================
+
   const onPageLimitChanged = (n: number) => {
     setState({
       ...state,
@@ -116,10 +136,11 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   };
 
   //#endregion
+  //===========================================================================
 
-  //===========================================================
+  //===========================================================================
   //#region Table elements filter by search and pagination
-  //===========================================================
+
   const fuse = new Fuse(items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
@@ -128,6 +149,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
         .slice(offset, offset + pageLimit)
     : items.slice(offset, offset + pageLimit);
   //#endregion
+  //===========================================================================
 
   return (
     <>
@@ -178,63 +200,10 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   );
 };
 
-//===========================================================
-//#region GraphQl queries - mutation - subscriptions
-//===========================================================
-const GET_AUTHORS = gql`
-  query Authors {
-    authors {
-      count
-      limit
-      offset
-      items {
-        id
-        name
-        country
-        age
-      }
-    }
-  }
-`;
-
-const CREATE_AUTHOR = gql`
-  mutation CreateAuthor($name: String!, $age: Float!, $country: String) {
-    createAuthor(data: { name: $name, age: $age, country: $country }) {
-      id
-      name
-      country
-      age
-    }
-  }
-`;
-
-const UPDATE_AUTHOR = gql`
-  mutation UpdateAuthor(
-    $id: Float!
-    $age: Float
-    $country: String
-    $name: String
-  ) {
-    updateAuthor(id: $id, data: { age: $age, country: $country, name: $name }) {
-      age
-      country
-      id
-      name
-    }
-  }
-`;
-
-const REMOVE_AUTHOR = gql`
-  mutation RemoveAuthor($id: Float!) {
-    deleteAuthor(id: $id)
-  }
-`;
-//#endregion
-
 export default gqlHoC<Author>({
-  entityName: "Author",
-  readGql: GET_AUTHORS,
-  createGql: CREATE_AUTHOR,
-  updateGql: UPDATE_AUTHOR,
-  removeGql: REMOVE_AUTHOR,
+  entityName: ENTITY_NAME,
+  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
+  createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
+  updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
+  removeGql: createMutationToDeleteItem(ENTITY_NAME),
 })(AuthorsPage);

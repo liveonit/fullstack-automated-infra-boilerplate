@@ -1,6 +1,5 @@
-import gql from "graphql-tag";
-import { useLazyQuery, useSubscription, OnSubscriptionDataOptions } from "@apollo/client";
 import React from "react";
+import { useLazyQuery, useSubscription, OnSubscriptionDataOptions, gql } from "@apollo/client";
 const GET_ALERTS = gql`
   query Alerts() {
     alerts () {
