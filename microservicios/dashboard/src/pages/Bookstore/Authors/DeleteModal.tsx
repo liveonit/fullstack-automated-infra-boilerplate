@@ -3,8 +3,7 @@ import { Button, Modal } from "@patternfly/react-core";
 import { Author } from ".";
 
 interface CreateUpdateModalProps {
-  isModalOpen: boolean;
-  handleModalToggle: () => void;
+  onClose: () => void;
   author?: Author;
   rm: ({
     variables: { id },
@@ -16,28 +15,27 @@ interface CreateUpdateModalProps {
 }
 
 const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
-  isModalOpen,
-  handleModalToggle,
+  onClose,
   author,
   rm,
 }) => {
   return (
     <Modal
       title="Simple modal header"
-      isOpen={isModalOpen}
-      onClose={handleModalToggle}
+      isOpen={true}
+      onClose={onClose}
       actions={[
         <Button
           key="delete"
           variant="primary"
           onClick={(e) => {
             author && rm({ variables: { id: author.id } });
-            handleModalToggle();
+            onClose();
           }}
         >
           Yes, delete
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle}>
+        <Button key="cancel" variant="link" onClick={onClose}>
           No, cancel
         </Button>,
       ]}

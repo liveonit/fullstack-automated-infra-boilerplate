@@ -77,7 +77,9 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //===========================================================
   //#region events
+  //===========================================================
   const onPageLimitChanged = (n: number) => {
     setState({
       ...state,
@@ -93,14 +95,12 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   const handleUpdateFilterInput = (searchText?: string) =>
     setState({ ...state, searchText: searchText || "" });
 
-  const handleCreateUpdateModalToggle = () =>
+  const onCloseAnyModal = () =>
     setState({
       ...state,
-      isCreateUpdateModalOpen: !state.isCreateUpdateModalOpen,
+      isCreateUpdateModalOpen: false,
+      isDeleteModalOpen: false,
     });
-
-  const handleDeleteModalToggle = () =>
-    setState({ ...state, isDeleteModalOpen: !state.isDeleteModalOpen });
 
   const onCreate = () => {
     setState({ ...state, author: undefined, isCreateUpdateModalOpen: true });
@@ -109,15 +109,17 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
     const author = _.find(items, (i) => i.id === id);
     setState({ ...state, author, isCreateUpdateModalOpen: true });
   };
+
   const onDelete = (id: number) => {
-    console.log("items before delete", items)
     const author = _.find(items, (i) => i.id === id);
-    console.log("autor in delete", author)
     setState({ ...state, author, isDeleteModalOpen: true });
   };
 
   //#endregion
 
+  //===========================================================
+  //#region Table elements filter by search and pagination
+  //===========================================================
   const fuse = new Fuse(items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
@@ -125,6 +127,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
     : items.slice(offset, offset + pageLimit);
+  //#endregion
 
   return (
     <>
@@ -138,60 +141,27 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
             handleUpdateFilterInput={handleUpdateFilterInput}
             hasCreateEntity={true}
             CreateEntityChild={
-              <IconButton
-                icon={<Icon icon="plus" />}
-                onClick={handleCreateUpdateModalToggle}
-              >
+              <IconButton icon={<Icon icon="plus" />} onClick={onCreate}>
                 Create Author
               </IconButton>
             }
           />
-          <CreateUpdateModal
-            isModalOpen={state.isCreateUpdateModalOpen}
-            handleModalToggle={handleCreateUpdateModalToggle}
-            author={state.author}
-          />
-          <DeleteModal
-            isModalOpen={state.isDeleteModalOpen}
-            handleModalToggle={handleDeleteModalToggle}
-            author={state.author}
-            rm={remove}
-          />
-          <Button
-            onClick={() =>
-              create({
-                variables: {
-                  name: "ibarreto",
-                  age: 123,
-                  country: "tres cruces",
-                },
-              })
-            }
-          >
-            Crear usuario
-          </Button>
-          <Button
-            onClick={() =>
-              update({
-                variables: {
-                  id: 11,
-                  name: "ibarretoupd",
-                  age: 12357,
-                  country: "tres crucesupd",
-                },
-              })
-            }
-          >
-            Update Usuario
-          </Button>
-          <Button onClick={() => remove({ variables: { id: 7 } })}>
-            Delete Usuario
-          </Button>
-          <Table
-            items={tableItems}
-            onDelete={onDelete}
-            onEdit={onEdit}
-          />
+          {state.isCreateUpdateModalOpen && (
+            <CreateUpdateModal
+              onClose={onCloseAnyModal}
+              author={state.author}
+              create={create}
+              update={update}
+            />
+          )}
+          {state.isDeleteModalOpen && (
+            <DeleteModal
+              onClose={onCloseAnyModal}
+              author={state.author}
+              rm={remove}
+            />
+          )}
+          <Table items={tableItems} onDelete={onDelete} onEdit={onEdit} />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}
@@ -208,7 +178,9 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   );
 };
 
+//===========================================================
 //#region GraphQl queries - mutation - subscriptions
+//===========================================================
 const GET_AUTHORS = gql`
   query Authors {
     authors {
