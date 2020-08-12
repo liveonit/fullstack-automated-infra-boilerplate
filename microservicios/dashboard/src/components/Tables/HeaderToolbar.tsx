@@ -26,10 +26,12 @@ interface ToolbarProps {
     startDate?: number;
     endDate?: number;
   }) => void;
+  hasCreateEntity?: Boolean;
+  CreateEntityChild?: React.ReactChild
 }
 
 export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
-  const { handleUpdateFilterInput, hasFilter, hasDateTimeFilter } = props;
+  const { handleUpdateFilterInput, hasFilter, hasDateTimeFilter, hasCreateEntity, CreateEntityChild } = props;
   return (
     <PatternflyToolbar>
       <ToolbarContent style={{ paddingRight: 0 }}>
@@ -47,6 +49,12 @@ export const HeaderToolbar: React.FC<ToolbarProps> = (props) => {
         hasDateTimeFilter &&
         <ToolbarItem className="--toolbar-header-date-filter">
           <DateTimeFilter {...props} />
+        </ToolbarItem>
+        }
+        {
+        hasCreateEntity &&
+        <ToolbarItem className="--toolbar-create-entity" alignment={{ default: 'alignRight' }}>
+          {CreateEntityChild}
         </ToolbarItem>
         }
       </ToolbarContent>

@@ -9,16 +9,24 @@ import {
   sortable,
 } from "@patternfly/react-table";
 import { onSort } from "../../../utils/Tables";
+import { Author } from ".";
+import _ from "lodash";
 
 const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
   { key: "name", title: "Name", transforms: [sortable] },
   { key: "country", title: "Country", transforms: [sortable] },
-  { key: "age", title: "Age", transforms: [sortable] }
+  { key: "age", title: "Age", transforms: [sortable] },
 ];
 
-function Table({ items }: { items: any[] }) {
-  let [state, setState] = React.useState<{ rows: any[], sortBy: any}>({
+interface TableProps {
+  items: Author[];
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
+  let [state, setState] = React.useState<{ rows: any[]; sortBy: any }>({
     rows: [],
     sortBy: {},
   });
@@ -31,6 +39,16 @@ function Table({ items }: { items: any[] }) {
     <PatternflyTable
       aria-label="Logs Table"
       sortBy={state.sortBy}
+      actions={[
+        {
+          title: "Edit",
+          onClick: (a, b, rowData) => onEdit(parseInt(_.get(rowData, "cells.0"))),
+        },
+        {
+          title: "Delete",
+          onClick: (a, b, rowData) => onDelete(parseInt(_.get(rowData, "cells.0"))),
+        },
+      ]}
       onSort={(_, index, direction) =>
         setState(
           onSort({
@@ -54,7 +72,7 @@ function Table({ items }: { items: any[] }) {
       />
     </PatternflyTable>
   );
-}
+};
 
 function calculateRows(items: any[]) {
   if (items === undefined) return [];

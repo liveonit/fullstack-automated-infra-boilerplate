@@ -16,7 +16,7 @@ export class AuthorResolver {
     if (offset && limit) {
       authors = authors.slice(offset, offset + limit + 1)
     }
-
+    console.log(authors)
     return {
       count: count,
       limit: limit || authors.length,

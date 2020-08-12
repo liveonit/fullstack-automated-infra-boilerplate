@@ -1,11 +1,11 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, AfterInsert } from "typeorm";
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, Int } from "type-graphql";
 import PaginatedResponse from "../utils/PaginateEntity";
 import { pubsub } from '../'
 @Entity()
 @ObjectType()
 export class Log extends BaseEntity {
-  @Field(() => ID)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 

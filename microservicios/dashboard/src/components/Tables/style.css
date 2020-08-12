@@ -27,3 +27,7 @@
 .pf-c-toolbar.--footer-toolbar {
   padding: 0 0 0 0;
 }
+
+.--toolbar-create-entity {
+  padding-right: 1rem;
+}

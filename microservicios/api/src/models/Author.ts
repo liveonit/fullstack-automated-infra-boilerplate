@@ -1,12 +1,12 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { ObjectType, Field, ID, Int } from "type-graphql";
+import { ObjectType, Field, Int } from "type-graphql";
 import { Book } from "./Book";
 import PaginatedResponse from "../utils/PaginateEntity";
 
 @Entity()
 @ObjectType()
 export class Author extends BaseEntity {
-  @Field(() => ID)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 

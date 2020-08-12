@@ -1,11 +1,11 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
-import { ObjectType, Field, ID, GraphQLISODateTime } from "type-graphql";
+import { ObjectType, Field, Int, GraphQLISODateTime } from "type-graphql";
 import { Book } from "./Book";
 
 @Entity()
 @ObjectType()
 export class Edition extends BaseEntity {
-  @Field(() => ID)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 

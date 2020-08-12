@@ -1,12 +1,12 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from "typeorm";
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, Int } from "type-graphql";
 import { Author } from "./Author";
 import { Edition } from "./Edition";
 
 @Entity()
 @ObjectType()
 export class Book extends BaseEntity {
-  @Field(() => ID)
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
