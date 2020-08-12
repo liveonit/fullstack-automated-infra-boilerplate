@@ -9,6 +9,13 @@ import {
 } from "@patternfly/react-core";
 import { Author } from ".";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import {
+  validateFullName,
+  validateAge,
+  validateCountry,
+  FormInputControl,
+} from "../../../utils/Forms";
+import _ from "lodash";
 
 interface CreateUpdateModalProps {
   onClose: () => void;
@@ -34,58 +41,59 @@ interface CreateUpdateModalProps {
   }) => void;
 }
 
-type ValidateResult = "success" | "error" | "default" | "warning" | undefined;
-
 const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
   onClose,
   author,
   update,
   create,
 }) => {
-  const validateName = (n: string): ValidateResult =>
-    n === "" ? "default" : /^\d+$/.test(n) ? "success" : "error";
-
-  const validateAge = (n: string): ValidateResult =>
-    n === "" ? "default" : /^[1-9]?[1-2]?[0-9]{1}$/.test(n) ? "success" : "error";
-
-  const validateCountry = (n: string): ValidateResult =>
-    n === "" ? "default" : /^\d+$/.test(n) ? "success" : "error";
-
-  const [state, setState] = React.useState({
-    form: {
-      name: {
-        value: author?.name || "",
-        required: true,
-        validate: validateName(author?.name || ""),
-      },
-      age: {
-        value: author?.age?.toString() || "",
-        required: true,
-        validate: validateAge(author?.age?.toString() || ""),
-      },
-      country: {
-        value: author && author.country,
-        required: false,
-        validate: validateCountry((author && author.country) || ""),
-      },
+  const [state, setState] = React.useState<{
+    name: FormInputControl;
+    age: FormInputControl;
+    country: FormInputControl;
+  }>({
+    name: {
+      value: author?.name || "",
+      required: true,
+      validate: validateFullName,
+      validated: "default",
+    },
+    age: {
+      value: author?.age?.toString() || "",
+      required: true,
+      validate: validateAge,
+      validated: "default",
+    },
+    country: {
+      value: author?.country || "",
+      required: false,
+      validate: validateCountry,
+      validated: "default",
     },
   });
 
-  const validateForm = () =>
-    Object.values(state.form).reduce(
+  const validateForm = () => {
+    const form =  {...state}
+
+    for (const key in state) {
+      const f: FormInputControl = _.get(form, key)
+      _.set(form, `${key}.validated`, f.validate(f.value,f.required))
+    }
+    setState(form)
+    return Object.values(form).reduce(
       (v, c) =>
         v &&
-        (c.required
-          ? c.value === "success"
-          : c.value === "success" || c.value === "default"),
+        (c.validated === "success" || c.validated === "default"),
       true
     );
+  }
+
 
   const isUpdate = author !== undefined;
   const id: number = author !== undefined ? author.id : 0;
-  const name = state.form.name.value;
-  const age = state.form.age.value;
-  const country = state.form.country.value;
+  const name = state.name.value;
+  const age = state.age.value;
+  const country = state.country.value;
 
   return (
     <Modal
@@ -97,10 +105,16 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
           key="create"
           variant="primary"
           onClick={(e) => {
-            if (validateForm())
+            if (validateForm()) {
               isUpdate
-                ? update && update({ variables: { id, name, age: parseInt(age), country } })
-                : create && create({ variables: { name, age: parseInt(age) , country } });
+                ? update &&
+                  update({
+                    variables: { id, name, age: parseInt(age), country },
+                  })
+                : create &&
+                  create({ variables: { name, age: parseInt(age), country } });
+                onClose();
+            }
           }}
         >
           {isUpdate ? "Update" : "Create"}
@@ -111,13 +125,46 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
       ]}
     >
       <Form>
+      <FormGroup
+          label="Full Name"
+          helperText={
+            <FormHelperText
+              icon={<ExclamationCircleIcon />}
+              isHidden={state.name.validated !== "default"}
+            >
+              Please enter Author's full name
+            </FormHelperText>
+          }
+          helperTextInvalid="Full name has to be at least two words"
+          helperTextInvalidIcon={<ExclamationCircleIcon />}
+          fieldId="name-1"
+          validated={state.name.validated}
+        >
+          <TextInput
+            validated={state.name.validated}
+            value={state.name.value}
+            id="name-1"
+            type="text"
+            onChange={(v) =>
+              setState({
+                ...state,
+                name: {
+                  ...state.name,
+                  value: v,
+                  validated: state.name.validate(v, state.name.required),
+                },
+              })
+            }
+          />
+        </FormGroup>
+
         <FormGroup
           label="Age"
           type="number"
           helperText={
             <FormHelperText
               icon={<ExclamationCircleIcon />}
-              isHidden={state.form.age.validate !== "default"}
+              isHidden={state.age.validated !== "default"}
             >
               Please enter your age
             </FormHelperText>
@@ -125,23 +172,53 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
           helperTextInvalid="Age has to be a number"
           helperTextInvalidIcon={<ExclamationCircleIcon />}
           fieldId="age-1"
-          validated={state.form.age.validate}
+          validated={state.age.validated}
         >
           <TextInput
-            validated={state.form.age.validate}
-            value={state.form.age.value}
+            validated={state.age.validated}
+            value={state.age.value}
             id="age-1"
             type="number"
             onChange={(v) =>
               setState({
                 ...state,
-                form: {
-                  ...state.form,
-                  age: {
-                    ...state.form.age,
-                    value: v,
-                    validate: validateAge(v),
-                  }
+                age: {
+                  ...state.age,
+                  value: v,
+                  validated: state.age.validate(v, state.age.required),
+                },
+              })
+            }
+          />
+        </FormGroup>
+
+        <FormGroup
+          label="Country"
+          helperText={
+            <FormHelperText
+              icon={<ExclamationCircleIcon />}
+              isHidden={state.country.validated !== "default"}
+            >
+              Please enter Author's country
+            </FormHelperText>
+          }
+          helperTextInvalid="If country is set, it has to be at least one word"
+          helperTextInvalidIcon={<ExclamationCircleIcon />}
+          fieldId="country-1"
+          validated={state.country.validated}
+        >
+          <TextInput
+            validated={state.country.validated}
+            value={state.country.value}
+            id="country-1"
+            type="text"
+            onChange={(v) =>
+              setState({
+                ...state,
+                country: {
+                  ...state.country,
+                  value: v,
+                  validated: state.country.validate(v, state.country.required),
                 },
               })
             }
