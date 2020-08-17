@@ -1,7 +1,7 @@
 import { InputType, Field, Int } from "type-graphql";
 
 @InputType()
-export class UpdateAuthorInput {
+export class UpdateUserInput {
   @Field({ nullable: true })
   name?: string;
 

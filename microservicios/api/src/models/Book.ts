@@ -2,6 +2,7 @@ import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMan
 import { ObjectType, Field, Int } from "type-graphql";
 import { Author } from "./Author";
 import { Edition } from "./Edition";
+import PaginatedResponse from "../utils/PaginateEntity";
 
 @Entity()
 @ObjectType()
@@ -14,11 +15,9 @@ export class Book extends BaseEntity {
   @Column({ nullable: true})
   title: string;
 
-  
   @Field(() => Boolean)
   @Column({ default: false })
   isPublished: boolean;
-
 
   @Field(() => Number)
   @Column()
@@ -27,9 +26,12 @@ export class Book extends BaseEntity {
   @Field(() => Author)
   @ManyToOne(type => Author, author => author.books)
   public author: Author
-  
+
   @Field(() => [Edition])
   @OneToMany(type => Edition, edition => edition.book)
   public editions: Edition[]
 
 }
+
+@ObjectType()
+export class PaginatedBooks extends PaginatedResponse(Book) { };

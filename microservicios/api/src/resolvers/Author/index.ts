@@ -1,14 +1,14 @@
 import { Resolver, Query, Mutation, Arg, UseMiddleware, Int } from "type-graphql";
-import { Author, PaginateAuthors } from "../../models/Author";
+import { Author, PaginatedAuthors } from "../../models/Author";
 import { CreateAuthorInput } from "./types/CreateAuthorInput";
 import { UpdateAuthorInput } from "./types/UpdateAuthorInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 
 @Resolver()
 export class AuthorResolver {
-  @Query(() => PaginateAuthors)
+  @Query(() => PaginatedAuthors)
   async authors(@Arg("limit", { nullable: true }) limit: number,
-    @Arg("offset", { nullable: true }) offset: number): Promise<PaginateAuthors> {
+    @Arg("offset", { nullable: true }) offset: number): Promise<PaginatedAuthors> {
     let authors: Author[];
     let count: number;
     authors = await Author.find({ relations: ['books'] })
@@ -18,7 +18,7 @@ export class AuthorResolver {
     }
     console.log(authors)
     return {
-      count: count,
+      count,
       limit: limit || authors.length,
       offset: offset || 0,
       items: authors

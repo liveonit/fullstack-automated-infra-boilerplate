@@ -40,4 +40,4 @@ export class Log extends BaseEntity {
 }
 
 @ObjectType()
-export class PaginateLogs extends PaginatedResponse(Log) { };
+export class PaginatedLogs extends PaginatedResponse(Log) { };

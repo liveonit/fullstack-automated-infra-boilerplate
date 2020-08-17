@@ -28,4 +28,4 @@ export class Author extends BaseEntity {
 }
 
 @ObjectType()
-export class PaginateAuthors extends PaginatedResponse(Author) { };
+export class PaginatedAuthors extends PaginatedResponse(Author) { };
