@@ -5,45 +5,60 @@ const keycloakRealm = process.env.KEYCLOAK_RELM || 'fullstack'
 const keycloakUser = process.env.KEYCLOAK_USER || 'keycloak'
 const keycloakPassword = process.env.KEYCLOAK_PASSWORD || 'keycloakPass'
 const keycloakLocalUrl = process.env.KEYCLOAK_LOCAL_URL || 'http://keycloak:8080/auth'
+const keycloakClientID = "dashboard";
 const connConfig: ConnectionConfig = {
   baseUrl: keycloakLocalUrl,
-    realmName: "master"
+  realmName: "master"
 }
 
-const kcAdminClient = new KcAdminClient(connConfig);
 
-(async () => {
-await kcAdminClient.auth({
-  username: keycloakUser,
-  password:  keycloakPassword,
-  grantType: 'password',
-  clientId: 'admin-cli',
-});
+const kcConnect: () => Promise<KcAdminClient | undefined> = async () => {
+  const kcAdminClient = new KcAdminClient(connConfig);
+  try {
+    await kcAdminClient.auth({
+      username: keycloakUser,
+      password: keycloakPassword,
+      grantType: 'password',
+      clientId: 'admin-cli',
+    });
+    kcAdminClient.setConfig({
+      realmName: keycloakRealm,
+    });
+    return kcAdminClient;
+  } catch (err) {
+    console.error("Can't connect with keylocak admin. Error: ", err);
+  }
+}
 
-// const users = await kcAdminClient.users.find();
-// console.log(users);
+const getRoles = async () => {
+  const kcAdmin = await kcConnect();
+  const roles = await kcAdmin.roles.find();
+  return roles
+}
 
+const getUsers = async () => {
+  const kcAdmin = await kcConnect();
+  const users = await kcAdmin.users.find();
+  return users
+}
 
-// const cl = await kcAdminClient.clients.find()
-// const clientAccount = cl.filter(c => c.clientId == 'account')[0]
-// const clientSecAdmCons = cl.filter(c => c.clientId == 'security-admin-console')[0]
+const getUserWithRoles = async () => {
+  const kcAdmin = await kcConnect();
+  const users = await kcAdmin.users.find();
+  const userWithRoles =  await Promise.all(users.map(async u => {
+    const userRoles = await kcAdmin.users.listRealmRoleMappings({ id: u.id })
+    return {...u, roles: userRoles.map(r => r.name)}
+  }));
+  return userWithRoles;
+}
 
-// await kcAdminClient.clients.update({ id: clientAccount.id }, { ...clientAccount, enabled: true })
-// await kcAdminClient.clients.update({ id: clientSecAdmCons.id }, { ...clientSecAdmCons, enabled: true })
-// const updCls = await kcAdminClient.clients.find();
-
-// console.log(updCls);
-
-kcAdminClient.setConfig({
-  realmName: keycloakRealm,
-});
-
-const fsUsers = await kcAdminClient.users.find();
-console.log("fsUsers", fsUsers);
-
-const roles = await Promise.all(fsUsers.map(async u => await kcAdminClient.users.listAvailableRealmRoleMappings({ id: u.id })));
-console.log("role mapping", roles);
-
-const allRolesMappings = "";
-
-})()
+if (require.main === module) {
+  (async () => {
+    const roles = await getRoles();
+    const users = await getUsers();
+    const userWithRoles = await getUserWithRoles();
+    console.log(roles);
+    console.log(users);
+    console.log(userWithRoles);
+  })()
+}

@@ -41,12 +41,29 @@
   "roles": {
     "realm": [
       {
+        "id": "b742897c-2d21-4c41-8a09-971c20818a2e",
+        "name": "user",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sm",
+        "attributes": {}
+      },
+      {
         "id": "124be87d-c3b9-4338-b566-87e72cc347ac",
         "name": "uma_authorization",
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "fullstack",
+        "containerId": "sm",
+        "attributes": {}
+      },
+      {
+        "id": "1a9bc354-7662-44b3-9f92-54d43306fb7d",
+        "name": "administrator",
+        "description": "Rol de administración del sistema",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sm",
         "attributes": {}
       },
       {
@@ -55,7 +72,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "fullstack",
+        "containerId": "sm",
         "attributes": {}
       }
     ],
@@ -286,14 +303,6 @@
         }
       ],
       "dashboard": [
-        {
-          "id": "8f728536-6f72-4acb-b3d3-3d82f18c9651",
-          "name": "user",
-          "composite": false,
-          "clientRole": true,
-          "containerId": "6d431d5f-e26d-4624-84d2-f08778daeb4b",
-          "attributes": {}
-        },
         {
           "id": "79fbcf02-2129-4421-bc6b-4e9f35fe7c0a",
           "name": "administrator",
@@ -1811,9 +1820,7 @@
     "firstName": "Administrator",
     "lastName": "User",
     "username": "{{ KEYCLOAK_ADMIN_DEFAULT_NAME }}",
-    "clientRoles": {
-      "dashboard": [ "administrator" ]
-    },
+    "realmRoles": [ "administrator" ],
     "credentials": [{
         "value" : "{{ KEYCLOAK_ADMIN_DEFAULT_PASS }}",
         "temporary" : true,
@@ -1826,9 +1833,7 @@
     "firstName": "End",
     "lastName": "User",
     "username": "{{ KEYCLOAK_USER_DEFAULT_NAME }}",
-    "clientRoles": {
-      "dashboard": [ "user" ]
-    },
+    "realmRoles": [ "user" ],
     "credentials": [{
         "value" : "{{ KEYCLOAK_USER_DEFAULT_PASS }}",
         "temporary" : true,
