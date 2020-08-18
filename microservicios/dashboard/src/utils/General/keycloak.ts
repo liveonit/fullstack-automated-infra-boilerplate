@@ -37,10 +37,8 @@ export const logout = () => {
 export const getUserRoles = (): String[] => {
   const base64Payload = getToken().split('.')[1];
   const payload = JSON.parse(atob(base64Payload))
-  return payload.realm_access
-    ? payload.realm_access.roles !== undefined
-      ? payload.realm_access.roles
-      : []
+  return (payload.resource_access && payload.resource_access.dashboard && payload.resource_access.dashboard.roles)
+    ? payload.resource_access.dashboard.roles
     : []
 }
 
@@ -48,9 +46,10 @@ export const getUserRoles = (): String[] => {
 export const getUserInfo = (): IUser => {
   const base64Payload = getToken().split('.')[1];
   const payload = JSON.parse(atob(base64Payload))
-  const roles = payload.realm_access ? payload.realm_access.roles !== undefined
-    ? payload.realm_access.roles
-    : []
+  const roles = (payload.resource_access &&
+    payload.resource_access.dashboard &&
+    payload.resource_access.dashboard.roles)
+    ? payload.resource_access.dashboard.roles
     : []
   const reduced: IUser = { ...payload, roles }
   return reduced

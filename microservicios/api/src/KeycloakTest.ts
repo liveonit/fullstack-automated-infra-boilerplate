@@ -20,24 +20,30 @@ await kcAdminClient.auth({
   clientId: 'admin-cli',
 });
 
-const users = await kcAdminClient.users.find();
-//console.log(users);
+// const users = await kcAdminClient.users.find();
+// console.log(users);
 
 
-const cl = await kcAdminClient.clients.find()
-const clientAccount = cl.filter(c => c.clientId == 'account')[0]
-const clientSecAdmCons = cl.filter(c => c.clientId == 'security-admin-console')[0]
+// const cl = await kcAdminClient.clients.find()
+// const clientAccount = cl.filter(c => c.clientId == 'account')[0]
+// const clientSecAdmCons = cl.filter(c => c.clientId == 'security-admin-console')[0]
 
-await kcAdminClient.clients.update({ id: clientAccount.id }, { ...clientAccount, enabled: true })
-await kcAdminClient.clients.update({ id: clientSecAdmCons.id }, { ...clientSecAdmCons, enabled: true })
-const updCls = await kcAdminClient.clients.find();
+// await kcAdminClient.clients.update({ id: clientAccount.id }, { ...clientAccount, enabled: true })
+// await kcAdminClient.clients.update({ id: clientSecAdmCons.id }, { ...clientSecAdmCons, enabled: true })
+// const updCls = await kcAdminClient.clients.find();
 
-console.log(updCls);
+// console.log(updCls);
 
 kcAdminClient.setConfig({
   realmName: keycloakRealm,
 });
 
-const groups = await kcAdminClient.roles.find();
-//console.log(groups);
+const fsUsers = await kcAdminClient.users.find();
+console.log("fsUsers", fsUsers);
+
+const roles = await Promise.all(fsUsers.map(async u => await kcAdminClient.users.listAvailableRealmRoleMappings({ id: u.id })));
+console.log("role mapping", roles);
+
+const allRolesMappings = "";
+
 })()

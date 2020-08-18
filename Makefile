@@ -11,6 +11,13 @@ up_dev:
 	sleep 30
 	make develop_db_run_api_migrations
 	docker-compose up -d
+
+down_dev:
+	docker-compose down
+
+tear_down_dev:
+	docker-compose down -v
+
 create_config:
 	docker-compose up -d templates
 

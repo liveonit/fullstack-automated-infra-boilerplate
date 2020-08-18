@@ -16,14 +16,12 @@ export class AuthorResolver {
     if (offset && limit) {
       authors = authors.slice(offset, offset + limit + 1)
     }
-    console.log(authors)
     return {
       count,
       limit: limit || authors.length,
       offset: offset || 0,
       items: authors
     }
-
   }
 
   @Query(() => Author)

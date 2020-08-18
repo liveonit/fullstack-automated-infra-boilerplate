@@ -4,6 +4,7 @@ import { UpdateUserInput } from "./types/UpdateUserInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 import { User, PaginatedUsers } from "../../models/User";
 import { kcAdminConn } from "../../utils/helpers/kcAdmin";
+import UserRepresentation from "keycloak-admin/lib/defs/userRepresentation";
 
 @Resolver()
 export class UserResolver {
@@ -11,7 +12,10 @@ export class UserResolver {
   async users(@Arg("limit", { nullable: true }) limit: number,
     @Arg("offset", { nullable: true }) offset: number): Promise<PaginatedUsers> {
     const kcAdmin = await kcAdminConn();
+    const usersA: UserRepresentation[] = await kcAdmin.users.find();
+    console.log("usersA", usersA);
     let users: User[] = await kcAdmin.users.find();
+    console.log("users before respond", users);
     const count = users.length;
     if (offset && limit) {
       users = users.slice(offset, offset + limit + 1)
@@ -24,26 +28,26 @@ export class UserResolver {
     }
   }
 
-  @Query(() => User)
-  user(@Arg("id") id: number) {
+  // @Query(() => User)
+  // user(@Arg("id") id: number) {
     
-  }
+  // }
 
-  @Mutation(() => User)
-  @UseMiddleware([GqlLog])
-  async createUser(@Arg("data") data: CreateUserInput) {
+  // @Mutation(() => User)
+  // @UseMiddleware([GqlLog])
+  // async createUser(@Arg("data") data: CreateUserInput) {
     
-  }
+  // }
 
-  @Mutation(() => User)
-  @UseMiddleware([GqlLog])
-  async updateUser(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateUserInput) {
+  // @Mutation(() => User)
+  // @UseMiddleware([GqlLog])
+  // async updateUser(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateUserInput) {
     
-  }
+  // }
 
-  @Mutation(() => Number)
-  @UseMiddleware([GqlLog])
-  async deleteUser(@Arg("id", type => Int) id: number) {
+  // @Mutation(() => Number)
+  // @UseMiddleware([GqlLog])
+  // async deleteUser(@Arg("id", type => Int) id: number) {
     
-  }
+  // }
 }

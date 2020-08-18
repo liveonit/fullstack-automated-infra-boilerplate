@@ -8,6 +8,7 @@ import { BookResolver } from './resolvers/Book'
 import { AuthorResolver } from './resolvers/Author';
 import { EditionResolver } from './resolvers/Editions';
 import { LogResolver } from './resolvers/Logs'
+import { UserResolver } from "./resolvers/Users";
 import { Env, isEnv } from './utils/environment'
 
 import express, { Application } from 'express'
@@ -36,7 +37,7 @@ async function main() {
 
   // Compilado de graphql `schema` a partir de los resolver y clases con decoradores
   const schema = await buildSchema({
-    resolvers: [BookResolver, AuthorResolver, EditionResolver, LogResolver],
+    resolvers: [BookResolver, AuthorResolver, EditionResolver, LogResolver, UserResolver],
     pubSub: pubsub
   })
 
@@ -71,7 +72,7 @@ async function main() {
 
 
   server.listen(
-    { host: '0.0.0.0', port: parseInt(port) },
+    { host: '0.0.0.0', port: parseInt(port,10) },
     (): void => {
       console.log(`Enviornment: ===>>> ${nodeEnv} <<<===`);
       console.log(`\n🚀      Express server is now running on http://localhost:${port}`);

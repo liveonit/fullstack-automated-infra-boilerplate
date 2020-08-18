@@ -2,12 +2,27 @@ import { InputType, Field, Int } from "type-graphql";
 
 @InputType()
 export class UpdateUserInput {
-  @Field({ nullable: true })
-  name?: string;
+  @Field(() => String)
+  username?: string;
 
-  @Field({ nullable: true })
-  country?: string;
+  @Field(() => Boolean)
+  enabled?: boolean;
 
-  @Field(type => Int, { nullable: true })
-  age?: number;
+  @Field(() => String)
+  email?: string;
+
+  @Field(() => String)
+  federationLink?: string;
+
+  @Field(() => String)
+  firstName?: string;
+
+  @Field(() => [String])
+  groups?: string[];
+
+  @Field(() => String)
+  lastName?: string;
+
+  @Field(() => [String])
+  realmRoles?: string[];
 }
