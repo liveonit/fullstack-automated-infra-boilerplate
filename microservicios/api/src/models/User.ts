@@ -13,20 +13,26 @@ export class User implements UserRepresentation {
   @Field(()=> String)
   id?: string;
 
-  @Field(() => Int)
-  createdTimestamp?: number;
+  @Field(() => String)
+  username: string;
+
+  @Field(() => Boolean)
+  enabled: boolean;
+
+  @Field(() => Boolean)
+  totp: boolean;
+
+  @Field(() => Boolean)
+  emailVerified: boolean;
 
   @Field(() => String)
-  username?: string;
+  firstName?: string;
 
-  @Field(() => Boolean)
-  enabled?: boolean;
+  @Field(() => String)
+  lastName?: string;
 
-  @Field(() => Boolean)
-  totp?: boolean;
-
-  @Field(() => Boolean)
-  emailVerified?: boolean;
+  @Field(() => String)
+  email?: string;
 
   @Field(() => [String])
   disableableCredentialTypes?: string[];
@@ -37,33 +43,8 @@ export class User implements UserRepresentation {
   @Field(() => Int)
   notBefore?: number;
 
-  @Field(() => String)
-  email?: string;
-
-
-  @Field(() => String)
-  federationLink?: string;
-
-  @Field(() => String)
-  firstName?: string;
-
-  @Field(() => [String])
-  groups?: string[];
-
-  @Field(() => String)
-  lastName?: string;
-
-  @Field(() => String)
-  origin?: string;
-
   @Field(() => [String])
   realmRoles?: string[];
-
-  @Field(() => String)
-  self?: string;
-
-  @Field(() => String)
-  serviceAccountClientId?: string;
 }
 
 @ObjectType()

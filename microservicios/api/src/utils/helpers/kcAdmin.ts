@@ -1,16 +1,19 @@
 import KcAdminClient from 'keycloak-admin';
 import { ConnectionConfig } from 'keycloak-admin/lib/client';
+import { User } from '../../models/User';
 
 const keycloakRealm = process.env.KEYCLOAK_RELM || 'fullstack'
-const keycloakUser = process.env.KEYCLOAK_USER || 'admin'
-const keycloakPassword = process.env.KEYCLOAK_PASSWORD || 'admin'
+const keycloakUser = process.env.KEYCLOAK_USER || 'keycloak'
+const keycloakPassword = process.env.KEYCLOAK_PASSWORD || 'keycloakPass'
 const keycloakLocalUrl = process.env.KEYCLOAK_LOCAL_URL || 'http://keycloak:8080/auth'
+const keycloakClientID = "dashboard";
 const connConfig: ConnectionConfig = {
   baseUrl: keycloakLocalUrl,
   realmName: "master"
 }
 
-export const kcAdminConn: () => Promise<KcAdminClient | undefined> = async () => {
+
+export const kcConnect: () => Promise<KcAdminClient | undefined> = async () => {
   const kcAdminClient = new KcAdminClient(connConfig);
   try {
     await kcAdminClient.auth({
@@ -24,22 +27,48 @@ export const kcAdminConn: () => Promise<KcAdminClient | undefined> = async () =>
     });
     return kcAdminClient;
   } catch (err) {
-    console.error("Error: Can't connect with keycloak admin-cli. ", err);
-    return undefined;
+    console.error("Can't connect with keylocak admin. Error: ", err);
   }
 }
 
-  // const users = await kcAdminClient.users.find();
+export const getRoles = async () => {
+  const kcAdmin = await kcConnect();
+  const roles = await kcAdmin.roles.find();
+  return roles
+}
 
-  // const cl = await kcAdminClient.clients.find()
-  // const clientAccount = cl.find(c => c.clientId === 'account')
-  // const clientSecAdmCons = cl.find(c => c.clientId === 'security-admin-console')
+export const getUsers = async () => {
+  const kcAdmin = await kcConnect();
+  const users = await kcAdmin.users.find();
+  return users
+}
 
-  // await kcAdminClient.clients.update({ id: clientAccount.id }, { ...clientAccount, enabled: true })
-  // await kcAdminClient.clients.update({ id: clientSecAdmCons.id }, { ...clientSecAdmCons, enabled: true })
-  // const updCls = await kcAdminClient.clients.find();
+export const getUsersWithRoles = async () => {
+  const kcAdmin = await kcConnect();
+  const users = await kcAdmin.users.find();
+  const userWithRoles = await Promise.all(users.map(async u => {
+    const realmRoles = (await kcAdmin.users.listRealmRoleMappings({ id: u.id })).map(r => r.name)
+    delete u.access;
+    return { ...u, realmRoles } as User
+  }));
+  return userWithRoles;
+}
 
-  // console.log(updCls);
+export const getUserWithRoles = async (id: string) => {
+  const kcAdmin = await kcConnect();
+  const user = await kcAdmin.users.findOne({ id });
+  const realmRoles = (await kcAdmin.users.listRealmRoleMappings({ id })).map(r => r.name);
+  delete user.access;
+  return { ...user, realmRoles } as User;
+}
 
-
-  // const groups = await kcAdminClient.roles.find();
+if (require.main === module) {
+  (async () => {
+    const roles = await getRoles();
+    const users = await getUsers();
+    const userWithRoles = await getUsersWithRoles();
+    console.log(roles);
+    console.log(users);
+    console.log(userWithRoles);
+  })()
+}

@@ -4,29 +4,22 @@ import { Edition } from "../../../models/Edition";
 
 @InputType()
 export class CreateUserInput {
-
   @Field(() => String)
-  username?: string;
+  username: string;
 
   @Field(() => Boolean)
-  enabled?: boolean;
+  enabled: boolean;
 
   @Field(() => String)
-  email?: string;
+  firstName: string;
 
   @Field(() => String)
-  federationLink?: string;
+  lastName: string;
 
   @Field(() => String)
-  firstName?: string;
+  email: string;
 
   @Field(() => [String])
-  groups?: string[];
-
-  @Field(() => String)
-  lastName?: string;
-
-  @Field(() => [String])
-  realmRoles?: string[];
+  realmRoles: string[];
 
 }

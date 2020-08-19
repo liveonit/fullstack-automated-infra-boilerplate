@@ -3,19 +3,17 @@ import { CreateUserInput } from "./types/CreateUserInput";
 import { UpdateUserInput } from "./types/UpdateUserInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 import { User, PaginatedUsers } from "../../models/User";
-import { kcAdminConn } from "../../utils/helpers/kcAdmin";
 import UserRepresentation from "keycloak-admin/lib/defs/userRepresentation";
+import { getUsersWithRoles, kcConnect, getUserWithRoles, getRoles } from "../../utils/helpers/kcAdmin";
+import { RenameTypes } from "apollo-server-express";
+import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
 
 @Resolver()
 export class UserResolver {
   @Query(() => PaginatedUsers)
   async users(@Arg("limit", { nullable: true }) limit: number,
     @Arg("offset", { nullable: true }) offset: number): Promise<PaginatedUsers> {
-    const kcAdmin = await kcAdminConn();
-    const usersA: UserRepresentation[] = await kcAdmin.users.find();
-    console.log("usersA", usersA);
-    let users: User[] = await kcAdmin.users.find();
-    console.log("users before respond", users);
+    let users = await getUsersWithRoles();
     const count = users.length;
     if (offset && limit) {
       users = users.slice(offset, offset + limit + 1)
@@ -28,26 +26,41 @@ export class UserResolver {
     }
   }
 
-  // @Query(() => User)
-  // user(@Arg("id") id: number) {
-    
-  // }
+  @Query(() => User)
+  async user(@Arg("id") id: string) {
+    const kcAdmin = await kcConnect();
+    const user = await kcAdmin.users.findOne({ id });
+    return user as User;
+  }
 
-  // @Mutation(() => User)
-  // @UseMiddleware([GqlLog])
-  // async createUser(@Arg("data") data: CreateUserInput) {
-    
-  // }
+  @Mutation(() => User)
+  @UseMiddleware([GqlLog])
+  async createUser(@Arg("data") data: CreateUserInput) {
+    const kcAdmin = await kcConnect();
+    const { id } = await kcAdmin.users.create(data);
+    const roles = (await getRoles()).filter(
+      r => data.realmRoles.includes(r.name)).map(r =>
+        ({ id: r.id, name: r.name } as RoleMappingPayload));
+    console.log(roles);
+    await kcAdmin.users.addRealmRoleMappings({ id, roles })
+    const user = await getUserWithRoles(id);
+    return user;
+  }
 
-  // @Mutation(() => User)
-  // @UseMiddleware([GqlLog])
-  // async updateUser(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateUserInput) {
-    
-  // }
+  @Mutation(() => User)
+  @UseMiddleware([GqlLog])
+  async updateUser(@Arg("id") id: string, @Arg("data") data: UpdateUserInput) {
+    const kcAdmin = await kcConnect();
+    await kcAdmin.users.update({ id }, data);
+    const user = await kcAdmin.users.findOne({ id });
+    return user;
+  }
 
-  // @Mutation(() => Number)
-  // @UseMiddleware([GqlLog])
-  // async deleteUser(@Arg("id", type => Int) id: number) {
-    
-  // }
+  @Mutation(() => String)
+  @UseMiddleware([GqlLog])
+  async deleteUser(@Arg("id") id: string) {
+    const kcAdmin = await kcConnect();
+    await kcAdmin.users.del({ id });
+    return id;
+  }
 }
