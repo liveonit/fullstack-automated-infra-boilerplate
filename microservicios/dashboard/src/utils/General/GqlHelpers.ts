@@ -77,3 +77,16 @@ export const createMutationToDeleteItem = (entityName: string) => {
   `;
   return REMOVE_MUTATION;
 }
+
+export const createQueryToSubscribe = (entityName: string, properties: string[]) => {
+  const entitiesName = entityName.toLowerCase() + "s"
+  const attr = properties.map(s => s !== "id" ? `        ${s}` : "").join("\n")
+  const SUBSCRIPTION_QUERY = gql`
+    subscription {
+      ${entitiesName}Subscription {
+        id\n${attr}
+      }
+    }
+    `;
+  return SUBSCRIPTION_QUERY
+}

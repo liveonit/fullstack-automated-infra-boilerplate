@@ -7,8 +7,7 @@ import {
   useMutation,
 } from "@apollo/client";
 
-import { Subtract, Assign } from "utility-types";
-import { type } from "os";
+import { Subtract } from "utility-types";
 
 interface InjectedGqlHoCProps {
   items: any[];

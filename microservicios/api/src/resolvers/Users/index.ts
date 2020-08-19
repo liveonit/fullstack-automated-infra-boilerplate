@@ -3,9 +3,7 @@ import { CreateUserInput } from "./types/CreateUserInput";
 import { UpdateUserInput } from "./types/UpdateUserInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 import { User, PaginatedUsers } from "../../models/User";
-import UserRepresentation from "keycloak-admin/lib/defs/userRepresentation";
 import { getUsersWithRoles, kcConnect, getUserWithRoles, getRoles } from "../../utils/helpers/kcAdmin";
-import { RenameTypes } from "apollo-server-express";
 import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
 
 @Resolver()
