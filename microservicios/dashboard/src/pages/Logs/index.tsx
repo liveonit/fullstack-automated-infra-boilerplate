@@ -4,8 +4,6 @@ import Table from "./Table";
 import { HeaderToolbar } from "../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../components/Tables/FooterToolbar";
 
-import { gql } from "@apollo/client";
-
 import Fuse from "fuse.js";
 import { Spinner } from "@patternfly/react-core";
 import gqlHoC from "../../utils/General/GqlHoC";
@@ -102,12 +100,12 @@ const LogsPage: React.FC<LogsPageProps> = ({
     endDate?: number;
   }) => {
     if (startDate && endDate) {
-      console.log("startDate", startDate + "--- ", new Date(startDate || 0));
-      console.log("endDate", endDate + "---- ", new Date(endDate || 0));
+      console.log("startDate", startDate + "--- ", new Date(startDate));
+      console.log("endDate", endDate + "---- ", new Date(endDate));
       setState({
         ...state,
-        startDate: startDate || state.startDate,
-        endDate: endDate || state.endDate,
+        startDate: startDate,
+        endDate: endDate,
       });
       unsubscribe();
     } else {
