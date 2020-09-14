@@ -5,23 +5,21 @@ import {
   Table as PatternflyTable,
   TableVariant,
   TableHeader,
-  TableBody,
-  sortable,
+  TableBody
 } from "@patternfly/react-table";
+
 import { onSort } from "../../../utils/Tables";
+import { EntityType, COLUMNS } from ".";
+import _ from "lodash";
 
-const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
-  { key: "unixStartTime", title: "Timestamp", transforms: [sortable] },
-  { key: "operation", title: "Operation", transforms: [sortable] },
-  { key: "operationType", title: "Operation Type", transforms: [sortable] },
-  { key: "payload", title: "Payload", transforms: [sortable] },
-  { key: "executionTime", title: "Execution Time", transforms: [sortable] },
-  { key: "resultPayload", title: "Payload Result", transforms: [sortable] },
-];
+interface TableProps {
+  items: EntityType[];
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+}
 
-function Table({ items }: { items: any[] }) {
-  let [state, setState] = React.useState<{ rows: any[], sortBy: any}>({
+const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
+  let [state, setState] = React.useState<{ rows: any[]; sortBy: any }>({
     rows: [],
     sortBy: {},
   });
@@ -34,6 +32,16 @@ function Table({ items }: { items: any[] }) {
     <PatternflyTable
       aria-label="Logs Table"
       sortBy={state.sortBy}
+      actions={[
+        {
+          title: "Edit",
+          onClick: (a, b, rowData) => onEdit(parseInt(_.get(rowData, "cells.0"))),
+        },
+        {
+          title: "Delete",
+          onClick: (a, b, rowData) => onDelete(parseInt(_.get(rowData, "cells.0"))),
+        },
+      ]}
       onSort={(_, index, direction) =>
         setState(
           onSort({
@@ -57,15 +65,15 @@ function Table({ items }: { items: any[] }) {
       />
     </PatternflyTable>
   );
-}
+};
 
 function calculateRows(items: any[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "unixStartTime") {
+      if (column.key === "xxx") {
         return {
-          title: new Date(item.unixStartTime).toLocaleString(),
+          title: "modify value of column",
         };
       } else return get(item, column.key);
     }),

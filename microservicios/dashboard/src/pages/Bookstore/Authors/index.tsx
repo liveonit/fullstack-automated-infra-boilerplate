@@ -1,7 +1,9 @@
 import React from "react";
 import { Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-
+import { sortable,
+} from "@patternfly/react-table";
+import { capitalize } from '../../../utils/General/capitalize'
 import Table from "./Table";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
@@ -20,32 +22,41 @@ import {
   EntityProp,
 } from "../../../utils/General/GqlHelpers";
 
-const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
-const FUSE_OPTIONS = {
-  keys: ["name", "age", "country"],
-};
 
 //=============================================================================
 //#region Entity definition
 
-const ENTITY_NAME = "Author"
-export type Author = {
+export const ENTITY_NAME = "Author"
+
+export type EntityType = {
   id: number;
   name: string;
   age: number;
   country?: string;
 };
 
-const ENTITY_PROPS: EntityProp[] = [
+export const ENTITY_PROPS: EntityProp[] = [
   { name: "name", type: "String", required: true },
   { name: "age", type: "Int", required: true },
   { name: "country", type: "String", required: false },
 ]
 
+export const COLUMNS = [
+  { key: "id", title: "Id", transforms: [sortable] },
+  ...(ENTITY_PROPS.map(e => ({ key: e.name, title: capitalize(e.name), transforms: [sortable] })))
+];
+
+const FUSE_OPTIONS = {
+  keys: ENTITY_PROPS.map(e => e.name),
+};
+
 //#endregion
 //=============================================================================
 
-interface AuthorsPageProps {
+const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
+
+
+interface EntityPageProps {
   get: () => void;
   create: ({
     variables: { name, age, country },
@@ -59,20 +70,20 @@ interface AuthorsPageProps {
   }) => void;
   remove: ({ variables: { id } }: { variables: { id: number } }) => void;
   loading: boolean;
-  items: Author[];
+  items: EntityType[];
   count: number;
 }
 
-interface AuthorPageState {
+interface EntityPageState {
   currentPage: number;
   pageLimit: number;
   searchText: string;
   isCreateUpdateModalOpen: boolean;
   isDeleteModalOpen: boolean;
-  author?: Author;
+  entity?: EntityType;
 }
 
-const AuthorsPage: React.FC<AuthorsPageProps> = ({
+const EntityPage: React.FC<EntityPageProps> = ({
   get,
   create,
   update,
@@ -81,13 +92,13 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   items,
   count,
 }) => {
-  const [state, setState] = React.useState<AuthorPageState>({
+  const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
     searchText: "",
     isCreateUpdateModalOpen: false,
     isDeleteModalOpen: false,
-    author: undefined,
+    entity: undefined,
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
@@ -123,16 +134,16 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
     });
 
   const onCreate = () => {
-    setState({ ...state, author: undefined, isCreateUpdateModalOpen: true });
+    setState({ ...state, entity: undefined, isCreateUpdateModalOpen: true });
   };
   const onEdit = (id: number) => {
-    const author = _.find(items, (i) => i.id === id);
-    setState({ ...state, author, isCreateUpdateModalOpen: true });
+    const entity = _.find(items, (i) => i.id === id);
+    setState({ ...state, entity, isCreateUpdateModalOpen: true });
   };
 
   const onDelete = (id: number) => {
-    const author = _.find(items, (i) => i.id === id);
-    setState({ ...state, author, isDeleteModalOpen: true });
+    const entity = _.find(items, (i) => i.id === id);
+    setState({ ...state, entity, isDeleteModalOpen: true });
   };
 
   //#endregion
@@ -164,14 +175,14 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
             hasCreateEntity={true}
             CreateEntityChild={
               <IconButton icon={<Icon icon="plus" />} onClick={onCreate}>
-                Create Author
+                {`Create ${ENTITY_NAME}`}
               </IconButton>
             }
           />
           {state.isCreateUpdateModalOpen && (
             <CreateUpdateModal
               onClose={onCloseAnyModal}
-              author={state.author}
+              entity={state.entity}
               create={create}
               update={update}
             />
@@ -179,7 +190,7 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
           {state.isDeleteModalOpen && (
             <DeleteModal
               onClose={onCloseAnyModal}
-              author={state.author}
+              entity={state.entity}
               rm={remove}
             />
           )}
@@ -200,10 +211,10 @@ const AuthorsPage: React.FC<AuthorsPageProps> = ({
   );
 };
 
-export default gqlHoC<Author>({
+export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
   readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
   removeGql: createMutationToDeleteItem(ENTITY_NAME),
-})(AuthorsPage);
+})(EntityPage);

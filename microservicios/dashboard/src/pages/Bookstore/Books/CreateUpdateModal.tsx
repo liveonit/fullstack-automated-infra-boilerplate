@@ -10,33 +10,32 @@ import {
 import { EntityType, ENTITY_NAME } from ".";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import {
-  validateFullName,
-  validateAge,
-  validateCountry,
+  validateString,
   FormInputControl,
-} from "../../../utils/Forms";
+  validateId
+} from "../../../components/Froms/Utils";
 import _ from "lodash";
 
 interface CreateUpdateModalProps {
   onClose: () => void;
   entity?: EntityType;
   create?: ({
-    variables: { name, age, country },
+    variables: { title, authorId, isPublished },
   }: {
     variables: {
-      name: String;
-      age?: number;
-      country?: String;
+      title: string;
+      authorId?: number;
+      isPublished?: boolean;
     };
   }) => void;
   update?: ({
-    variables: { id, name, age, country },
+    variables: { id, title, authorId, isPublished },
   }: {
     variables: {
       id: number;
-      name?: String;
-      age?: number;
-      country?: String;
+      title?: string;
+      authorId?: number;
+      isPublished?: boolean;
     };
   }) => void;
 }
@@ -48,26 +47,26 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
   create,
 }) => {
   const [state, setState] = React.useState<{
-    name: FormInputControl;
-    age: FormInputControl;
-    country: FormInputControl;
+    title: FormInputControl;
+    authorId: FormInputControl;
+    isPublished: FormInputControl;
   }>({
-    name: {
-      value: entity?.name || "",
+    title: {
+      value: entity?.title || "",
       required: true,
-      validate: validateFullName,
+      validate: validateString,
       validated: "default",
     },
-    age: {
-      value: entity?.age?.toString() || "",
+    authorId: {
+      value: entity?.authorId?.toString() || "",
       required: true,
-      validate: validateAge,
+      validate: validateId,
       validated: "default",
     },
-    country: {
-      value: entity?.country || "",
+    isPublished: {
+      value: entity?.isPublished ? "true" : "false",
       required: false,
-      validate: validateCountry,
+      validate: () => "success",
       validated: "default",
     },
   });
@@ -91,9 +90,9 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
 
   const isUpdate = entity !== undefined;
   const id: number = entity !== undefined ? entity.id : 0;
-  const name = state.name.value;
-  const age = state.age.value;
-  const country = state.country.value;
+  const title = state.title.value;
+  const authorId = state.authorId.value;
+  const isPublished = state.isPublished.value;
 
   return (
     <Modal
@@ -109,10 +108,10 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
               isUpdate
                 ? update &&
                   update({
-                    variables: { id, name, age: parseInt(age), country },
+                    variables: { id, title, authorId: parseInt(authorId), isPublished: (isPublished === 'true')  },
                   })
                 : create &&
-                  create({ variables: { name, age: parseInt(age), country } });
+                  create({ variables: { title, authorId: parseInt(authorId), isPublished: (isPublished === 'true') } });
                 onClose();
             }
           }}
@@ -126,32 +125,32 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
     >
       <Form>
       <FormGroup
-          label="Full Name"
+          label="Title"
           helperText={
             <FormHelperText
               icon={<ExclamationCircleIcon />}
-              isHidden={state.name.validated !== "default"}
+              isHidden={state.title.validated !== "default"}
             >
-              Please enter Author's full name
+              Please enter Title
             </FormHelperText>
           }
-          helperTextInvalid="Full name has to be at least two words"
+          helperTextInvalid="Title cannot be undefined"
           helperTextInvalidIcon={<ExclamationCircleIcon />}
-          fieldId="name-1"
-          validated={state.name.validated}
+          fieldId="title-1"
+          validated={state.title.validated}
         >
           <TextInput
-            validated={state.name.validated}
-            value={state.name.value}
+            validated={state.title.validated}
+            value={state.title.value}
             id="name-1"
             type="text"
             onChange={(v) =>
               setState({
                 ...state,
-                name: {
-                  ...state.name,
+                title: {
+                  ...state.title,
                   value: v,
-                  validated: state.name.validate(v, state.name.required),
+                  validated: state.title.validate(v, state.title.required),
                 },
               })
             }

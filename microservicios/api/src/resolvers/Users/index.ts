@@ -39,7 +39,6 @@ export class UserResolver {
     const roles = (await getRoles()).filter(
       r => data.realmRoles.includes(r.name)).map(r =>
         ({ id: r.id, name: r.name } as RoleMappingPayload));
-    console.log(roles);
     await kcAdmin.users.addRealmRoleMappings({ id, roles })
     const user = await getUserWithRoles(id);
     return user;

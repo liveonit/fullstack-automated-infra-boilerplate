@@ -5,22 +5,15 @@ import {
   Table as PatternflyTable,
   TableVariant,
   TableHeader,
-  TableBody,
-  sortable,
+  TableBody
 } from "@patternfly/react-table";
+
 import { onSort } from "../../../utils/Tables";
-import { Author } from ".";
+import { EntityType, COLUMNS } from ".";
 import _ from "lodash";
 
-const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
-  { key: "name", title: "Name", transforms: [sortable] },
-  { key: "country", title: "Country", transforms: [sortable] },
-  { key: "age", title: "Age", transforms: [sortable] },
-];
-
 interface TableProps {
-  items: Author[];
+  items: EntityType[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }

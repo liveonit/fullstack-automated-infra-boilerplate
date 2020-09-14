@@ -17,3 +17,9 @@ export const validateFullName: ValidateFunction = (s,r) =>
 
 export const validateCountry: ValidateFunction = (s,r) =>
   s === "" ? (r ? "error" : "default") : /^[a-zA-Z]+[a-zA-Z ]+?$/.test(s) ? "success" : "error";
+
+export const validateString: ValidateFunction = (s,r) =>
+  (s === ""  && r) ? "error" : "success";
+
+export const validateId: ValidateFunction = (s,r) =>
+  s === "" ? (r ? "error" : "default") : /^[1-9][0-9]*$/.test(s) ? "success" : "error";

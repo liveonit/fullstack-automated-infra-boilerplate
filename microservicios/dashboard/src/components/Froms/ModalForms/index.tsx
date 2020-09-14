@@ -7,97 +7,72 @@ import {
   TextInput,
   FormHelperText,
 } from "@patternfly/react-core";
-import { EntityType, ENTITY_NAME } from ".";
+
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import {
-  validateFullName,
-  validateAge,
-  validateCountry,
   FormInputControl,
-} from "../../../utils/Forms";
+} from "../Utils";
+
 import _ from "lodash";
 
-interface CreateUpdateModalProps {
+import { Field } from "../FieldsTypes";
+
+type Entity = { id: number, name: string } & Object;
+
+interface GenericModalProps {
+  title: string;
+  entity?: Entity;
   onClose: () => void;
-  entity?: EntityType;
-  create?: ({
-    variables: { name, age, country },
-  }: {
-    variables: {
-      name: String;
-      age?: number;
-      country?: String;
-    };
-  }) => void;
-  update?: ({
-    variables: { id, name, age, country },
-  }: {
-    variables: {
-      id: number;
-      name?: String;
-      age?: number;
-      country?: String;
-    };
-  }) => void;
+  fields?: Field[];
+  create?: ({ variables }: { variables: Object }) => void;
+  update?: ({ variables }: { variables: Object }) => void;
 }
 
-const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
-  onClose,
+interface State {
+  [key: string]: FormInputControl
+}
+
+const CreateUpdateModal: React.FC<GenericModalProps> = ({
+  title,
   entity,
+  onClose,
+  fields,
   update,
   create,
 }) => {
-  const [state, setState] = React.useState<{
-    name: FormInputControl;
-    age: FormInputControl;
-    country: FormInputControl;
-  }>({
-    name: {
-      value: entity?.name || "",
-      required: true,
-      validate: validateFullName,
-      validated: "default",
-    },
-    age: {
-      value: entity?.age?.toString() || "",
-      required: true,
-      validate: validateAge,
-      validated: "default",
-    },
-    country: {
-      value: entity?.country || "",
-      required: false,
-      validate: validateCountry,
-      validated: "default",
-    },
-  });
+  const [state, setState] = React.useState<State>({});
+  
+  React.useEffect(() => {
+    const o: any = {}
+    fields?.forEach((f) => (
+      o[f.keyName] = {
+        value: f.initValue,
+        required: f.required,
+        validate: f.validateFunction,
+        validated: f.validateFunction(f.initValue, f.required)
+      } as FormInputControl
+    ));
+    setState(o);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const validateForm = () => {
-    const form =  {...state}
+    const form = { ...state };
 
     for (const key in state) {
-      const f: FormInputControl = _.get(form, key)
-      _.set(form, `${key}.validated`, f.validate(f.value,f.required))
+      const f: FormInputControl = _.get(form, key);
+      _.set(form, `${key}.validated`, f.validate(f.value, f.required));
     }
-    setState(form)
+    setState(form);
     return Object.values(form).reduce(
-      (v, c) =>
-        v &&
-        (c.validated === "success" || c.validated === "default"),
+      (v, c) => v && ((c as FormInputControl).validated === "success" || (c as FormInputControl).validated === "default"),
       true
     );
-  }
-
-
-  const isUpdate = entity !== undefined;
-  const id: number = entity !== undefined ? entity.id : 0;
-  const name = state.name.value;
-  const age = state.age.value;
-  const country = state.country.value;
+  };
 
   return (
     <Modal
-      title={`Create ${ENTITY_NAME}`}
+      title={title}
       isOpen={true}
       onClose={onClose}
       actions={[
@@ -105,19 +80,21 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
           key="create"
           variant="primary"
           onClick={(e) => {
-            if (validateForm()) {
-              isUpdate
+            if (state && validateForm()) {
+              const attr: any = {}
+              Object.keys(state).forEach(k => attr[k] = state[k].value)
+              entity !== undefined
                 ? update &&
                   update({
-                    variables: { id, name, age: parseInt(age), country },
+                    variables: { id: entity.id, ...attr },
                   })
                 : create &&
-                  create({ variables: { name, age: parseInt(age), country } });
-                onClose();
+                  create({ variables: attr });
+              onClose();
             }
           }}
         >
-          {isUpdate ? "Update" : "Create"}
+          {entity !== undefined ? "Update" : "Create"}
         </Button>,
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
@@ -125,38 +102,48 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
       ]}
     >
       <Form>
-      <FormGroup
-          label="Full Name"
-          helperText={
-            <FormHelperText
-              icon={<ExclamationCircleIcon />}
-              isHidden={state.name.validated !== "default"}
-            >
-              Please enter Author's full name
-            </FormHelperText>
-          }
-          helperTextInvalid="Full name has to be at least two words"
-          helperTextInvalidIcon={<ExclamationCircleIcon />}
-          fieldId="name-1"
-          validated={state.name.validated}
-        >
-          <TextInput
-            validated={state.name.validated}
-            value={state.name.value}
-            id="name-1"
-            type="text"
-            onChange={(v) =>
-              setState({
-                ...state,
-                name: {
-                  ...state.name,
-                  value: v,
-                  validated: state.name.validate(v, state.name.required),
-                },
-              })
+        {
+          fields?.forEach(f => <FormGroup
+            label="Full Name"
+            helperText={
+              <FormHelperText
+                icon={<ExclamationCircleIcon />}
+                isHidden={state[f.keyName].validated !== "default"}
+              >
+                {f.helperText}
+              </FormHelperText>
             }
-          />
-        </FormGroup>
+            helperTextInvalid={f.helperTextInvalid}
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            fieldId={f.keyName}
+            validated={state[f.keyName].validated}
+          >
+            {
+              f.type === "TextInput" 
+              ? <p>Is text input</p>
+              : f.type === "SelectWithFilter"
+              ? <p> Is select with filter</p>
+              : undefined
+            }
+            <TextInput
+              validated={state.name.validated}
+              value={state.name.value}
+              id="name-1"
+              type="text"
+              onChange={(v) =>
+                setState({
+                  ...state,
+                  name: {
+                    ...state.name,
+                    value: v,
+                    validated: state.name.validate(v, state.name.required),
+                  },
+                })
+              }
+            />
+          </FormGroup>)
+        }
+        
 
         <FormGroup
           label="Age"
