@@ -13,9 +13,11 @@ export interface SelectionOption {
 }
 
 interface Props {
-  selected: SelectOptionObject;
+  keyName: string;
+  label: string;
+  selected?: string;
   options: SelectionOption[];
-  handleChangeSelected: (selected: SelectOptionObject | null) => void;
+  handleChangeSelected: (selected?: string) => void;
 }
 
 interface State {
@@ -25,8 +27,8 @@ interface State {
   hasOnCreateOption: boolean;
 }
 
-const TypeaheadSelectInput: React.FC<Props> = (props) => {
-  const { selected, options, handleChangeSelected } = props;
+const SelectWithFilter: React.FC<Props> = (props) => {
+  const { keyName, label, selected, options, handleChangeSelected } = props;
   const [state, setState] = React.useState<State>({
     isOpen: false,
     isDisabled: false,
@@ -48,7 +50,7 @@ const TypeaheadSelectInput: React.FC<Props> = (props) => {
   ) => {
     if (isPlaceholder) clearSelection();
     else {
-      handleChangeSelected(selection);
+      handleChangeSelected(selection.toString());
       setState({
         ...state,
         isOpen: false,
@@ -58,7 +60,7 @@ const TypeaheadSelectInput: React.FC<Props> = (props) => {
   };
 
   const clearSelection = () => {
-    handleChangeSelected(null);
+    handleChangeSelected();
     setState({
       ...state,
       isOpen: false,
@@ -67,19 +69,18 @@ const TypeaheadSelectInput: React.FC<Props> = (props) => {
 
 
   const { isDisabled, isCreatable } = state;
-  const titleId = "typeahead-select-id-1";
   return (
     <div>
       <Select
         variant={SelectVariant.typeahead}
-        typeAheadAriaLabel="Select a state"
+        typeAheadAriaLabel={label}
         onToggle={onToggle}
         onSelect={onSelect}
         onClear={clearSelection}
         selections={selected}
         isOpen={state.isOpen}
-        aria-labelledby={titleId}
-        placeholderText="Select a state"
+        aria-labelledby={keyName}
+        placeholderText={label}
         isDisabled={isDisabled}
         isCreatable={isCreatable}
       >
@@ -96,4 +97,4 @@ const TypeaheadSelectInput: React.FC<Props> = (props) => {
   );
 };
 
-export default TypeaheadSelectInput
+export default SelectWithFilter

@@ -14,7 +14,7 @@ import {
   validateAge,
   validateCountry,
   FormInputControl,
-} from "../../../utils/Forms";
+} from "../../../components/Froms/Utils";
 import _ from "lodash";
 
 interface CreateUpdateModalProps {

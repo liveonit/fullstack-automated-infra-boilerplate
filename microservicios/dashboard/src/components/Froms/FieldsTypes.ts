@@ -6,7 +6,9 @@ type FieldType = "TextInput" | "SelectWithFilter"
 
 export interface Field {
   keyName: string;
+  label: string;
   type: FieldType;
+  testInputType?: "number" | "time" | "text" | "date" | "datetime-local" | "email" | "month" | "password" | "search" | "tel" | "url" | undefined;
   helperText: string;
   helperTextInvalid: string;
   initValue: string;
