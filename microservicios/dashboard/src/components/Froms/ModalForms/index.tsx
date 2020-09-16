@@ -16,15 +16,15 @@ import _ from "lodash";
 import { Field } from "../FieldsTypes";
 import SelectWithFilter from "../SelectWithFilter";
 
-type Entity = { id: number; name: string } & Object;
+type Entity = { id: number; name: string } & any;
 
 interface GenericModalProps {
   title: string;
   entity?: Entity;
   onClose: () => void;
-  fields?: Field[];
-  create?: ({ variables }: { variables: Object }) => void;
-  update?: ({ variables }: { variables: Object }) => void;
+  fields: Field[];
+  create?: ({ variables }: { variables: any }) => void;
+  update?: ({ variables }: { variables: any }) => void;
 }
 
 interface State {
@@ -46,10 +46,13 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
     fields?.forEach(
       (f) =>
         (o[f.keyName] = {
-          value: f.initValue,
+          value: (entity && entity[f.keyName]) || "",
           required: f.required,
           validate: f.validateFunction,
-          validated: f.validateFunction(f.initValue, f.required),
+          validated: f.validateFunction(
+            entity && entity[f.keyName]?.value,
+            f.required
+          ),
         } as FormInputControl)
     );
     setState(o);
@@ -85,7 +88,13 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
           onClick={(e) => {
             if (state && validateForm()) {
               const attr: any = {};
-              Object.keys(state).forEach((k) => (attr[k] = state[k].value));
+              Object.keys(state).forEach(
+                (k, i) =>
+                  (attr[k] =
+                    fields[i].testInputType === "number"
+                      ? parseInt(state[k].value || "")
+                      : state[k].value)
+              );
               entity !== undefined
                 ? update &&
                   update({
@@ -104,13 +113,13 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
       ]}
     >
       <Form>
-        {(fields && fields.forEach((f) => (
+        {fields.map((f) => (
           <FormGroup
             label={f.label}
             helperText={
               <FormHelperText
                 icon={<ExclamationCircleIcon />}
-                isHidden={state[f.keyName].validated !== "default"}
+                isHidden={state[f.keyName]?.validated !== "default"}
               >
                 {f.helperText}
               </FormHelperText>
@@ -118,12 +127,12 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
             helperTextInvalid={f.helperTextInvalid}
             helperTextInvalidIcon={<ExclamationCircleIcon />}
             fieldId={f.keyName}
-            validated={state[f.keyName].validated}
+            validated={state[f.keyName]?.validated}
           >
             {f.type === "TextInput" ? (
               <TextInput
-                validated={state.name.validated}
-                value={state.name.value}
+                validated={state[f.keyName]?.validated}
+                value={state[f.keyName]?.value}
                 id={f.keyName}
                 type={f.testInputType}
                 onChange={(v) =>
@@ -132,28 +141,41 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                     [f.keyName]: {
                       ...state[f.keyName],
                       value: v,
-                      validated: state[f.keyName].validate(v, state[f.keyName].required),
+                      validated: state[f.keyName]?.validate(
+                        v,
+                        state[f.keyName]?.required
+                      ),
                     },
                   })
                 }
               />
             ) : f.type === "SelectWithFilter" ? (
               <SelectWithFilter
-              keyName={f.keyName}
-              label={f.label}
-              options={[{ value: "una opc" }, { value: "otra opc" }, { value: "tercer opc"}]}
-              selected={state[f.keyName].value}
-              handleChangeSelected={v => setState({
-                ...state, 
-                [f.keyName]: {
-                  ...state[f.keyName],
-                  value: v,
-                  validated: state[f.keyName].validate(v, state[f.keyName].required)
-              } }) }
-            />
+                keyName={f.keyName}
+                label={f.label}
+                options={[
+                  { value: "una opc" },
+                  { value: "otra opc" },
+                  { value: "tercer opc" },
+                ]}
+                selected={state[f.keyName].value}
+                handleChangeSelected={(v) =>
+                  setState({
+                    ...state,
+                    [f.keyName]: {
+                      ...state[f.keyName],
+                      value: v,
+                      validated: state[f.keyName]?.validate(
+                        v,
+                        state[f.keyName]?.required
+                      ),
+                    },
+                  })
+                }
+              />
             ) : undefined}
           </FormGroup>
-        ))) || <></>}
+        ))}
       </Form>
     </Modal>
   );

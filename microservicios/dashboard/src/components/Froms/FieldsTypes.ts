@@ -11,7 +11,6 @@ export interface Field {
   testInputType?: "number" | "time" | "text" | "date" | "datetime-local" | "email" | "month" | "password" | "search" | "tel" | "url" | undefined;
   helperText: string;
   helperTextInvalid: string;
-  initValue: string;
   required: boolean;
   validateFunction: ValidateFunction
   options?: SelectionOption[]

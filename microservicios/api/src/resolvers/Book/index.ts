@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
-import { Book } from "../../models/Book";
+import { Book, PaginatedBooks } from "../../models/Book";
 import { CreateBookInput } from "./types/CreateBookInput";
 import { UpdateBookInput } from "./types/UpdateBookInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
@@ -13,10 +13,25 @@ export class BookResolver {
     return "world";
   }
 
-  @Query(() => [Book])
-  books() {
-    return Book.find({ relations: ['author', 'editions'] })
+
+  @Query(() => PaginatedBooks)
+  async books(@Arg("limit", { nullable: true }) limit: number,
+    @Arg("offset", { nullable: true }) offset: number): Promise<PaginatedBooks> {
+    let books: Book[];
+    let count: number;
+    books = await Book.find({ relations: ['author'] })
+    count = books.length
+    if (offset && limit) {
+      books = books.slice(offset, offset + limit + 1)
+    }
+    return {
+      count,
+      limit: limit || books.length,
+      offset: offset || 0,
+      items: books
+    }
   }
+
 
   @Mutation(() => Book)
   @UseMiddleware([GqlLog])

@@ -9,7 +9,7 @@ import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 
-import CreateUpdateModal from "./CreateUpdateModal";
+import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "./DeleteModal";
 
 import { gqlHoC } from "../../../utils/General/GqlHoC";
@@ -21,6 +21,7 @@ import {
   createMutationToDeleteItem,
   EntityProp,
 } from "../../../utils/General/GqlHelpers";
+import { validateAge, validateCountry, validateFullName } from "../../../components/Froms/Utils";
 
 
 //=============================================================================
@@ -180,7 +181,34 @@ const EntityPage: React.FC<EntityPageProps> = ({
             }
           />
           {state.isCreateUpdateModalOpen && (
-            <CreateUpdateModal
+            <ModalForm
+              title={state.entity ? "Update Author": "Create Author"}
+              fields={[ 
+                { 
+                  keyName: "name", label: "Full Name", 
+                  helperText: "Please enter Author's full name", helperTextInvalid: "Full name has to be at least two words",
+                  required: true,
+                  type: "TextInput",
+                  validateFunction: validateFullName,
+                  testInputType: "text"
+                },
+                { 
+                  keyName: "age", label: "Age", 
+                  helperText: "Please enter Author's age", helperTextInvalid: "Age has to be a number",
+                  required: true,
+                  type: "TextInput",
+                  validateFunction: validateAge,
+                  testInputType: "number"
+                },
+                { 
+                  keyName: "country", label: "Country", 
+                  helperText: "Please enter Author's country", helperTextInvalid: "If country is set, it has to be at least one word",
+                  required: false,
+                  type: "TextInput",
+                  validateFunction: validateCountry,
+                  testInputType: "text"
+                },
+              ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
               create={create}

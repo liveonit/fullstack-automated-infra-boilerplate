@@ -9,7 +9,7 @@ import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 
-import CreateUpdateModal from "./CreateUpdateModal";
+
 import DeleteModal from "./DeleteModal";
 
 import { gqlHoC } from "../../../utils/General/GqlHoC";
@@ -182,14 +182,14 @@ const EntityPage: React.FC<EntityPageProps> = ({
               </IconButton>
             }
           />
-          {state.isCreateUpdateModalOpen && (
+          {/* {state.isCreateUpdateModalOpen && (
             <CreateUpdateModal
               onClose={onCloseAnyModal}
               entity={state.entity}
               create={create}
               update={update}
             />
-          )}
+          )} */}
           {state.isDeleteModalOpen && (
             <DeleteModal
               onClose={onCloseAnyModal}
