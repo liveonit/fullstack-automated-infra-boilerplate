@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Modal } from "@patternfly/react-core";
-import { EntityType, ENTITY_NAME } from ".";
 
 interface CreateUpdateModalProps {
   onClose: () => void;
-  entity?: EntityType;
+  entityName: string;
+  entity?: any;
   rm: ({
     variables: { id },
   }: {
@@ -16,12 +16,13 @@ interface CreateUpdateModalProps {
 
 const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
   onClose,
+  entityName,
   entity,
   rm,
 }) => {
   return (
     <Modal
-      title={`Delete ${ENTITY_NAME}`}
+      title={`Delete ${entityName}`}
       isOpen={true}
       onClose={onClose}
       actions={[
@@ -40,7 +41,7 @@ const CreateUpdateModal: React.FC<CreateUpdateModalProps> = ({
         </Button>,
       ]}
     >
-      {`Are you sure to delete the ${ENTITY_NAME}?`}
+      {`Are you sure to delete the ${entityName}?`}
     </Modal>
   );
 };

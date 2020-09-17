@@ -1,6 +1,6 @@
 import React from "react";
 
-import Table from "./Table";
+import Table from "../../components/Tables/GenericTable";
 import { HeaderToolbar } from "../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../components/Tables/FooterToolbar";
 
@@ -8,6 +8,8 @@ import Fuse from "fuse.js";
 import { Spinner } from "@patternfly/react-core";
 import gqlHoC from "../../utils/General/GqlHoC";
 import { createQueryToGetItems, createQueryToSubscribe, EntityProp } from "../../utils/General/GqlHelpers";
+import { sortable } from "@patternfly/react-table";
+import _ from "lodash";
 
 const ENTITY_NAME = "Log";
 
@@ -30,9 +32,32 @@ const ENTITY_PROPS: EntityProp[] = [
   { name: "resultPayload", type: "String", required: false },
 ]
 
+const COLUMNS = [
+  { key: "id", title: "Id", transforms: [sortable] },
+  { key: "unixStartTime", title: "Timestamp", transforms: [sortable] },
+  { key: "operation", title: "Operation", transforms: [sortable] },
+  { key: "operationType", title: "Operation Type", transforms: [sortable] },
+  { key: "payload", title: "Payload", transforms: [sortable] },
+  { key: "executionTime", title: "Execution Time", transforms: [sortable] },
+  { key: "resultPayload", title: "Payload Result", transforms: [sortable] },
+];
+
 const FUSE_OPTIONS = {
   keys: ["operation", "operationType", "payload", "resultPayload"],
 };
+
+function transformRows(items: any[]) {
+  if (items === undefined) return [];
+  return items.map((item) => ({
+    cells: COLUMNS.map((column) => {
+      if (column.key === "unixStartTime") {
+        return {
+          title: new Date(item.unixStartTime).toLocaleString(),
+        };
+      } else return _.get(item, column.key);
+    }),
+  }));
+}
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
 
@@ -142,7 +167,10 @@ const LogsPage: React.FC<LogsPageProps> = ({
         <Spinner />
       ) : (
         <>
-          <Table items={tableItems} />
+          <Table
+          columns={COLUMNS}
+          items={tableItems} 
+          transformRows={transformRows}/>
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}

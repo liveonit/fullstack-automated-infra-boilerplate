@@ -4,13 +4,13 @@ import { IconButton, Icon } from "rsuite";
 import { sortable,
 } from "@patternfly/react-table";
 import { capitalize } from '../../../utils/General/capitalize'
-import Table from "./Table";
+import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 
 import ModalForm from "../../../components/Froms/ModalForms";
-import DeleteModal from "./DeleteModal";
+import DeleteModal from "../../../components/DeleteModal";
 
 import { gqlHoC } from "../../../utils/General/GqlHoC";
 import _ from "lodash";
@@ -50,6 +50,20 @@ export const COLUMNS = [
 const FUSE_OPTIONS = {
   keys: ENTITY_PROPS.map(e => e.name),
 };
+
+
+function transformRows(items: any[]) {
+  if (items === undefined) return [];
+  return items.map((item) => ({
+    cells: COLUMNS.map((column) => {
+      if (column.key === "xxx") {
+        return {
+          title: "modify value of column",
+        };
+      } else return _.get(item, column.key);
+    }),
+  }));
+}
 
 //#endregion
 //=============================================================================
@@ -218,12 +232,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
           )}
           {state.isDeleteModalOpen && (
             <DeleteModal
+              entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
               rm={remove}
             />
           )}
-          <Table items={tableItems} onDelete={onDelete} onEdit={onEdit} />
+          <Table columns={COLUMNS} items={tableItems} onDelete={onDelete} onEdit={onEdit} transformRows={transformRows} />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}

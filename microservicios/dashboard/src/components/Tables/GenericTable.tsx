@@ -5,20 +5,22 @@ import {
   Table as PatternflyTable,
   TableVariant,
   TableHeader,
-  TableBody
+  TableBody, ICell
 } from "@patternfly/react-table";
 
-import { onSort } from "../../../utils/Tables";
-import { EntityType, COLUMNS } from ".";
+import { onSort } from "./onSort";
+
 import _ from "lodash";
 
 interface TableProps {
-  items: EntityType[];
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  columns: (string | ICell)[];
+  items: any[];
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
+  transformRows: (items: any[]) => { cells: any }[];
 }
 
-const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
+const Table: React.FC<TableProps> = ({ columns, items, onEdit, onDelete, transformRows }) => {
   let [state, setState] = React.useState<{ rows: any[]; sortBy: any }>({
     rows: [],
     sortBy: {},
@@ -35,11 +37,11 @@ const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
       actions={[
         {
           title: "Edit",
-          onClick: (a, b, rowData) => onEdit(parseInt(_.get(rowData, "cells.0"))),
+          onClick: (a, b, rowData) => onEdit && onEdit(parseInt(_.get(rowData, "cells.0"))),
         },
         {
           title: "Delete",
-          onClick: (a, b, rowData) => onDelete(parseInt(_.get(rowData, "cells.0"))),
+          onClick: (a, b, rowData) => onDelete && onDelete(parseInt(_.get(rowData, "cells.0"))),
         },
       ]}
       onSort={(_, index, direction) =>
@@ -47,13 +49,13 @@ const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
           onSort({
             index,
             direction,
-            key: get(COLUMNS, `${index}.key`),
+            key: get(columns, `${index}.key`),
             rows: state.rows,
           })
         )
       }
-      cells={COLUMNS}
-      rows={calculateRows(state.rows)}
+      cells={columns}
+      rows={transformRows(state.rows)}
       variant={TableVariant.compact}
     >
       <TableHeader />
@@ -66,18 +68,5 @@ const Table: React.FC<TableProps> = ({ items, onEdit, onDelete }) => {
     </PatternflyTable>
   );
 };
-
-function calculateRows(items: any[]) {
-  if (items === undefined) return [];
-  return items.map((item) => ({
-    cells: COLUMNS.map((column) => {
-      if (column.key === "xxx") {
-        return {
-          title: "modify value of column",
-        };
-      } else return get(item, column.key);
-    }),
-  }));
-}
 
 export default Table;
