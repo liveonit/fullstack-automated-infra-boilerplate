@@ -23,3 +23,6 @@ export const validateString: ValidateFunction = (s,r) =>
 
 export const validateId: ValidateFunction = (s,r) =>
   (s === "" || s === undefined) ? (r ? "error" : "default") : /^[1-9][0-9]*$/.test(s) ? "success" : "error";
+
+export const validateBoolean: ValidateFunction = (s,r) =>
+  (s === "false") ? (r ? "error" : "default") : "success";

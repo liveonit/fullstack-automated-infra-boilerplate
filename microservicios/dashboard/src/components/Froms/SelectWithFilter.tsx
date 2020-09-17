@@ -7,6 +7,7 @@ import {
 } from "@patternfly/react-core";
 
 export interface SelectionOption {
+  id: number | string;
   value: string;
   description?: string;
   disabled?: boolean;
@@ -83,6 +84,7 @@ const SelectWithFilter: React.FC<Props> = (props) => {
         placeholderText={label}
         isDisabled={isDisabled}
         isCreatable={isCreatable}
+        menuAppendTo={() => document.body}
       >
         {options.map((option, index) => (
           <SelectOption

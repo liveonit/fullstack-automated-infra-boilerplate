@@ -5,8 +5,10 @@ import {
   Form,
   FormGroup,
   TextInput,
-  FormHelperText,
+  FormHelperText, ModalVariant
 } from "@patternfly/react-core";
+
+import { Toggle } from 'rsuite'
 
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import { FormInputControl } from "../Utils";
@@ -20,6 +22,7 @@ type Entity = { id: number; name: string } & any;
 
 interface GenericModalProps {
   title: string;
+  modalVariant: ModalVariant;
   entity?: Entity;
   onClose: () => void;
   fields: Field[];
@@ -34,6 +37,7 @@ interface State {
 const CreateUpdateModal: React.FC<GenericModalProps> = ({
   title,
   entity,
+  modalVariant,
   onClose,
   fields,
   update,
@@ -49,10 +53,7 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
           value: (entity && entity[f.keyName]) || "",
           required: f.required,
           validate: f.validateFunction,
-          validated: f.validateFunction(
-            entity && entity[f.keyName]?.value,
-            f.required
-          ),
+          validated: "default",
         } as FormInputControl)
     );
     setState(o);
@@ -78,6 +79,7 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
 
   return (
     <Modal
+      variant={modalVariant}
       title={title}
       isOpen={true}
       onClose={onClose}
@@ -91,7 +93,11 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
               Object.keys(state).forEach(
                 (k, i) =>
                   (attr[k] =
-                    fields[i].testInputType === "number"
+                    fields[i].type === "ToggleSwitch"
+                    ? state[k].value === 'true'
+                    : fields[i].type === 'SelectWithFilter'
+                    ? fields[i].options?.filter(o => o.value === state[k].value)[0].id
+                    : fields[i].testInputType === "number"
                       ? parseInt(state[k].value || "")
                       : state[k].value)
               );
@@ -115,6 +121,7 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
       <Form>
         {fields.map((f) => (
           <FormGroup
+            key={f.keyName}
             label={f.label}
             helperText={
               <FormHelperText
@@ -153,12 +160,8 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
               <SelectWithFilter
                 keyName={f.keyName}
                 label={f.label}
-                options={[
-                  { value: "una opc" },
-                  { value: "otra opc" },
-                  { value: "tercer opc" },
-                ]}
-                selected={state[f.keyName].value}
+                options={f.options || []}
+                selected={state[f.keyName]?.value}
                 handleChangeSelected={(v) =>
                   setState({
                     ...state,
@@ -173,7 +176,22 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                   })
                 }
               />
-            ) : undefined}
+            ) : f.type === "ToggleSwitch" 
+            ? <Toggle size="md" onChange={(v) =>
+              setState({
+                ...state,
+                [f.keyName]: {
+                  ...state[f.keyName],
+                  value: v ? "true" : "false",
+                  validated: state[f.keyName]?.validate(
+                    v ? "true" : "false",
+                    state[f.keyName]?.required
+                  ),
+                },
+              })
+            } ></Toggle>
+            : undefined
+          }
           </FormGroup>
         ))}
       </Form>

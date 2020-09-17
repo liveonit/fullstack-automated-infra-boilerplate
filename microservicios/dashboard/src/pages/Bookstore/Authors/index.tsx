@@ -1,5 +1,5 @@
 import React from "react";
-import { Spinner } from "@patternfly/react-core";
+import { ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
 import { sortable,
 } from "@patternfly/react-table";
@@ -183,6 +183,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
           {state.isCreateUpdateModalOpen && (
             <ModalForm
               title={state.entity ? "Update Author": "Create Author"}
+              modalVariant={ModalVariant.small}
               fields={[ 
                 { 
                   keyName: "name", label: "Full Name", 

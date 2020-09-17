@@ -1,11 +1,11 @@
-import { InputType, Field } from "type-graphql";
+import { InputType, Field, Int } from "type-graphql";
 
 @InputType()
 export class CreateBookInput {
   @Field({nullable: true})
   title: string;
 
-  @Field()
+  @Field(type => Int)
   authorId: number;
 
   @Field({ defaultValue: true })

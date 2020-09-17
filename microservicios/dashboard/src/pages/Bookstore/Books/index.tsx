@@ -1,15 +1,15 @@
 import React from "react";
-import { Spinner } from "@patternfly/react-core";
+import { ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
 import { sortable,
 } from "@patternfly/react-table";
-import { capitalize } from '../../../utils/General/capitalize'
+
 import Table from "./Table";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
 import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 
-
+import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "./DeleteModal";
 
 import { gqlHoC } from "../../../utils/General/GqlHoC";
@@ -19,8 +19,10 @@ import {
   createMutationToCreateItem,
   createMutationToUpdateItem,
   createMutationToDeleteItem,
-  EntityProp,
+  EntityProp, getCachedItems
 } from "../../../utils/General/GqlHelpers";
+
+import { validateString, validateBoolean } from "../../../components/Froms/Utils";
 
 
 //=============================================================================
@@ -182,14 +184,41 @@ const EntityPage: React.FC<EntityPageProps> = ({
               </IconButton>
             }
           />
-          {/* {state.isCreateUpdateModalOpen && (
-            <CreateUpdateModal
+            {state.isCreateUpdateModalOpen && (
+            <ModalForm
+              title={state.entity ? "Update Book": "Create Book"}
+              modalVariant={ModalVariant.small}
+              fields={[ 
+                { 
+                  keyName: "title", label: "Book Title", 
+                  helperText: "Please enter the Book title", helperTextInvalid: "Book title is at least one word",
+                  required: true,
+                  type: "TextInput",
+                  validateFunction: validateString,
+                  testInputType: "text"
+                },
+                { 
+                  keyName: "isPublished", label: "Is Published?", 
+                  helperText: "select if the book is currently published", helperTextInvalid: "Active means the book is published",
+                  required: false,
+                  type: "ToggleSwitch",
+                  validateFunction: validateBoolean,
+                },
+                { 
+                  keyName: "authorId", label: "Book's author", 
+                  helperText: "Please select the Book's Author", helperTextInvalid: "Author must be selected",
+                  required: false,
+                  type: "SelectWithFilter",
+                  validateFunction: validateString,
+                  options: getCachedItems("Author").map(a => ({ id: a.id, value: a.name }))
+                },
+              ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
               create={create}
               update={update}
             />
-          )} */}
+          )}
           {state.isDeleteModalOpen && (
             <DeleteModal
               onClose={onCloseAnyModal}
