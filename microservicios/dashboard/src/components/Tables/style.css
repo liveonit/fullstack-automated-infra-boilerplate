@@ -31,3 +31,19 @@
 .--toolbar-create-entity {
   padding-right: 1rem;
 }
+
+.redLabel {
+  background: var(--pf-global--danger-color--100);
+}
+
+.greenLabel {
+  background: var(--pf-global--success-color--100);
+}
+
+.successLabel {
+  background: var(--pf-global--info-color--100);
+}
+
+.normalLabel {
+  background: rgba(3,3,3,0.32);
+}

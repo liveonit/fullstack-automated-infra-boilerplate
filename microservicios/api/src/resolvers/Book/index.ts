@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, UseMiddleware, Int } from "type-graphql";
 import { Book, PaginatedBooks } from "../../models/Book";
 import { CreateBookInput } from "./types/CreateBookInput";
 import { UpdateBookInput } from "./types/UpdateBookInput";
@@ -50,7 +50,7 @@ export class BookResolver {
 
   @Mutation(() => Book)
   @UseMiddleware([GqlLog])
-  async updateBook(@Arg("id") id: number, @Arg("data") data: UpdateBookInput) {
+  async updateBook(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateBookInput) {
     const book = await Book.findOne({ where: { id } });
     if (!book) throw new Error("Book not found!");
     Object.assign(book, data);

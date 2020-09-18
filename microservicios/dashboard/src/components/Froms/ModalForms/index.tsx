@@ -48,13 +48,21 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
   React.useEffect(() => {
     const o: any = {};
     fields?.forEach(
-      (f) =>
+      f => {
+        const value: string = 
+        f.type === 'ToggleSwitch'
+          ? ((entity && entity[f.keyName]) ? 'true' : 'false')
+          : f.type === 'SelectWithFilter'
+          ? _.find(f.options, { id: (entity && entity[f.keyName]) })?.value
+          : ((entity && entity[f.keyName]) || "");
+          
         (o[f.keyName] = {
-          value: (entity && entity[f.keyName]) || "",
+          value,
           required: f.required,
           validate: f.validateFunction,
           validated: "default",
         } as FormInputControl)
+      }
     );
     setState(o);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,10 +101,15 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
               Object.keys(state).forEach(
                 (k, i) =>
                   (attr[k] =
-                    fields[i].type === "ToggleSwitch"
+                    // si es ToggleSwitch el valor se pasa de string a boolean
+                    fields[i].type === 'ToggleSwitch'
                     ? state[k].value === 'true'
                     : fields[i].type === 'SelectWithFilter'
+                    // Select with filter es para seleccionar de una lista de opciones y 
+                    //lo que se setea en valor es el id correspondiente a esa opcion
                     ? fields[i].options?.filter(o => o.value === state[k].value)[0].id
+                    // si es el type es TextInput llega aca, y si el tipo de input es number
+                    // hace el parseo de lo contrario coloca el texto directamente
                     : fields[i].testInputType === "number"
                       ? parseInt(state[k].value || "")
                       : state[k].value)
@@ -177,7 +190,7 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                 }
               />
             ) : f.type === "ToggleSwitch" 
-            ? <Toggle size="md" onChange={(v) =>
+            ? <Toggle checked={state[f.keyName]?.value === "true"} size="md" onChange={(v) =>
               setState({
                 ...state,
                 [f.keyName]: {

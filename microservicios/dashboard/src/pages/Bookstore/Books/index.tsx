@@ -1,8 +1,7 @@
 import React from "react";
-import { ModalVariant, Spinner } from "@patternfly/react-core";
+import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-import { sortable,
-} from "@patternfly/react-table";
+import { sortable } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
@@ -19,16 +18,19 @@ import {
   createMutationToCreateItem,
   createMutationToUpdateItem,
   createMutationToDeleteItem,
-  EntityProp, getCachedItems
+  EntityProp,
+  getCachedItems,
 } from "../../../utils/General/GqlHelpers";
 
-import { validateString, validateBoolean } from "../../../components/Froms/Utils";
-
+import {
+  validateString,
+  validateBoolean,
+} from "../../../components/Froms/Utils";
 
 //=============================================================================
 //#region Entity definition
 
-export const ENTITY_NAME = "Book"
+export const ENTITY_NAME = "Book";
 
 export type EntityType = {
   id: number;
@@ -41,7 +43,7 @@ export const ENTITY_PROPS: EntityProp[] = [
   { name: "title", type: "String", required: true },
   { name: "authorId", type: "Int", required: true },
   { name: "isPublished", type: "Boolean", required: false },
-]
+];
 
 export const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
@@ -51,16 +53,23 @@ export const COLUMNS = [
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map(e => e.name),
+  keys: ENTITY_PROPS.map((e) => e.name),
 };
 
-function transformRows(items: any[]) {
+function transformRows(items: EntityType[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "xxx") {
+      if (column.key === "author") {
         return {
-          title: "modify value of column",
+          title: _.find(getCachedItems("Author"), { id: item.authorId }).name,
+        };
+      }
+      if (column.key === "isPublished") {
+        let label = _.get(item, column.key, false);
+        const className = label ? "greenLabel" : "normalLabel";
+        return {
+          title: <Label className={className}>{label ? "YES" : "NO"}</Label>,
         };
       } else return _.get(item, column.key);
     }),
@@ -71,7 +80,6 @@ function transformRows(items: any[]) {
 //=============================================================================
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
-
 
 interface EntityPageProps {
   get: () => void;
@@ -196,33 +204,42 @@ const EntityPage: React.FC<EntityPageProps> = ({
               </IconButton>
             }
           />
-            {state.isCreateUpdateModalOpen && (
+          {state.isCreateUpdateModalOpen && (
             <ModalForm
-              title={state.entity ? "Update Book": "Create Book"}
+              title={state.entity ? "Update Book" : "Create Book"}
               modalVariant={ModalVariant.small}
-              fields={[ 
-                { 
-                  keyName: "title", label: "Book Title", 
-                  helperText: "Please enter the Book title", helperTextInvalid: "Book title is at least one word",
+              fields={[
+                {
+                  keyName: "title",
+                  label: "Book Title",
+                  helperText: "Please enter the Book title",
+                  helperTextInvalid: "Book title is at least one word",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateString,
-                  testInputType: "text"
+                  testInputType: "text",
                 },
-                { 
-                  keyName: "isPublished", label: "Is Published?", 
-                  helperText: "select if the book is currently published", helperTextInvalid: "Active means the book is published",
+                {
+                  keyName: "isPublished",
+                  label: "Is Published?",
+                  helperText: "select if the book is currently published",
+                  helperTextInvalid: "Active means the book is published",
                   required: false,
                   type: "ToggleSwitch",
                   validateFunction: validateBoolean,
                 },
-                { 
-                  keyName: "authorId", label: "Book's author", 
-                  helperText: "Please select the Book's Author", helperTextInvalid: "Author must be selected",
+                {
+                  keyName: "authorId",
+                  label: "Book's author",
+                  helperText: "Please select the Book's Author",
+                  helperTextInvalid: "Author must be selected",
                   required: false,
                   type: "SelectWithFilter",
                   validateFunction: validateString,
-                  options: getCachedItems("Author").map(a => ({ id: a.id, value: a.name }))
+                  options: getCachedItems("Author").map((a) => ({
+                    id: a.id,
+                    value: a.name,
+                  })),
                 },
               ]}
               onClose={onCloseAnyModal}
@@ -239,7 +256,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
               rm={remove}
             />
           )}
-          <Table columns={COLUMNS} items={tableItems} onDelete={onDelete} onEdit={onEdit} transformRows={transformRows} />
+          <Table
+            columns={COLUMNS}
+            items={tableItems}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            transformRows={transformRows}
+          />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}
@@ -258,7 +281,10 @@ const EntityPage: React.FC<EntityPageProps> = ({
 
 export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
-  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
+  readGql: createQueryToGetItems(
+    ENTITY_NAME,
+    ENTITY_PROPS.map((p) => p.name)
+  ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
   removeGql: createMutationToDeleteItem(ENTITY_NAME),
