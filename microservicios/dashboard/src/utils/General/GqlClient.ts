@@ -1,9 +1,23 @@
-import { ApolloClient, HttpLink, split,  InMemoryCache  } from '@apollo/client';
+import { ApolloClient, HttpLink, split, InMemoryCache, ServerError, gql } from '@apollo/client';
 
 import { getMainDefinition } from '@apollo/client/utilities';
 import { setContext } from '@apollo/link-context';
 import { WebSocketLink } from '@apollo/client/link/ws';
+import { onError } from '@apollo/client/link/error'
 import { getToken, updateToken } from './keycloak';
+
+
+const errorQuery = gql`
+query ErrorQuery {
+  error {
+    __typename
+    statusCode
+    message
+    locations
+    path
+  }
+}`;
+
 
 let loc = window.location, new_uri;
 new_uri = loc.protocol === "https:"
@@ -35,7 +49,39 @@ const link = split(
   httpLink,
 );
 
-const authLink = setContext(async (_, { headers }) => {
+
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+  const { cache } = operation.getContext();
+  if (networkError || graphQLErrors) {
+    graphQLErrors?.forEach(({ message, locations, path }) =>
+      cache.writeQuery({
+        query: errorQuery,
+        data: {
+          error: {
+            __typename: 'error',
+            message,
+            locations,
+            path
+          }
+        },
+      })
+    )
+    networkError && cache.writeQuery({
+      query: errorQuery,
+      data: {
+        error: {
+          __typename: 'error',
+          message: networkError,
+          locations: "Network or server error",
+          path: "None"
+        }
+      },
+    })
+  };
+});
+
+
+  const authLink = setContext(async (_, { headers }) => {
   await updateToken(60);
   return {
     headers: {
@@ -44,14 +90,15 @@ const authLink = setContext(async (_, { headers }) => {
     }
   }
 });
+
 let clientAux;
 if (getToken() !== "") {
   clientAux = new ApolloClient({
-    link: authLink.concat(link),
+    link: errorLink.concat(authLink.concat(link)),
     cache: new InMemoryCache()
   });
 } else clientAux = new ApolloClient({
+  link: errorLink.concat(link),
   cache: new InMemoryCache(),
-  link,
 });
 export const client = clientAux;
