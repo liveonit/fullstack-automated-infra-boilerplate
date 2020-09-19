@@ -22,14 +22,14 @@ export const PageNav: React.FC<Props> = ({ location }) => {
         <NavItem itemId={1} isActive={pathname === '/demoGrid'}>
           <Link to="/demogrid">Demo Grid</Link>
         </NavItem>
-        <NavItem itemId={1} isActive={pathname === '/page2'}>
+        <NavItem itemId={2} isActive={pathname === '/page2'}>
           <Link to="/bookstore">Bookstore</Link>
         </NavItem>
-        <NavItem itemId={2} isActive={pathname === '/page3'}>
-          <Link to="/usersadmin">Users Admin</Link>
+        <NavItem itemId={3} isActive={pathname === '/Logs'}>
+          <Link to="/bookstoreaudit">Bookstore Audit</Link>
         </NavItem>
-        <NavItem itemId={2} isActive={pathname === '/Logs'}>
-          <Link to="/logs">Logs</Link>
+        <NavItem itemId={4} isActive={pathname === '/page3'}>
+          <Link to="/usersadmin">Users Admin</Link>
         </NavItem>
       </NavList>
     </Nav>

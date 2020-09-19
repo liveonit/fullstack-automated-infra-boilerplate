@@ -61,7 +61,7 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
 
-interface LogsPageProps {
+interface BookstoreAuditoryProps {
   get: ({
     variables: { timeStart, timeEnd },
   }: {
@@ -74,7 +74,7 @@ interface LogsPageProps {
   unsubscribe: () => void;
 }
 
-const LogsPage: React.FC<LogsPageProps> = ({
+const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
   get,
   loading,
   items,
@@ -191,4 +191,4 @@ export default gqlHoC({
   entityName: ENTITY_NAME,
   readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(e => e.name)),
   subscriptionGql: createQueryToSubscribe(ENTITY_NAME, ENTITY_PROPS.map(e => e.name)),
-})(LogsPage);
+})(BookstoreAuditory);

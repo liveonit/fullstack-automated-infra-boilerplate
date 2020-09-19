@@ -10,7 +10,7 @@ import Home from "./Home";
 import DemoGrid from "./DemoGrid";
 import Bookstore from "./Bookstore";
 import UsersAdmin from "./UsersAdmin";
-import LogsPage from "./Logs";
+import LogsPage from "./BookstoreAudit";
 
 const  Root: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ const  Root: React.FC = () => {
               <Route path="/demogrid" component={DemoGrid} />
               <Route path="/bookstore" component={Bookstore} />
               <Route path="/usersadmin" component={UsersAdmin} />
-              <Route path="/logs" component={LogsPage} />
+              <Route path="/bookstoreaudit" component={LogsPage} />
             </Switch>
           </Layout>
         </Router>
