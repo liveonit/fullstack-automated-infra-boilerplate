@@ -1,78 +1,55 @@
 import React from "react";
-import { useLazyQuery, useSubscription, OnSubscriptionDataOptions, gql } from "@apollo/client";
-const GET_ALERTS = gql`
-  query Alerts() {
-    alerts () {
-      items {
-        id
-        title
-        type
-        description
-      }
-    }
-  }
-`;
+import {
+  useLazyQuery,
+  useSubscription,
+  OnSubscriptionDataOptions,
+  gql,
+} from "@apollo/client";
+import {
+  getCachedItems,
+} from "../../utils/General/GqlHelpers";
+import { Subtract } from "utility-types";
 
-const ALERTS_SUBSCRIPTION = gql`
-  subscription {
-    alertsSubscription {
-      id
-      title
-      type
-      description
-    }
-  }
-`;
+interface InjectedGqlHoCProps {
+  alerts: any[];
+  hideAlert: (s: string) => void;
+}
 
-export const withAlterts = <P extends object>(
+export const withAlterts = <P extends InjectedGqlHoCProps>(
   Component: React.ComponentType<P>
-): React.FC<P> => (props) => {
+): React.FC<Subtract<P, InjectedGqlHoCProps>> => (props) => {
   const [state, setState] = React.useState<{
-    items: any[];
+    alarms: any[];
     count: number;
-    isSubscribe: boolean;
   }>({
-    items: [],
+    alarms: [],
     count: 0,
-    isSubscribe: true,
   });
-
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(() => () => setState({...state, isSubscribe: false}),[])
-
-  const onCompleted = (d: any) => {
-    setState({ ...state, ...d.logs });
-  };
-
-  let [getAlerts, { loading }] = useLazyQuery<{ alerts: { items: [] }, count: number }>(
-    GET_ALERTS,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted,
-    }
+  
+  React.useEffect(
+    () => () =>
+      setState({
+        alarms: [].map((se: any) => ({
+          title: "System Error",
+          type: "System Error",
+          description: JSON.stringify({
+            location: se?.location,
+            path: se?.path,
+            message: se.message,
+          }),
+        })),
+        count: getCachedItems("SystemError").length,
+      }),
+    []
   );
 
-  const onSubscriptionData = (options: OnSubscriptionDataOptions<any>) => {
-    setState({
-      ...state,
-      items: [options.subscriptionData.data.logsSubscription, ...state.items],
-      count: state.count + 1,
-    });
+  const hideAlert = (description: string) => {
+    const data = JSON.parse(description);
+    console.info("data to hide alert", data);
   };
-
-  useSubscription(ALERTS_SUBSCRIPTION, {
-    onSubscriptionData,
-    skip: !state.isSubscribe,
-  });
-
-  const { items } = state;
   return (
-    <Component
-      alerts={items}
-      getAlerts={getAlerts}
-      loading={loading}
-      {...(props as P)}
-    />
+    <Component {...(props as P)} alerts={state.alarms} hideAlert={hideAlert} />
   );
 };

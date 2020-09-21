@@ -5,7 +5,7 @@ export class CreateBookInput {
   @Field({nullable: true})
   title: string;
 
-  @Field(type => Int)
+  @Field()
   authorId: number;
 
   @Field({ defaultValue: true })

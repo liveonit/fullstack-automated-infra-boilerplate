@@ -32,7 +32,7 @@ const Alerts: React.FC<Props> = ({ alerts, hideAlert }) => {
             title={title}
             key={++count}
             actionClose={
-              <AlertActionCloseButton onClose={() => hideAlert(title)} />
+              <AlertActionCloseButton onClose={() => hideAlert(description)} />
             }
           >{description}</Alert>
         ))}

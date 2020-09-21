@@ -1,16 +1,20 @@
 import { client } from "./GqlClient"
 import { gql } from "@apollo/client";
+import _ from "lodash";
 
 export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID"
+
+
 export interface EntityProp {
   name: string;
   type: string;
   required: boolean;
 }
-export const getCachedItems = (entity: string) => {
+
+export const getCachedItems = (entityName: string) => {
   const serializedState = client.cache.extract()
   const result: any[] = [];
-  for (var [k, v] of Object.entries(serializedState)) if (k.indexOf(entity + ":") >= 0) result.push(v);
+  for (var [k, v] of Object.entries(serializedState)) if (k.indexOf(entityName + ":") >= 0) result.push(v);
   return result;
 }
 
@@ -54,7 +58,7 @@ export const createMutationToCreateItem = (entityName: string, properties: Entit
 export const createMutationToUpdateItem = (entityName: string, properties: EntityProp[]) => {
   const formatedEntityName = entityName.charAt(0).toUpperCase() +
     entityName.slice(1).toLowerCase()
-  const varDef = properties.map(p => p.name !== "id" ? (`$${p.name}: ${p.type}` + (p.required ? "!" : "")): "").join(", ")
+  const varDef = properties.map(p => p.name !== "id" ? (`$${p.name}: ${p.type}` + (p.required ? "!" : "")) : "").join(", ")
   const dataDef = properties.map(p => p.name !== "id" ? `${p.name}: $${p.name}` : "").join(", ")
   const attr = properties.map(s => s.name !== "id" ? `      ${s.name}` : "").join("\n")
   const UPDATE_MUTATION = gql`

@@ -69,6 +69,7 @@ export const gqlHoC = <T extends { id: number}>(config: HoCConfig) => <P extends
       [get, { loading }] = useLazyQuery(readGql, {
         fetchPolicy: "cache-and-network",
         onCompleted: onCompletedQuery,
+        onError: (err) => console.error(err)
       });
     }
 
@@ -115,6 +116,8 @@ export const gqlHoC = <T extends { id: number}>(config: HoCConfig) => <P extends
       };
       [create] = useMutation(createGql, {
         onCompleted: onCompletedCreate,
+        onError: (err) => console.error(err),
+        errorPolicy: "all"
       });
     }
 
@@ -128,6 +131,7 @@ export const gqlHoC = <T extends { id: number}>(config: HoCConfig) => <P extends
       };
       [update] = useMutation(updateGql, {
         onCompleted: onCompletedUpdate,
+        onError: (err) => console.error(err)
       });
     }
     let remove;
@@ -152,6 +156,7 @@ export const gqlHoC = <T extends { id: number}>(config: HoCConfig) => <P extends
       };
       [remove] = useMutation(removeGql, {
         onCompleted: onCompletedRemove,
+        onError: (err) => console.error(err)
       });
     }
 

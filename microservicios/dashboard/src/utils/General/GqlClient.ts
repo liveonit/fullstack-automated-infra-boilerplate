@@ -7,18 +7,6 @@ import { onError } from '@apollo/client/link/error'
 import { getToken, updateToken } from './keycloak';
 
 
-const errorQuery = gql`
-query ErrorQuery {
-  error {
-    __typename
-    statusCode
-    message
-    locations
-    path
-  }
-}`;
-
-
 let loc = window.location, new_uri;
 new_uri = loc.protocol === "https:"
   ? "wss:"
@@ -50,38 +38,22 @@ const link = split(
 );
 
 
-const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
-  const { cache } = operation.getContext();
-  if (networkError || graphQLErrors) {
-    graphQLErrors?.forEach(({ message, locations, path }) =>
-      cache.writeQuery({
-        query: errorQuery,
-        data: {
-          error: {
-            __typename: 'error',
-            message,
-            locations,
-            path
-          }
-        },
-      })
-    )
-    networkError && cache.writeQuery({
-      query: errorQuery,
-      data: {
-        error: {
-          __typename: 'error',
-          message: networkError,
-          locations: "Network or server error",
-          path: "None"
-        }
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.error(
+        "[GraphQL error]: ", {
+        message, locations, path
       },
-    })
-  };
+      ),
+    );
+
+  if (networkError) console.error(`[Network error]: ${networkError}`);
+
 });
 
 
-  const authLink = setContext(async (_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
   await updateToken(60);
   return {
     headers: {
@@ -91,14 +63,22 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    SystemError: {
+      keyFields: ["message"]
+    }
+  }
+})
+
 let clientAux;
 if (getToken() !== "") {
   clientAux = new ApolloClient({
     link: errorLink.concat(authLink.concat(link)),
-    cache: new InMemoryCache()
+    cache,
   });
 } else clientAux = new ApolloClient({
   link: errorLink.concat(link),
-  cache: new InMemoryCache(),
+  cache,
 });
 export const client = clientAux;
