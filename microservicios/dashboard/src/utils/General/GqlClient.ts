@@ -1,4 +1,4 @@
-import { ApolloClient, HttpLink, split, InMemoryCache, ServerError, gql } from '@apollo/client';
+import { ApolloClient, HttpLink, split, InMemoryCache } from '@apollo/client';
 
 import { getMainDefinition } from '@apollo/client/utilities';
 import { setContext } from '@apollo/link-context';

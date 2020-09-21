@@ -11,7 +11,6 @@ import DemoGrid from "./DemoGrid";
 import Bookstore from "./Bookstore";
 import UsersAdmin from "./UsersAdmin";
 import LogsPage from "./BookstoreAudit";
-import Alerts from '../components/Alerts'
 
 const  Root: React.FC = () => {
   return (

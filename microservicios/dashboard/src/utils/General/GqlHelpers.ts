@@ -1,6 +1,5 @@
 import { client } from "./GqlClient"
 import { gql } from "@apollo/client";
-import _ from "lodash";
 
 export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID"
 
