@@ -22,6 +22,7 @@ import {
   EntityProp,
 } from "../../../utils/General/GqlHelpers";
 import { validateAge, validateCountry, validateFullName } from "../../../components/Froms/Utils";
+import { Subtract } from "utility-types";
 
 
 //=============================================================================
@@ -74,14 +75,14 @@ const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 interface EntityPageProps {
   get: () => void;
   create: ({
-    variables: { name, age, country },
+    variables,
   }: {
-    variables: { name: String; age?: number; country?: String };
+    variables: Subtract<EntityType, { id: number }>;
   }) => void;
   update: ({
-    variables: { id, name, age, country },
+    variables,
   }: {
-    variables: { id: number; name?: String; age?: number; country?: String };
+    variables: EntityType;
   }) => void;
   remove: ({ variables: { id } }: { variables: { id: number } }) => void;
   loading: boolean;

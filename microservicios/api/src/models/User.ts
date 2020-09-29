@@ -8,7 +8,7 @@ import { RequiredActionAlias } from "keycloak-admin/lib/defs/requiredActionProvi
 @ObjectType()
 export class User implements UserRepresentation {
   @Field(()=> String)
-  id?: string;
+  id?:string;
 
   @Field(() => String)
   username: string;

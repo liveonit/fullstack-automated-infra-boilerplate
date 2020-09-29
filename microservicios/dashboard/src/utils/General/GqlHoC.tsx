@@ -30,7 +30,7 @@ interface HoCConfig {
   removeGql?: DocumentNode;
 }
 
-export const gqlHoC = <T extends { id: number}>(config: HoCConfig) => <P extends InjectedGqlHoCProps>(
+export const gqlHoC = <T extends { id: any}>(config: HoCConfig) => <P extends InjectedGqlHoCProps>(
     Component: React.ComponentType<P>
   ): React.FC<Subtract<P, InjectedGqlHoCProps>> => (props) => {
     const {

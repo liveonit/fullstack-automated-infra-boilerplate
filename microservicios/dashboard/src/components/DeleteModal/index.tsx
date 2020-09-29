@@ -9,7 +9,7 @@ interface CreateUpdateModalProps {
     variables: { id },
   }: {
     variables: {
-      id: number;
+      id: any;
     };
   }) => void;
 }

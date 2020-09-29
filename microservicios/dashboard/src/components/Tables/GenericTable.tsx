@@ -17,8 +17,8 @@ import _ from "lodash";
 interface TableProps {
   columns: (string | ICell)[];
   items: any[];
-  onEdit?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  onEdit?: (id: any) => void;
+  onDelete?: (id: any) => void;
   transformRows: (items: any[]) => { cells: any }[];
 }
 
@@ -39,11 +39,19 @@ const Table: React.FC<TableProps> = ({ columns, items, onEdit, onDelete, transfo
       actions={[
         {
           title: "Edit",
-          onClick: (a, b, rowData) => onEdit && onEdit(parseInt(_.get(rowData, "cells.0"))),
-        },
+          onClick: (a, b, rowData) => {
+            onEdit && (isNaN(_.get(rowData, "cells.0"))
+            ? onEdit(_.get(rowData, "cells.0").toString())
+            : onEdit(parseInt(_.get(rowData, "cells.0"))))
+        }
+      },
         {
           title: "Delete",
-          onClick: (a, b, rowData) => onDelete && onDelete(parseInt(_.get(rowData, "cells.0"))),
+          onClick: (a, b, rowData) => {
+            onDelete && (isNaN(_.get(rowData, "cells.0"))
+            ? onDelete(_.get(rowData, "cells.0").toString())
+            : onDelete(parseInt(_.get(rowData, "cells.0"))))
+        }
         },
       ]}
       onSort={(_, index, direction) =>

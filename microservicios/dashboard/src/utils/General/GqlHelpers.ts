@@ -6,7 +6,7 @@ export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID"
 
 export interface EntityProp {
   name: string;
-  type: string;
+  type:  GqlTypes;
   required: boolean;
 }
 

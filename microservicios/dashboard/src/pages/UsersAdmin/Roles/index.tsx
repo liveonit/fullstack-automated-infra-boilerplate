@@ -31,46 +31,36 @@ import { Subtract } from "utility-types";
 //=============================================================================
 //#region Entity definition
 
-export const ENTITY_NAME = "Book";
+export const ENTITY_NAME = "Role";
 
 export type EntityType = {
   id: number;
-  title: string;
-  authorId: number;
-  isPublished?: boolean;
+  name: string;
+  description: number;
 };
 
 export const ENTITY_PROPS: EntityProp[] = [
-  { name: "title", type: "String", required: true },
-  { name: "authorId", type: "Int", required: true },
-  { name: "isPublished", type: "Boolean", required: false },
+  { name: "name", type: "String", required: true },
+  { name: "description", type: "String", required: false },
 ];
 
 export const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
-  { key: "title", title: "Title", transforms: [sortable] },
-  { key: "author", title: "Author", transforms: [sortable] },
-  { key: "isPublished", title: "Published", transforms: [sortable] },
+  { key: "name", title: "Name", transforms: [sortable] },
+  { key: "description", title: "Description", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
   keys: ENTITY_PROPS.map((e) => e.name),
 };
 
-function transformRows(items: EntityType[]) {
+function transformRows(items: any[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "author") {
+      if (column.key === "xxx") {
         return {
-          title: _.find(getCachedItems("Author"), { id: item.authorId }).name,
-        };
-      }
-      if (column.key === "isPublished") {
-        let label = _.get(item, column.key, false);
-        const className = label ? "greenLabel" : "normalLabel";
-        return {
-          title: <Label className={className}>{label ? "YES" : "NO"}</Label>,
+          title: "modify value of column",
         };
       } else return _.get(item, column.key);
     }),

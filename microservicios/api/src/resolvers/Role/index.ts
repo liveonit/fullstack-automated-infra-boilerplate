@@ -30,7 +30,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => Role)
-  async createUser(@Arg("data") data: CreateRoleInput) {
+  async createRole(@Arg("data") data: CreateRoleInput) {
     const kcAdmin = await kcConnect();
     const { roleName } = await kcAdmin.roles.create(data);
     const role = await kcAdmin.roles.findOneByName({ name: roleName });
