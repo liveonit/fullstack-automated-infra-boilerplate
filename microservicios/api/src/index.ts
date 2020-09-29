@@ -6,8 +6,9 @@ import { buildSchema } from "type-graphql";
 
 import { BookResolver } from './resolvers/Book'
 import { AuthorResolver } from './resolvers/Author';
-import { LogResolver } from './resolvers/Logs'
-import { UserResolver } from "./resolvers/Users";
+import { LogResolver } from './resolvers/Log'
+import { UserResolver } from "./resolvers/User";
+import { RoleResolver } from "./resolvers/Role";
 import { Env, isEnv } from './utils/environment'
 
 import express, { Application } from 'express'
@@ -36,7 +37,7 @@ async function main() {
 
   // Compilado de graphql `schema` a partir de los resolver y clases con decoradores
   const schema = await buildSchema({
-    resolvers: [BookResolver, AuthorResolver, LogResolver, UserResolver],
+    resolvers: [BookResolver, AuthorResolver, LogResolver, UserResolver, RoleResolver],
     pubSub: pubsub
   })
 

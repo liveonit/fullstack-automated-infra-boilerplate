@@ -2,9 +2,6 @@ import { ObjectType, Field, Int } from "type-graphql";
 import PaginatedResponse from "../utils/PaginateEntity";
 import UserRepresentation from "keycloak-admin/lib/defs/userRepresentation";
 import { RequiredActionAlias } from "keycloak-admin/lib/defs/requiredActionProviderRepresentation";
-import UserConsentRepresentation from "keycloak-admin/lib/defs/userConsentRepresentation";
-import CredentialRepresentation from "keycloak-admin/lib/defs/credentialRepresentation";
-import FederatedIdentityRepresentation from "keycloak-admin/lib/defs/federatedIdentityRepresentation";
 
 // NOT IN DB - ONLY REPRESENTATION
 
