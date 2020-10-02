@@ -13,8 +13,8 @@ export class Role implements RoleRepresentation {
   @Field(() => String)
   name: string;
 
-  @Field(() => String)
-  description: string;
+  @Field(() => String, { nullable: true })
+  description?: string;
 }
 
 @ObjectType()

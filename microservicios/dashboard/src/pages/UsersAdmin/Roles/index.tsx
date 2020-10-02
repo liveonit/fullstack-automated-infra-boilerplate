@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
+import {  ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
 import { sortable } from "@patternfly/react-table";
 
@@ -36,7 +36,7 @@ export const ENTITY_NAME = "Role";
 export type EntityType = {
   id: number;
   name: string;
-  description: number;
+  description?: number;
 };
 
 export const ENTITY_PROPS: EntityProp[] = [

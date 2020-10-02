@@ -28,7 +28,7 @@ import { Subtract } from "utility-types";
 //=============================================================================
 //#region Entity definition
 
-export const ENTITY_NAME = "Author"
+export const ENTITY_NAME = "User"
 
 export type EntityType = {
   id: string;
@@ -43,8 +43,8 @@ export type EntityType = {
 export const ENTITY_PROPS: EntityProp[] = [
   { name: "username", type: "String", required: true },
   { name: "enabled", type: "Boolean", required: false },
-  { name: "firstname", type: "String", required: true },
-  { name: "lastname", type: "String", required: true },
+  { name: "firstName", type: "String", required: true },
+  { name: "lastName", type: "String", required: true },
   { name: "email", type: "String", required: true },
 ]
 
