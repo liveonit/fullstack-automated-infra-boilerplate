@@ -5,12 +5,12 @@ import {  Between } from "typeorm";
 
 @Resolver()
 export class LogResolver {
-  @Query(() => PaginatedLogs)
+  @Query(() => [Log])
   async logs(
     @Arg("limit", { nullable: true }) limit: number,
     @Arg("offset", { nullable: true }) offset: number,
     @Arg("timeStart", { nullable: true }) timeStart: number,
-    @Arg("timeEnd", { nullable: true }) timeEnd: number): Promise<PaginatedLogs> {
+    @Arg("timeEnd", { nullable: true }) timeEnd: number): Promise<Log[]> {
     let logs: Log[];
     let count: number;
     if (offset && limit) {
@@ -22,13 +22,7 @@ export class LogResolver {
       logs = await Log.find({ where: { unixStartTime: Between(timeStart || Date.now() - 604800000, timeEnd || Date.now())} , order: { unixStartTime: "DESC" } })
       count = logs.length
     }
-
-      return {
-      count,
-      limit: limit ||  logs.length,
-      offset: offset || 0,
-      items: logs
-    }
+      return logs
   }
 
   @Subscription({ topics: "NEW_LOG" })

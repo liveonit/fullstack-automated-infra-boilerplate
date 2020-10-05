@@ -59,11 +59,15 @@ const FUSE_OPTIONS = {
 
 function transformRows(items: EntityType[]) {
   if (items === undefined) return [];
+  const authors = getCachedItems(
+    "Author",
+    ["name"]
+  );
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
       if (column.key === "author") {
         return {
-          title: _.find(getCachedItems("Author"), { id: item.authorId }).name,
+          title: _.find(authors, { id: item.authorId })?.name,
         };
       }
       if (column.key === "isPublished") {
@@ -89,11 +93,7 @@ interface EntityPageProps {
   }: {
     variables: Subtract<EntityType, { id: number }>;
   }) => void;
-  update: ({
-    variables,
-  }: {
-    variables: EntityType;
-  }) => void;
+  update: ({ variables }: { variables: EntityType }) => void;
   remove: ({ variables: { id } }: { variables: { id: number } }) => void;
   loading: boolean;
   items: EntityType[];
@@ -237,7 +237,10 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: false,
                   type: "SelectWithFilter",
                   validateFunction: validateString,
-                  options: getCachedItems("Author").map((a) => ({
+                  options: getCachedItems(
+                    "Author",
+                    ["name"]
+                  ).map((a: any) => ({
                     id: a.id,
                     value: a.name,
                   })),
@@ -288,5 +291,5 @@ export default gqlHoC<EntityType>({
   ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
-  removeGql: createMutationToDeleteItem(ENTITY_NAME),
+  removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),
 })(EntityPage);

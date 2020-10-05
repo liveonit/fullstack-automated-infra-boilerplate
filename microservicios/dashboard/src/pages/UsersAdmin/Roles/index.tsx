@@ -19,12 +19,10 @@ import {
   createMutationToUpdateItem,
   createMutationToDeleteItem,
   EntityProp,
-  getCachedItems,
 } from "../../../utils/General/GqlHelpers";
 
 import {
   validateString,
-  validateBoolean,
 } from "../../../components/Froms/Utils";
 import { Subtract } from "utility-types";
 
@@ -40,6 +38,7 @@ export type EntityType = {
 };
 
 export const ENTITY_PROPS: EntityProp[] = [
+  { name: "id", type: "String", required: false },
   { name: "name", type: "String", required: true },
   { name: "description", type: "String", required: false },
 ];
@@ -201,36 +200,24 @@ const EntityPage: React.FC<EntityPageProps> = ({
               modalVariant={ModalVariant.small}
               fields={[
                 {
-                  keyName: "title",
-                  label: "Book Title",
-                  helperText: "Please enter the Book title",
-                  helperTextInvalid: "Book title is at least one word",
+                  keyName: "name",
+                  label: "Role name",
+                  helperText: "Insert a representarive name to the role",
+                  helperTextInvalid: "The role name must not be empty",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateString,
                   testInputType: "text",
                 },
                 {
-                  keyName: "isPublished",
-                  label: "Is Published?",
-                  helperText: "select if the book is currently published",
-                  helperTextInvalid: "Active means the book is published",
-                  required: false,
-                  type: "ToggleSwitch",
-                  validateFunction: validateBoolean,
-                },
-                {
-                  keyName: "authorId",
-                  label: "Book's author",
-                  helperText: "Please select the Book's Author",
-                  helperTextInvalid: "Author must be selected",
-                  required: false,
-                  type: "SelectWithFilter",
+                  keyName: "description",
+                  label: "Role description",
+                  helperText: "Insert a description to the role",
+                  helperTextInvalid: "",
+                  required: true,
+                  type: "TextInput",
                   validateFunction: validateString,
-                  options: getCachedItems("Author").map((a) => ({
-                    id: a.id,
-                    value: a.name,
-                  })),
+                  testInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}
@@ -278,5 +265,5 @@ export default gqlHoC<EntityType>({
   ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
-  removeGql: createMutationToDeleteItem(ENTITY_NAME),
+  removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),
 })(EntityPage);

@@ -28,22 +28,22 @@ export const withAlterts = <P extends InjectedGqlHoCProps>(
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   
-  React.useEffect(
-    () => () =>
-      setState({
-        alarms: [].map((se: any) => ({
-          title: "System Error",
-          type: "System Error",
-          description: JSON.stringify({
-            location: se?.location,
-            path: se?.path,
-            message: se.message,
-          }),
-        })),
-        count: getCachedItems("SystemError").length,
-      }),
-    []
-  );
+  // React.useEffect(
+  //   () => () =>
+  //     setState({
+  //       alarms: [].map((se: any) => ({
+  //         title: "System Error",
+  //         type: "System Error",
+  //         description: JSON.stringify({
+  //           location: se?.location,
+  //           path: se?.path,
+  //           message: se.message,
+  //         }),
+  //       })),
+  //       count: getCachedItems("SystemError").length,
+  //     }),
+  //   []
+  // );
 
   const hideAlert = (description: string) => {
     const data = JSON.parse(description);

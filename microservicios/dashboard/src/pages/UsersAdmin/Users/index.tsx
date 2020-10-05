@@ -41,6 +41,7 @@ export type EntityType = {
 };
 
 export const ENTITY_PROPS: EntityProp[] = [
+  { name: "id", type: "String", required: false },
   { name: "username", type: "String", required: true },
   { name: "enabled", type: "Boolean", required: false },
   { name: "firstName", type: "String", required: true },
@@ -266,5 +267,5 @@ export default gqlHoC<EntityType>({
   readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
-  removeGql: createMutationToDeleteItem(ENTITY_NAME),
+  removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),
 })(EntityPage);

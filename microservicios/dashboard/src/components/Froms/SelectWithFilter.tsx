@@ -56,7 +56,6 @@ const SelectWithFilter: React.FC<Props> = (props) => {
         ...state,
         isOpen: false,
       });
-      console.log("selected:", selection);
     }
   };
 

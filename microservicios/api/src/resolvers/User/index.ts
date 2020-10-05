@@ -2,26 +2,21 @@ import { Resolver, Query, Mutation, Arg, UseMiddleware, Int } from "type-graphql
 import { CreateUserInput } from "./types/CreateUserInput";
 import { UpdateUserInput } from "./types/UpdateUserInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
-import { User, PaginatedUsers } from "../../models/User";
+import { User } from "../../models/User";
 import { getUsersWithRoles, kcConnect, getUserWithRoles, getRoles } from "../../utils/helpers/kcAdmin";
 import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
 
 @Resolver()
 export class UserResolver {
-  @Query(() => PaginatedUsers)
+  @Query(() => [User])
   async users(@Arg("limit", { nullable: true }) limit: number,
-    @Arg("offset", { nullable: true }) offset: number): Promise<PaginatedUsers> {
+    @Arg("offset", { nullable: true }) offset: number): Promise<User[]> {
     let users = await getUsersWithRoles();
     const count = users.length;
     if (offset && limit) {
       users = users.slice(offset, offset + limit + 1)
     }
-    return {
-      count,
-      limit: limit || users.length,
-      offset: offset || 0,
-      items: users
-    }
+    return users
   }
 
   @Query(() => User)

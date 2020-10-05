@@ -1,9 +1,8 @@
 import React from "react";
 import { ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-import { sortable,
-} from "@patternfly/react-table";
-import { capitalize } from '../../../utils/General/capitalize'
+import { sortable } from "@patternfly/react-table";
+import { capitalize } from "../../../utils/General/capitalize";
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
@@ -21,14 +20,17 @@ import {
   createMutationToDeleteItem,
   EntityProp,
 } from "../../../utils/General/GqlHelpers";
-import { validateAge, validateCountry, validateFullName } from "../../../components/Froms/Utils";
+import {
+  validateAge,
+  validateCountry,
+  validateFullName,
+} from "../../../components/Froms/Utils";
 import { Subtract } from "utility-types";
-
 
 //=============================================================================
 //#region Entity definition
 
-export const ENTITY_NAME = "Author"
+export const ENTITY_NAME = "Author";
 
 export type EntityType = {
   id: number;
@@ -41,17 +43,20 @@ export const ENTITY_PROPS: EntityProp[] = [
   { name: "name", type: "String", required: true },
   { name: "age", type: "Int", required: true },
   { name: "country", type: "String", required: false },
-]
+];
 
 export const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
-  ...(ENTITY_PROPS.map(e => ({ key: e.name, title: capitalize(e.name), transforms: [sortable] })))
+  ...ENTITY_PROPS.map((e) => ({
+    key: e.name,
+    title: capitalize(e.name),
+    transforms: [sortable],
+  })),
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map(e => e.name),
+  keys: ENTITY_PROPS.map((e) => e.name),
 };
-
 
 function transformRows(items: any[]) {
   if (items === undefined) return [];
@@ -71,7 +76,6 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
-
 interface EntityPageProps {
   get: () => void;
   create: ({
@@ -79,11 +83,7 @@ interface EntityPageProps {
   }: {
     variables: Subtract<EntityType, { id: number }>;
   }) => void;
-  update: ({
-    variables,
-  }: {
-    variables: EntityType;
-  }) => void;
+  update: ({ variables }: { variables: EntityType }) => void;
   remove: ({ variables: { id } }: { variables: { id: number } }) => void;
   loading: boolean;
   items: EntityType[];
@@ -197,32 +197,39 @@ const EntityPage: React.FC<EntityPageProps> = ({
           />
           {state.isCreateUpdateModalOpen && (
             <ModalForm
-              title={state.entity ? "Update Author": "Create Author"}
+              title={state.entity ? "Update Author" : "Create Author"}
               modalVariant={ModalVariant.small}
-              fields={[ 
-                { 
-                  keyName: "name", label: "Full Name", 
-                  helperText: "Please enter Author's full name", helperTextInvalid: "Full name has to be at least two words",
+              fields={[
+                {
+                  keyName: "name",
+                  label: "Full Name",
+                  helperText: "Please enter Author's full name",
+                  helperTextInvalid: "Full name has to be at least two words",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateFullName,
-                  testInputType: "text"
+                  testInputType: "text",
                 },
-                { 
-                  keyName: "age", label: "Age", 
-                  helperText: "Please enter Author's age", helperTextInvalid: "Age has to be a number",
+                {
+                  keyName: "age",
+                  label: "Age",
+                  helperText: "Please enter Author's age",
+                  helperTextInvalid: "Age has to be a number",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateAge,
-                  testInputType: "number"
+                  testInputType: "number",
                 },
-                { 
-                  keyName: "country", label: "Country", 
-                  helperText: "Please enter Author's country", helperTextInvalid: "If country is set, it has to be at least one word",
+                {
+                  keyName: "country",
+                  label: "Country",
+                  helperText: "Please enter Author's country",
+                  helperTextInvalid:
+                    "If country is set, it has to be at least one word",
                   required: false,
                   type: "TextInput",
                   validateFunction: validateCountry,
-                  testInputType: "text"
+                  testInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}
@@ -239,7 +246,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
               rm={remove}
             />
           )}
-          <Table columns={COLUMNS} items={tableItems} onDelete={onDelete} onEdit={onEdit} transformRows={transformRows} />
+          <Table
+            columns={COLUMNS}
+            items={tableItems}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            transformRows={transformRows}
+          />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}
@@ -258,8 +271,11 @@ const EntityPage: React.FC<EntityPageProps> = ({
 
 export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
-  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
+  readGql: createQueryToGetItems(
+    ENTITY_NAME,
+    ENTITY_PROPS.map((p) => p.name)
+  ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
-  removeGql: createMutationToDeleteItem(ENTITY_NAME),
+  removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),
 })(EntityPage);

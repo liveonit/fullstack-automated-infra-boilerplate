@@ -1,36 +1,51 @@
 import { client } from "./GqlClient"
 import { gql } from "@apollo/client";
+import _ from "lodash";
 
 export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID"
 
 
 export interface EntityProp {
   name: string;
-  type:  GqlTypes;
+  type: GqlTypes;
   required: boolean;
 }
 
-export const getCachedItems = (entityName: string) => {
-  const serializedState = client.cache.extract()
-  const result: any[] = [];
-  for (var [k, v] of Object.entries(serializedState)) if (k.indexOf(entityName + ":") >= 0) result.push(v);
-  return result;
+export const getCachedItems = (entityName: string, properties: string[]) => {
+  const entitiesName = entityName.toLowerCase() + "s"
+  const attr = properties.map(s => s !== "id" ? `        ${s}` : "").join("\n")
+  const result = client.readQuery({
+    query: gql`
+    query Read${entityName}s {
+      ${entitiesName} {
+        id\n${attr}
+      }
+    }`
+  })
+  return (result && result[entitiesName]) || []
 }
+
+
+declare global {
+  interface Window {
+    getCacheItems: any;
+    test: any;
+  }
+}
+
+window.getCacheItems = getCachedItems;
+
+
 
 export const createQueryToGetItems = (entityName: string, properties: string[]) => {
   const formatedEntityName = entityName.charAt(0).toUpperCase() +
     entityName.slice(1).toLowerCase()
   const entitiesName = entityName.toLowerCase() + "s"
-  const attr = properties.map(s => s !== "id" ? `          ${s}` : "").join("\n")
+  const attr = properties.map(s => s !== "id" ? `        ${s}` : "").join("\n")
   const GET_QUERY = gql`
     query ${formatedEntityName} {
       ${entitiesName} {
-        count
-        limit
-        offset
-        items {
-          id\n${attr}
-        }
+        id\n${attr}
       }
     }
     `;
@@ -70,11 +85,11 @@ export const createMutationToUpdateItem = (entityName: string, properties: Entit
   return UPDATE_MUTATION;
 }
 
-export const createMutationToDeleteItem = (entityName: string) => {
+export const createMutationToDeleteItem = (entityName: string, properties: EntityProp[]) => {
   const formatedEntityName = entityName.charAt(0).toUpperCase() +
     entityName.slice(1).toLowerCase()
   const REMOVE_MUTATION = gql`
-    mutation Remove${formatedEntityName}($id: Int!) {
+    mutation Remove${formatedEntityName}($id: ${_.find(properties, { name: 'id' })?.type || 'Int'}!) {
       delete${formatedEntityName}(id: $id)
     }
   `;
