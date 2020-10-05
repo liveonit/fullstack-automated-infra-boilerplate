@@ -1,9 +1,8 @@
 import React from "react";
 import { ModalVariant, Spinner } from "@patternfly/react-core";
-import { IconButton, Icon } from "rsuite";
-import { sortable,
-} from "@patternfly/react-table";
-import { capitalize } from '../../../utils/General/capitalize'
+import { IconButton, Icon, TagGroup, Tag } from "rsuite";
+import { sortable } from "@patternfly/react-table";
+import { capitalize } from "../../../utils/General/capitalize";
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
@@ -20,15 +19,23 @@ import {
   createMutationToUpdateItem,
   createMutationToDeleteItem,
   EntityProp,
+  getCachedItems,
 } from "../../../utils/General/GqlHelpers";
-import { validateAge, validateCountry, validateFullName } from "../../../components/Froms/Utils";
+import {
+  validateAge,
+  validateCountry,
+  validateFullName,
+} from "../../../components/Froms/Utils";
 import { Subtract } from "utility-types";
+import { hashCode } from "../../../utils/General/stringHash";
+import { intToRGB } from "../../../utils/General/intToRGB";
 
+const TAGS_COLORS = ["red","orange","yellow","green","cyan","blue","violet"]
 
 //=============================================================================
 //#region Entity definition
 
-export const ENTITY_NAME = "User"
+export const ENTITY_NAME = "User";
 
 export type EntityType = {
   id: string;
@@ -43,29 +50,41 @@ export type EntityType = {
 export const ENTITY_PROPS: EntityProp[] = [
   { name: "id", type: "String", required: false },
   { name: "username", type: "String", required: true },
-  { name: "enabled", type: "Boolean", required: false },
+  { name: "email", type: "String", required: true },
   { name: "firstName", type: "String", required: true },
   { name: "lastName", type: "String", required: true },
-  { name: "email", type: "String", required: true },
-]
+  { name: "enabled", type: "Boolean", required: false },
+  { name: "realmRoles", type: "String", required: true }
+];
 
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
-  ...(ENTITY_PROPS.map(e => ({ key: e.name, title: capitalize(e.name), transforms: [sortable] })))
+  ...ENTITY_PROPS.map((e) => ({
+    key: e.name,
+    title: capitalize(e.name),
+    transforms: [sortable],
+  })).filter(e => e.key !== "realmRoles"),
+  { key: "realmRoles", title: "Roles", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map(e => e.name),
+  keys: ENTITY_PROPS.map((e) => e.name),
 };
-
 
 function transformRows(items: any[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "xxx") {
+      if (column.key === "realmRoles") {
         return {
-          title: "modify value of column",
+          title: item?.realmRoles ? (
+            <TagGroup>
+              {item.realmRoles.map((r: any) => (
+                <Tag color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}>{r}</Tag>
+              ))}
+            </TagGroup>
+          ) : (
+            ""
+          ),
         };
       } else return _.get(item, column.key);
     }),
@@ -77,7 +96,6 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
-
 interface EntityPageProps {
   get: () => void;
   create: ({
@@ -85,11 +103,7 @@ interface EntityPageProps {
   }: {
     variables: Subtract<EntityType, { id: string }>;
   }) => void;
-  update: ({
-    variables,
-  }: {
-    variables: EntityType;
-  }) => void;
+  update: ({ variables }: { variables: EntityType }) => void;
   remove: ({ variables: { id } }: { variables: { id: string } }) => void;
   loading: boolean;
   items: EntityType[];
@@ -203,32 +217,39 @@ const EntityPage: React.FC<EntityPageProps> = ({
           />
           {state.isCreateUpdateModalOpen && (
             <ModalForm
-              title={state.entity ? "Update Author": "Create Author"}
+              title={state.entity ? "Update Author" : "Create Author"}
               modalVariant={ModalVariant.small}
-              fields={[ 
-                { 
-                  keyName: "name", label: "Full Name", 
-                  helperText: "Please enter Author's full name", helperTextInvalid: "Full name has to be at least two words",
+              fields={[
+                {
+                  keyName: "name",
+                  label: "Full Name",
+                  helperText: "Please enter Author's full name",
+                  helperTextInvalid: "Full name has to be at least two words",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateFullName,
-                  testInputType: "text"
+                  testInputType: "text",
                 },
-                { 
-                  keyName: "age", label: "Age", 
-                  helperText: "Please enter Author's age", helperTextInvalid: "Age has to be a number",
+                {
+                  keyName: "age",
+                  label: "Age",
+                  helperText: "Please enter Author's age",
+                  helperTextInvalid: "Age has to be a number",
                   required: true,
                   type: "TextInput",
                   validateFunction: validateAge,
-                  testInputType: "number"
+                  testInputType: "number",
                 },
-                { 
-                  keyName: "country", label: "Country", 
-                  helperText: "Please enter Author's country", helperTextInvalid: "If country is set, it has to be at least one word",
+                {
+                  keyName: "country",
+                  label: "Country",
+                  helperText: "Please enter Author's country",
+                  helperTextInvalid:
+                    "If country is set, it has to be at least one word",
                   required: false,
                   type: "TextInput",
                   validateFunction: validateCountry,
-                  testInputType: "text"
+                  testInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}
@@ -245,7 +266,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
               rm={remove}
             />
           )}
-          <Table columns={COLUMNS} items={tableItems} onDelete={onDelete} onEdit={onEdit} transformRows={transformRows} />
+          <Table
+            columns={COLUMNS}
+            items={tableItems}
+            onDelete={onDelete}
+            onEdit={onEdit}
+            transformRows={transformRows}
+          />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}
@@ -264,7 +291,10 @@ const EntityPage: React.FC<EntityPageProps> = ({
 
 export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
-  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(p => p.name)),
+  readGql: createQueryToGetItems(
+    ENTITY_NAME,
+    ENTITY_PROPS.map((p) => p.name)
+  ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
   removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),

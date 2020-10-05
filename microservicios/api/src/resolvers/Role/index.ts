@@ -27,7 +27,9 @@ export class RoleResolver {
   async createRole(@Arg("data") data: CreateRoleInput) {
     const kcAdmin = await kcConnect();
     const { roleName } = await kcAdmin.roles.create(data);
+    console.log(roleName)
     const role = await kcAdmin.roles.findOneByName({ name: roleName });
+    console.log(role)
     return role as Role;
   }
 

@@ -55,8 +55,8 @@ export const createQueryToGetItems = (entityName: string, properties: string[]) 
 export const createMutationToCreateItem = (entityName: string, properties: EntityProp[]) => {
   const formatedEntityName = entityName.charAt(0).toUpperCase() +
     entityName.slice(1).toLowerCase()
-  const varDef = properties.map(p => `$${p.name}: ${p.type}` + (p.required ? "!" : "")).join(", ")
-  const dataDef = properties.map(p => `${p.name}: $${p.name}`).join(", ")
+  const varDef = properties.map(p =>  p.name !== "id" ? `$${p.name}: ${p.type}` + (p.required ? "!" : "") : "").join(", ")
+  const dataDef = properties.map(p =>  p.name !== "id" ? `${p.name}: $${p.name}`: "").join(", ")
   const attr = properties.map(s => s.name !== "id" ? `      ${s.name}` : "").join("\n")
   const CREATE_MUTATION = gql`
     mutation Create${formatedEntityName}(${varDef}) {
