@@ -1,5 +1,5 @@
 import React from "react";
-import { ModalVariant, Spinner } from "@patternfly/react-core";
+import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon, TagGroup, Tag } from "rsuite";
 import { sortable } from "@patternfly/react-table";
 import { capitalize } from "../../../utils/General/capitalize";
@@ -19,7 +19,6 @@ import {
   createMutationToUpdateItem,
   createMutationToDeleteItem,
   EntityProp,
-  getCachedItems,
 } from "../../../utils/General/GqlHelpers";
 import {
   validateAge,
@@ -28,7 +27,6 @@ import {
 } from "../../../components/Froms/Utils";
 import { Subtract } from "utility-types";
 import { hashCode } from "../../../utils/General/stringHash";
-import { intToRGB } from "../../../utils/General/intToRGB";
 
 const TAGS_COLORS = ["red","orange","yellow","green","cyan","blue","violet"]
 
@@ -79,14 +77,21 @@ function transformRows(items: any[]) {
           title: item?.realmRoles ? (
             <TagGroup>
               {item.realmRoles.map((r: any) => (
-                <Tag color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}>{r}</Tag>
+                <Tag key={r} color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}>{r}</Tag>
               ))}
             </TagGroup>
           ) : (
             ""
           ),
         };
-      } else return _.get(item, column.key);
+      } else if (column.key === "enabled") {
+        let label = _.get(item, column.key, false);
+        const className = label ? "greenLabel" : "normalLabel";
+        return {
+          title: <Label className={className}>{label ? "YES" : "NO"}</Label>,
+        }; 
+      }
+      else return _.get(item, column.key);
     }),
   }));
 }

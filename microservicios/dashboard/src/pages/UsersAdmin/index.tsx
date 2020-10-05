@@ -8,8 +8,8 @@ export function UsersAdmin() {
     <>
         <SimpleTabs
           tabObjects={[
-            { title: "Users", page: <Users /> },
-            { title: "Roles", page: <Roles /> },
+            { title: "Users", page: Users },
+            { title: "Roles", page: Roles },
           ]}
         />
     </>

@@ -176,7 +176,6 @@ const EntityPage: React.FC<EntityPageProps> = ({
     : items.slice(offset, offset + pageLimit);
   //#endregion
   //===========================================================================
-
   return (
     <>
       {loading ? (

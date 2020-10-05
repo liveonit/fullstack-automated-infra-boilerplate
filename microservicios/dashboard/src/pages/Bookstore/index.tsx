@@ -8,8 +8,8 @@ export function BookStore() {
     <>
         <SimpleTabs
           tabObjects={[
-            { title: "Authors", page: <Authors /> },
-            { title: "Books", page: <Books /> },
+            { title: "Authors", page: Authors },
+            { title: "Books", page: Books },
           ]}
         />
     </>
