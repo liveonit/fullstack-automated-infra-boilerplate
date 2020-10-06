@@ -15,7 +15,7 @@ const SimpleTabs: React.FC<Props> = ({ tabObjects }) => {
 
   const activePage = (eventKey: number) => {
     const Page = tabObjects[activeTabKey].page;
-    return activeTabKey === eventKey ? <Page /> : <></>;
+    return <Page />;
   };
 
   const handleTabClick = (
@@ -30,17 +30,18 @@ const SimpleTabs: React.FC<Props> = ({ tabObjects }) => {
   };
   let eventKey = 0;
   return (
-    <Tabs activeKey={activeTabKey} onSelect={handleTabClick} isBox={false}>
-      {tabObjects.map((o) => (
-        <Tab
-          key={eventKey}
-          eventKey={eventKey}
-          title={<TabTitleText>{o.title}</TabTitleText>}
-        >
-          {activePage(eventKey++)}
-        </Tab>
-      ))}
-    </Tabs>
+    <>
+      <Tabs activeKey={activeTabKey} onSelect={handleTabClick} isBox={false}>
+        {tabObjects.map((o) => (
+          <Tab
+            key={eventKey}
+            eventKey={eventKey++}
+            title={<TabTitleText>{o.title}</TabTitleText>}
+          ></Tab>
+        ))}
+      </Tabs>
+      {activePage(eventKey)}
+    </>
   );
 };
 

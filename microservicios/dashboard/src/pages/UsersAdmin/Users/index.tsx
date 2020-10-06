@@ -11,22 +11,19 @@ import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
-import { gqlHoC } from "../../../utils/General/GqlHoC";
+import { gqlHoC } from "../../../utils/General/gqlHoC";
 import _ from "lodash";
 import {
   createQueryToGetItems,
   createMutationToCreateItem,
   createMutationToUpdateItem,
   createMutationToDeleteItem,
-  EntityProp, getCachedItems
+  EntityProp
 } from "../../../utils/General/GqlHelpers";
 import {
-  validateAge,
   validateAtLeastOneOptionRequired,
   validateBoolean,
-  validateCountry,
   validateEmail,
-  validateFullName,
   validateString,
   validateUsername,
 } from "../../../components/Froms/Utils";
@@ -130,15 +127,16 @@ interface EntityPageState {
   entity?: EntityType;
 }
 
-const EntityPage: React.FC<EntityPageProps> = ({
-  get,
-  create,
-  update,
-  remove,
-  loading,
-  items,
-  count,
-}) => {
+const EntityPage: React.FC<EntityPageProps> = (props) => {
+  const {
+    create,
+    update,
+    remove,
+    loading,
+    items,
+    count,
+  } = props;
+
   const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -147,17 +145,14 @@ const EntityPage: React.FC<EntityPageProps> = ({
     isDeleteModalOpen: false,
     entity: undefined,
   });
+
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
 
   
-  React.useEffect(() => {
-    get();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data } = useQuery(createQueryToGetItems("Role", [{ name: "name", type: "String", required: true }]))
+  const { roles } = data || { roles: []}
   
-  const { data } = useQuery(createQueryToGetItems("Role", ["name"]))
-  const { roles } = data || {}
   //===========================================================================
   //#region events
 
@@ -341,7 +336,7 @@ export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
   readGql: createQueryToGetItems(
     ENTITY_NAME,
-    ENTITY_PROPS.map((p) => p.name)
+    ENTITY_PROPS
   ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),

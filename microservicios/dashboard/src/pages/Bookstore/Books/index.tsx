@@ -11,7 +11,7 @@ import { FooterToolbar } from "../../../components/Tables/FooterToolbar";
 import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
-import { gqlHoC } from "../../../utils/General/GqlHoC";
+import { gqlHoC } from "../../../utils/General/gqlHoC";
 import _ from "lodash";
 import {
   createQueryToGetItems,
@@ -128,11 +128,6 @@ const EntityPage: React.FC<EntityPageProps> = ({
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
-
-  React.useEffect(() => {
-    get();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   //===========================================================================
   //#region events
@@ -287,7 +282,7 @@ export default gqlHoC<EntityType>({
   entityName: ENTITY_NAME,
   readGql: createQueryToGetItems(
     ENTITY_NAME,
-    ENTITY_PROPS.map((p) => p.name)
+    ENTITY_PROPS
   ),
   createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
   updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),

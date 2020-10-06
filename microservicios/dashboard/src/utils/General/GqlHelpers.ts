@@ -36,13 +36,14 @@ window.getCacheItems = getCachedItems;
 
 
 
-export const createQueryToGetItems = (entityName: string, properties: string[]) => {
+export const createQueryToGetItems = (entityName: string, properties: EntityProp[], variables?: EntityProp[]) => {
   const formatedEntityName = entityName.charAt(0).toUpperCase() +
     entityName.slice(1).toLowerCase()
   const entitiesName = entityName.toLowerCase() + "s"
-  const attr = properties.map(s => s !== "id" ? `        ${s}` : "").join("\n")
+  const attr = properties.map(s => s.name !== "id" ? `        ${s.name}` : "").join("\n")
+  const varsString = variables?.map((s,k) => `${k===0 ?"(" : ""}${s.name} : ${s.type}${s.required ? "!" : ""}${k===(variables.length-1) ?")" : ""}`).join(", ") || ""
   const GET_QUERY = gql`
-    query ${formatedEntityName} {
+    query ${formatedEntityName}${varsString} {
       ${entitiesName} {
         id\n${attr}
       }

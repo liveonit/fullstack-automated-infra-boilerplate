@@ -33,6 +33,6 @@ export const validateUsername: ValidateFunction = (s, r) =>
 
 
 export const validateEmail: ValidateFunction = (s, r) =>
-  (s === "" || s === undefined) ? (r ? "error" : "default") : /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(s.toString()) ? "success" : "error";
+  (s === "" || s === undefined) ? (r ? "error" : "default") : /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/.test(s.toString()) ? "success" : "error";
 
 export const validateAtLeastOneOptionRequired: ValidateFunction = (s, r) => ((s as string[]).length >= 1) ? "success" : r ? "error" : "default"

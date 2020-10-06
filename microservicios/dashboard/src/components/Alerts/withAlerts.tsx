@@ -10,14 +10,14 @@ import {
 } from "../../utils/General/GqlHelpers";
 import { Subtract } from "utility-types";
 
-interface InjectedGqlHoCProps {
+interface InjectedgqlHoCProps {
   alerts: any[];
   hideAlert: (s: string) => void;
 }
 
-export const withAlterts = <P extends InjectedGqlHoCProps>(
+export const withAlterts = <P extends InjectedgqlHoCProps>(
   Component: React.ComponentType<P>
-): React.FC<Subtract<P, InjectedGqlHoCProps>> => (props) => {
+): React.FC<Subtract<P, InjectedgqlHoCProps>> => (props) => {
   const [state, setState] = React.useState<{
     alarms: any[];
     count: number;

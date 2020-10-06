@@ -6,8 +6,12 @@ import { FooterToolbar } from "../../components/Tables/FooterToolbar";
 
 import Fuse from "fuse.js";
 import { Spinner } from "@patternfly/react-core";
-import gqlHoC from "../../utils/General/GqlHoC";
-import { createQueryToGetItems, createQueryToSubscribe, EntityProp } from "../../utils/General/GqlHelpers";
+import gqlHoC from "../../utils/General/gqlHoC";
+import {
+  createQueryToGetItems,
+  createQueryToSubscribe,
+  EntityProp,
+} from "../../utils/General/GqlHelpers";
 import { sortable } from "@patternfly/react-table";
 import _ from "lodash";
 
@@ -30,7 +34,7 @@ const ENTITY_PROPS: EntityProp[] = [
   { name: "unixStartTime", type: "Int", required: true },
   { name: "executionTime", type: "Int", required: true },
   { name: "resultPayload", type: "String", required: false },
-]
+];
 
 const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
@@ -74,14 +78,16 @@ interface BookstoreAuditoryProps {
   unsubscribe: () => void;
 }
 
-const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
-  get,
-  loading,
-  items,
-  count,
-  subscribe,
-  unsubscribe,
-}) => {
+const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = (props) => {
+  const {
+    get,
+    loading,
+    items,
+    count,
+    subscribe,
+    unsubscribe,
+  }= props;
+  
   const [state, setState] = React.useState({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -96,11 +102,6 @@ const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  React.useEffect(() => {
-    get({ variables: { timeStart: startDate, timeEnd: endDate } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate]);
 
   const onPageLimitChanged = (n: number) => {
     setState({
@@ -124,22 +125,28 @@ const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
     startDate?: number;
     endDate?: number;
   }) => {
-    if (startDate && endDate) {
-      console.log("startDate", startDate + "--- ", new Date(startDate));
-      console.log("endDate", endDate + "---- ", new Date(endDate));
-      setState({
-        ...state,
-        startDate: startDate,
-        endDate: endDate,
+    if (startDate !== state.startDate || endDate !== state.endDate) {
+      get({
+        variables: {
+          timeStart: startDate || Date.now() - 604800000,
+          timeEnd: endDate || Date.now(),
+        },
       });
-      unsubscribe();
-    } else {
-      setState({
-        ...state,
-        startDate: Date.now() - 604800000,
-        endDate: Date.now(),
-      });
-      subscribe();
+      if (startDate && endDate) {
+        setState({
+          ...state,
+          startDate: startDate,
+          endDate: endDate,
+        });
+        unsubscribe();
+      } else {
+        setState({
+          ...state,
+          startDate: Date.now() - 604800000,
+          endDate: Date.now(),
+        });
+        subscribe();
+      }
     }
   };
 
@@ -168,9 +175,10 @@ const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
       ) : (
         <>
           <Table
-          columns={COLUMNS}
-          items={tableItems} 
-          transformRows={transformRows}/>
+            columns={COLUMNS}
+            items={tableItems}
+            transformRows={transformRows}
+          />
           <div className="pagination-footer">
             <FooterToolbar
               totalRecords={count}
@@ -189,6 +197,9 @@ const BookstoreAuditory: React.FC<BookstoreAuditoryProps> = ({
 
 export default gqlHoC({
   entityName: ENTITY_NAME,
-  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS.map(e => e.name)),
-  subscriptionGql: createQueryToSubscribe(ENTITY_NAME, ENTITY_PROPS.map(e => e.name)),
+  readGql: createQueryToGetItems(ENTITY_NAME, ENTITY_PROPS),
+  subscriptionGql: createQueryToSubscribe(
+    ENTITY_NAME,
+    ENTITY_PROPS.map((e) => e.name)
+  ),
 })(BookstoreAuditory);
