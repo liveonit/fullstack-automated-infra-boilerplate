@@ -36,7 +36,7 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
     isDisabled: false,
     isCreatable: false,
     hasOnCreateOption: false,
-    customBadgeText: 0
+    customBadgeText: 0,
   });
 
   const onToggle = (isOpen: boolean) => {
@@ -46,25 +46,13 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
     });
   };
 
-  const onSelect = (
-    event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    selection: string | SelectOptionObject,
-    isPlaceholder?: boolean | undefined
-  ) => {
-    if (isPlaceholder) clearSelection();
-    else {
-      handleChangeSelected(selected?.filter(item => item !== selection) || []);
-      setState({
-        ...state,
-        customBadgeText: setBadgeText((selected?.length || -2)  + 1),
-        isOpen: false,
-      });
-    }
+  const clearSelection = () => {
+    handleChangeSelected([]);
   };
 
   const setBadgeText = (selected: number) => {
     if (selected === options.length) {
-      return 'All';
+      return "All";
     }
     if (selected === 0) {
       return 0;
@@ -72,14 +60,26 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
     return undefined;
   };
 
-  const clearSelection = () => {
-    handleChangeSelected([]);
-    setState({
-      ...state,
-      isOpen: false,
-    });
+  const onSelect = (
+    event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject,
+    isPlaceholder?: boolean | undefined
+  ) => {
+    if (isPlaceholder) clearSelection();
+    else {
+      if (selected?.includes(selection.toString())) {
+        handleChangeSelected(
+          (selected || []).filter((item) => item !== selection)
+        );
+      } else {
+        handleChangeSelected([...(selected || []), selection.toString()]);
+        setState({
+          ...state,
+          customBadgeText: setBadgeText((selected?.length || -2) + 1),
+        });
+      }
+    }
   };
-
 
   const { isDisabled, isCreatable } = state;
   return (
@@ -97,7 +97,8 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
         isDisabled={isDisabled}
         isCreatable={isCreatable}
         customBadgeText={state.customBadgeText}
-        menuAppendTo={() => document.body}
+        menuAppendTo="parent"
+        style={{ overflow: "auto" }}
       >
         {options.map((option, index) => (
           <SelectOption
@@ -112,4 +113,4 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
   );
 };
 
-export default MultiSelectWithFilter
+export default MultiSelectWithFilter;

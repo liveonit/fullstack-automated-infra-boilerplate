@@ -17,6 +17,7 @@ import _ from "lodash";
 
 import { Field } from "../FieldsTypes";
 import SelectWithFilter from "../SelectWithFilter";
+import MultiSelectWithFilter from "../MultiSelectWithFilter";
 
 type Entity = { id: number; name: string } & any;
 
@@ -103,15 +104,15 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                   (attr[k] =
                     // si es ToggleSwitch el valor se pasa de string a boolean
                     fields[i].type === 'ToggleSwitch'
-                    ? state[k].value === 'true'
+                    ? !!state[k].value
                     : fields[i].type === 'SelectWithFilter'
                     // Select with filter es para seleccionar de una lista de opciones y 
                     //lo que se setea en valor es el id correspondiente a esa opcion
                     ? fields[i].options?.filter(o => o.value === state[k].value)[0].id
-                    // si es el type es TextInput llega aca, y si el tipo de input es number
+                    // si el type es TextInput llega aca, y si el tipo de input es number
                     // hace el parseo de lo contrario coloca el texto directamente
-                    : fields[i].testInputType === "number"
-                      ? parseInt(state[k].value || "")
+                    : fields[i].textInputType === "number"
+                      ? parseInt(state[k].value?.toString() || "")
                       : state[k].value)
               );
               entity !== undefined
@@ -152,9 +153,9 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
             {f.type === "TextInput" ? (
               <TextInput
                 validated={state[f.keyName]?.validated}
-                value={state[f.keyName]?.value}
+                value={(state[f.keyName]?.value || "") as string}
                 id={f.keyName}
-                type={f.testInputType}
+                type={f.textInputType}
                 onChange={(v) =>
                   setState({
                     ...state,
@@ -174,7 +175,7 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                 keyName={f.keyName}
                 label={f.label}
                 options={f.options || []}
-                selected={state[f.keyName]?.value}
+                selected={(state[f.keyName]?.value || "") as string}
                 handleChangeSelected={(v) =>
                   setState({
                     ...state,
@@ -190,20 +191,40 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
                 }
               />
             ) : f.type === "ToggleSwitch" 
-            ? <Toggle checked={state[f.keyName]?.value === "true"} size="md" onChange={(v) =>
+            ? <Toggle checked={!!state[f.keyName]?.value} size="md" onChange={(v) =>
               setState({
                 ...state,
                 [f.keyName]: {
                   ...state[f.keyName],
-                  value: v ? "true" : "false",
+                  value: v,
                   validated: state[f.keyName]?.validate(
-                    v ? "true" : "false",
+                    v,
                     state[f.keyName]?.required
                   ),
                 },
               })
             } ></Toggle>
-            : undefined
+            : f.type === "MultiSelectWithFilter" ? (
+              <MultiSelectWithFilter
+                keyName={f.keyName}
+                label={f.label}
+                options={f.options || []}
+                selected={(state[f.keyName]?.value || []) as string[]}
+                handleChangeSelected={(v) =>
+                  setState({
+                    ...state,
+                    [f.keyName]: {
+                      ...state[f.keyName],
+                      value: v,
+                      validated: state[f.keyName]?.validate(
+                        v,
+                        state[f.keyName]?.required
+                      ),
+                    },
+                  })
+                }
+              />
+            ) : undefined
           }
           </FormGroup>
         ))}

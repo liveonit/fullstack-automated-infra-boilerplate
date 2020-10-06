@@ -208,7 +208,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: true,
                   type: "TextInput",
                   validateFunction: validateFullName,
-                  testInputType: "text",
+                  textInputType: "text",
                 },
                 {
                   keyName: "age",
@@ -218,7 +218,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: true,
                   type: "TextInput",
                   validateFunction: validateAge,
-                  testInputType: "number",
+                  textInputType: "number",
                 },
                 {
                   keyName: "country",
@@ -229,7 +229,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: false,
                   type: "TextInput",
                   validateFunction: validateCountry,
-                  testInputType: "text",
+                  textInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}

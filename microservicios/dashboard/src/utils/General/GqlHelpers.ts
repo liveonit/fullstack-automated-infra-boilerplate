@@ -2,7 +2,7 @@ import { client } from "./GqlClient"
 import { gql } from "@apollo/client";
 import _ from "lodash";
 
-export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID"
+export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID" | "[String!]"
 
 
 export interface EntityProp {
@@ -24,7 +24,6 @@ export const getCachedItems = (entityName: string, properties: string[]) => {
   })
   return (result && result[entitiesName]) || []
 }
-
 
 declare global {
   interface Window {
@@ -76,7 +75,7 @@ export const createMutationToUpdateItem = (entityName: string, properties: Entit
   const dataDef = properties.map(p => p.name !== "id" ? `${p.name}: $${p.name}` : "").join(", ")
   const attr = properties.map(s => s.name !== "id" ? `      ${s.name}` : "").join("\n")
   const UPDATE_MUTATION = gql`
-    mutation Update${formatedEntityName}($id: Int!, ${varDef}) {
+    mutation Update${formatedEntityName}($id: ${_.find(properties, { name: 'id' })?.type || 'Int'}!, ${varDef}) {
       update${formatedEntityName}(id: $id, data: {${dataDef} }) {
         id\n${attr}
       }

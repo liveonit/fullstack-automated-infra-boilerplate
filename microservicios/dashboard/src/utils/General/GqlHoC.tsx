@@ -4,7 +4,7 @@ import {
   useSubscription,
   OnSubscriptionDataOptions,
   DocumentNode,
-  useMutation,
+  useMutation
 } from "@apollo/client";
 
 import { Subtract } from "utility-types";
@@ -54,11 +54,12 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     isSubscribe: false,
   });
   const entities = entityName.toLowerCase() + "s";
+  const { items, count } = state;
 
   // =======================
   // Read from GQL API
   // =======================
-  let get, loading;
+  let get, loading = false;
   if (readGql !== undefined) {
     const onCompletedQuery = (d: any) => {
       setState({
@@ -71,9 +72,13 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     [get, { loading }] = useLazyQuery(readGql, {
       fetchPolicy: "cache-and-network",
       onCompleted: onCompletedQuery,
+      onError: (err) => console.error(err),
     });
   }
 
+  // =======================
+  // Subscribe to GQL API
+  // =======================
   let subscribe, unsubscribe, onSubscriptionData;
   if (subscriptionGql) {
     subscribe = () => {
@@ -100,6 +105,9 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     });
   }
 
+  // =======================
+  // Create item in GQL API
+  // =======================
   let create;
   if (createGql) {
     const onCompletedCreate = (data: any) => {
@@ -117,6 +125,7 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     };
     [create] = useMutation(createGql, {
       onCompleted: onCompletedCreate,
+      onError: (err) => console.error(err),
       update: (cache, { data }) => {
         if (readGql) {
           const result: any = cache.readQuery({ query: readGql });
@@ -132,6 +141,9 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     });
   }
 
+  // =======================
+  // Update item in GQL API
+  // =======================
   let update;
   if (updateGql) {
     const onCompletedUpdate = (data: any) => {
@@ -141,12 +153,15 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
       });
     };
     [update] = useMutation(updateGql, {
-      onCompleted: onCompletedUpdate
+      onCompleted: onCompletedUpdate,
+      onError: (err) => console.error(err),
     });
   }
-  let remove;
-  const { items, count } = state;
 
+  // =======================
+  // Remove item in GQL API
+  // =======================
+  let remove;
   if (removeGql) {
     const onCompletedRemove = (data: any) => {
       let respId =
@@ -164,6 +179,7 @@ export const gqlHoC = <T extends { id: any }>(config: HoCConfig) => <
     };
     [remove] = useMutation(removeGql, {
       onCompleted: onCompletedRemove,
+      onError: (err) => console.error(err),
       update: (cache, { data }) => {
         cache.modify({
           fields: {

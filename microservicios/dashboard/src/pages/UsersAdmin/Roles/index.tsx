@@ -1,7 +1,7 @@
 import React from "react";
-import {  ModalVariant, Spinner } from "@patternfly/react-core";
+import { ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-import { sortable } from "@patternfly/react-table";
+import { sortable, classNames, Visibility } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
@@ -21,10 +21,9 @@ import {
   EntityProp,
 } from "../../../utils/General/GqlHelpers";
 
-import {
-  validateString,
-} from "../../../components/Froms/Utils";
+import { validateString, validateUsername } from "../../../components/Froms/Utils";
 import { Subtract } from "utility-types";
+
 
 //=============================================================================
 //#region Entity definition
@@ -44,7 +43,7 @@ export const ENTITY_PROPS: EntityProp[] = [
 ];
 
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
+  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
   { key: "name", title: "Name", transforms: [sortable] },
   { key: "description", title: "Description", transforms: [sortable] },
 ];
@@ -78,11 +77,7 @@ interface EntityPageProps {
   }: {
     variables: Subtract<EntityType, { id: number }>;
   }) => void;
-  update: ({
-    variables,
-  }: {
-    variables: EntityType;
-  }) => void;
+  update: ({ variables }: { variables: EntityType }) => void;
   remove: ({ variables: { id } }: { variables: { id: number } }) => void;
   loading: boolean;
   items: EntityType[];
@@ -202,11 +197,11 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   keyName: "name",
                   label: "Role name",
                   helperText: "Insert a representarive name to the role",
-                  helperTextInvalid: "The role name must not be empty",
+                  helperTextInvalid: 'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
                   required: true,
                   type: "TextInput",
-                  validateFunction: validateString,
-                  testInputType: "text",
+                  validateFunction: validateUsername,
+                  textInputType: "text",
                 },
                 {
                   keyName: "description",
@@ -216,7 +211,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: true,
                   type: "TextInput",
                   validateFunction: validateString,
-                  testInputType: "text",
+                  textInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}
