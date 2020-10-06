@@ -5,6 +5,8 @@ import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 import { User } from "../../models/User";
 import { getUsersWithRoles, kcConnect, getUserWithRoles, getRoles } from "../../utils/helpers/kcAdmin";
 import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
+import CredentialRepresentation from "keycloak-admin/lib/defs/credentialRepresentation";
+import { validatePassword } from "../../utils/helpers/validateFields";
 
 @Resolver()
 export class UserResolver {
@@ -12,7 +14,6 @@ export class UserResolver {
   async users(@Arg("limit", { nullable: true }) limit: number,
     @Arg("offset", { nullable: true }) offset: number): Promise<User[]> {
     let users = await getUsersWithRoles();
-    const count = users.length;
     if (offset && limit) {
       users = users.slice(offset, offset + limit + 1)
     }
@@ -30,7 +31,19 @@ export class UserResolver {
   @UseMiddleware([GqlLog])
   async createUser(@Arg("data") data: CreateUserInput) {
     const kcAdmin = await kcConnect();
+    const pass = data.password
+    delete data.password
     const { id } = await kcAdmin.users.create(data);
+    if (validatePassword(data.password)) {
+      await kcAdmin.users.resetPassword({
+        id,
+        credential: {
+          temporary: false,
+          type: 'password',
+          value: pass,
+        },
+      });
+    }
     const roles = (await getRoles()).filter(
       r => data.realmRoles.includes(r.name)).map(r =>
         ({ id: r.id, name: r.name } as RoleMappingPayload));
@@ -43,6 +56,17 @@ export class UserResolver {
   @UseMiddleware([GqlLog])
   async updateUser(@Arg("id") id: string, @Arg("data") data: UpdateUserInput) {
     const kcAdmin = await kcConnect();
+    if (validatePassword(data.password)) {
+      await kcAdmin.users.resetPassword({
+        id,
+        credential: {
+          temporary: false,
+          type: 'password',
+          value: data.password,
+        },
+      });
+    }
+    delete data.password
     await kcAdmin.users.update({ id }, data);
     const user = await kcAdmin.users.findOne({ id });
     return user;

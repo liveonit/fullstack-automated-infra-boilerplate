@@ -18,6 +18,7 @@ import _ from "lodash";
 import { Field } from "../FieldsTypes";
 import SelectWithFilter from "../SelectWithFilter";
 import MultiSelectWithFilter from "../MultiSelectWithFilter";
+import PasswordWithConfirm from "../PasswordWithConfirm";
 
 type Entity = { id: number; name: string } & any;
 
@@ -134,7 +135,29 @@ const CreateUpdateModal: React.FC<GenericModalProps> = ({
     >
       <Form>
         {fields.map((f) => (
-          <FormGroup
+          f.type === "Password" 
+          ? < PasswordWithConfirm 
+            keyName={f.keyName}
+            label={f.label}
+            helperText={f.helperText}
+            helperTextInvalid={f.helperTextInvalid}
+            validated={state[f.keyName]?.validated}
+            onChangePassword={(v) =>
+              setState({
+                ...state,
+                [f.keyName]: {
+                  ...state[f.keyName],
+                  value: v,
+                  validated: state[f.keyName]?.validate(
+                    v,
+                    state[f.keyName]?.required
+                  ),
+                },
+              })
+            }
+            password={(state[f.keyName]?.value || "") as string}
+          />
+          : <FormGroup
             key={f.keyName}
             label={f.label}
             helperText={

@@ -1,7 +1,7 @@
 import React from "react";
 import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon, TagGroup, Tag } from "rsuite";
-import { sortable } from "@patternfly/react-table";
+import { sortable, classNames, Visibility  } from "@patternfly/react-table";
 import { capitalize } from "../../../utils/General/capitalize";
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
@@ -24,6 +24,7 @@ import {
   validateAtLeastOneOptionRequired,
   validateBoolean,
   validateEmail,
+  validatePassword,
   validateString,
   validateUsername,
 } from "../../../components/Froms/Utils";
@@ -51,6 +52,7 @@ export type EntityType = {
 export const ENTITY_PROPS: EntityProp[] = [
   { name: "id", type: "String", required: false },
   { name: "username", type: "String", required: true },
+  { name: "password", type: "String", required: true },
   { name: "email", type: "String", required: true },
   { name: "firstName", type: "String", required: true },
   { name: "lastName", type: "String", required: true },
@@ -63,7 +65,8 @@ export const COLUMNS = [
     key: e.name,
     title: capitalize(e.name),
     transforms: [sortable],
-  })).filter(e => ((e.key !== "realmRoles") && (e.key !== 'id'))),
+    ...(e.name === "id" && {columnTransforms: [classNames(Visibility.hidden || "")]})
+  })).filter(e => ((e.key !== "realmRoles") && (e.key !== 'password'))),
   { key: "realmRoles", title: "Roles", transforms: [sortable] },
 ];
 
@@ -238,6 +241,16 @@ const EntityPage: React.FC<EntityPageProps> = (props) => {
                   type: "TextInput",
                   validateFunction: validateUsername,
                   textInputType: "text",
+                },
+                {
+                  keyName: "password",
+                  label: "Password",
+                  helperText: "Insert passwrd",
+                  helperTextInvalid: 'Password must be at least 8 characters long and include uppercase lowercase and numbers',
+                  required: true,
+                  type: "Password",
+                  validateFunction: validatePassword,
+                  textInputType: "password",
                 },
                 {
                   keyName: "firstName",

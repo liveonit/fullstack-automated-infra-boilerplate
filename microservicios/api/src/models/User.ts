@@ -13,6 +13,9 @@ export class User implements UserRepresentation {
   @Field(() => String)
   username: string;
 
+  @Field(() => String, {nullable: true})
+  password?: string;
+
   @Field(() => Boolean)
   enabled: boolean;
 

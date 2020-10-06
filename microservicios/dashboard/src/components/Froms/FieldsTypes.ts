@@ -2,7 +2,7 @@ import { SelectionOption } from "./SelectWithFilter";
 import { ValidateFunction } from "./Utils";
 
 
-type FieldType = "TextInput" | "SelectWithFilter" | "ToggleSwitch" | "MultiSelectWithFilter"
+type FieldType = "TextInput" | "SelectWithFilter" | "ToggleSwitch" | "MultiSelectWithFilter" | "Password"
 
 export interface Field {
   keyName: string;

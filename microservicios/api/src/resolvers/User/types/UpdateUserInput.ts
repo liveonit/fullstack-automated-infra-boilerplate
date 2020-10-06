@@ -5,6 +5,9 @@ export class UpdateUserInput {
   @Field(() => String,{ nullable: true })
   username?: string;
 
+  @Field(() => String)
+  password?: string;
+
   @Field(() => Boolean,{ nullable: true })
   enabled?: boolean;
 
