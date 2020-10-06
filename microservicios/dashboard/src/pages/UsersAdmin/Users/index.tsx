@@ -128,7 +128,6 @@ interface EntityPageState {
   isCreateUpdateModalOpen: boolean;
   isDeleteModalOpen: boolean;
   entity?: EntityType;
-  roles?: string[]
 }
 
 const EntityPage: React.FC<EntityPageProps> = ({
@@ -147,7 +146,6 @@ const EntityPage: React.FC<EntityPageProps> = ({
     isCreateUpdateModalOpen: false,
     isDeleteModalOpen: false,
     entity: undefined,
-    roles: undefined
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
@@ -159,10 +157,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
   }, []);
   
   const { data } = useQuery(createQueryToGetItems("Role", ["name"]))
-  React.useEffect(() => {
-    get();
-    setState({...state, roles: data?.roles})
-  }, [data]);
+  const { roles } = data || {}
   //===========================================================================
   //#region events
 
@@ -299,7 +294,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   required: true,
                   type: "MultiSelectWithFilter",
                   validateFunction: validateAtLeastOneOptionRequired,
-                  options: (state.roles || []).map((a: any) => ({
+                  options: (roles || []).map((a: any) => ({
                     id: a.id,
                     value: a.name,
                   })),
