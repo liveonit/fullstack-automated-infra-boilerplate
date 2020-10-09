@@ -599,6 +599,48 @@ export function useDeleteRoleMutation(baseOptions?: Apollo.MutationHookOptions<T
 export type DeleteRoleMutationHookResult = ReturnType<typeof useDeleteRoleMutation>;
 export type DeleteRoleMutationResult = Apollo.MutationResult<Types.DeleteRoleMutation>;
 export type DeleteRoleMutationOptions = Apollo.BaseMutationOptions<Types.DeleteRoleMutation, Types.DeleteRoleMutationVariables>;
+export const GetUserAndRolesDocument = gql`
+    query GetUserAndRoles {
+  users {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+  roles {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetUserAndRolesQuery__
+ *
+ * To run a query within a React component, call `useGetUserAndRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserAndRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserAndRolesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserAndRolesQuery(baseOptions?: Apollo.QueryHookOptions<Types.GetUserAndRolesQuery, Types.GetUserAndRolesQueryVariables>) {
+        return Apollo.useQuery<Types.GetUserAndRolesQuery, Types.GetUserAndRolesQueryVariables>(GetUserAndRolesDocument, baseOptions);
+      }
+export function useGetUserAndRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Types.GetUserAndRolesQuery, Types.GetUserAndRolesQueryVariables>) {
+          return Apollo.useLazyQuery<Types.GetUserAndRolesQuery, Types.GetUserAndRolesQueryVariables>(GetUserAndRolesDocument, baseOptions);
+        }
+export type GetUserAndRolesQueryHookResult = ReturnType<typeof useGetUserAndRolesQuery>;
+export type GetUserAndRolesLazyQueryHookResult = ReturnType<typeof useGetUserAndRolesLazyQuery>;
+export type GetUserAndRolesQueryResult = Apollo.QueryResult<Types.GetUserAndRolesQuery, Types.GetUserAndRolesQueryVariables>;
 export const GetUsersDocument = gql`
     query GetUsers {
   users {

@@ -256,13 +256,13 @@ export type User = {
   username: Scalars['String'];
   password?: Maybe<Scalars['String']>;
   enabled: Scalars['Boolean'];
-  totp: Scalars['Boolean'];
-  emailVerified: Scalars['Boolean'];
+  totp?: Maybe<Scalars['Boolean']>;
+  emailVerified?: Maybe<Scalars['Boolean']>;
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
-  disableableCredentialTypes: Array<Scalars['String']>;
-  requiredActions: Array<Scalars['String']>;
-  notBefore: Scalars['Int'];
+  disableableCredentialTypes?: Maybe<Array<Scalars['String']>>;
+  requiredActions?: Maybe<Array<Scalars['String']>>;
+  notBefore?: Maybe<Scalars['Int']>;
   realmRoles: Array<Scalars['String']>;
 };

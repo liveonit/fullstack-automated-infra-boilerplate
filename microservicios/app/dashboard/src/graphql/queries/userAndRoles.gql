@@ -1,0 +1,15 @@
+query GetUserAndRoles {
+  users {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+  roles {
+    id
+    name
+  }
+}

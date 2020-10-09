@@ -126,13 +126,13 @@ type User {
   username: String!
   password: String
   enabled: Boolean!
-  totp: Boolean!
-  emailVerified: Boolean!
+  totp: Boolean
+  emailVerified: Boolean
   firstName: String!
   lastName: String!
   email: String!
-  disableableCredentialTypes: [String!]!
-  requiredActions: [String!]!
-  notBefore: Int!
+  disableableCredentialTypes: [String!]
+  requiredActions: [String!]
+  notBefore: Int
   realmRoles: [String!]!
 }

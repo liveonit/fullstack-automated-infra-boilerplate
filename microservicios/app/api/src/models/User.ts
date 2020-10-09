@@ -19,10 +19,10 @@ export class User implements UserRepresentation {
   @Field(() => Boolean)
   enabled: boolean;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {nullable: true})
   totp: boolean;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {nullable: true})
   emailVerified: boolean;
 
   @Field(() => String)
@@ -34,13 +34,13 @@ export class User implements UserRepresentation {
   @Field(() => String)
   email?: string;
 
-  @Field(() => [String])
+  @Field(() => [String], {nullable: true})
   disableableCredentialTypes?: string[];
 
-  @Field(() => [String])
+  @Field(() => [String], {nullable: true})
   requiredActions?: RequiredActionAlias[];
 
-  @Field(() => Int)
+  @Field(() => Int, {nullable: true})
   notBefore?: number;
 
   @Field(() => [String])

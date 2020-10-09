@@ -13,17 +13,13 @@ import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
 import {
-  createQueryToGetItems,
-  createMutationToCreateItem,
-  createMutationToUpdateItem,
-  createMutationToDeleteItem,
-  EntityProp,
-  gqlHoC
+  EntityProp
 } from "../../../graphql";
 
 import { validateString, validateUsername } from "../../../components/Froms/Utils";
-import { Subtract } from "utility-types";
 
+import { Role } from '../../../graphql/queries/autogenerate/schemas'
+import { useGetRolesQuery, useCreateRoleMutation, useUpdateRoleMutation, useDeleteRoleMutation } from '../../../graphql/queries/autogenerate/hooks'
 
 //=============================================================================
 //#region Entity definition
@@ -70,19 +66,7 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
-interface EntityPageProps {
-  get: () => void;
-  create: ({
-    variables,
-  }: {
-    variables: Subtract<EntityType, { id: number }>;
-  }) => void;
-  update: ({ variables }: { variables: EntityType }) => void;
-  remove: ({ variables: { id } }: { variables: { id: number } }) => void;
-  loading: boolean;
-  items: EntityType[];
-  count: number;
-}
+
 
 interface EntityPageState {
   currentPage: number;
@@ -90,18 +74,11 @@ interface EntityPageState {
   searchText: string;
   isCreateUpdateModalOpen: boolean;
   isDeleteModalOpen: boolean;
-  entity?: EntityType;
+  entity?: Role;
+  items: Role[];
 }
 
-const EntityPage: React.FC<EntityPageProps> = ({
-  get,
-  create,
-  update,
-  remove,
-  loading,
-  items,
-  count,
-}) => {
+const EntityPage: React.FC = () => {
   const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -109,9 +86,44 @@ const EntityPage: React.FC<EntityPageProps> = ({
     isCreateUpdateModalOpen: false,
     isDeleteModalOpen: false,
     entity: undefined,
+    items: []
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
+
+
+  const { data, loading } = useGetRolesQuery();
+  React.useEffect(() => {
+    if (data && data.roles) {
+      setState({ ...state, items: data.roles });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, loading]);
+
+  const [createRole, createRoleResult] = useCreateRoleMutation();
+  if (createRoleResult.data?.createRole) {
+    const newItems: Role[] = [
+      ...state.items,
+      createRoleResult.data.createRole,
+    ];
+    setState({ ...state, items: newItems });
+  }
+
+  const [updateRole, updateRoleResult] = useUpdateRoleMutation();
+  if (updateRoleResult.data?.updateRole) {
+    const updRole = updateRoleResult.data.updateRole;
+    const newItems: Role[] = state.items.map((i) =>
+      i.id !== updRole.id ? i : updRole
+    );
+    setState({ ...state, items: newItems });
+  }
+
+  const [deleteRole, deleteRoleResult] = useDeleteRoleMutation();
+  if (deleteRoleResult.data?.deleteRole) {
+    const delRole = deleteRoleResult.data.deleteRole;
+    const newItems: Role[] = state.items.filter((i) => i.id !== delRole);
+    setState({ ...state, items: newItems });
+  }
 
   //===========================================================================
   //#region events
@@ -141,13 +153,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
   const onCreate = () => {
     setState({ ...state, entity: undefined, isCreateUpdateModalOpen: true });
   };
-  const onEdit = (id: number) => {
-    const entity = _.find(items, (i) => i.id === id);
+  const onEdit = (id: any) => {
+    const entity = _.find(state.items, (i) => i.id === id);
     setState({ ...state, entity, isCreateUpdateModalOpen: true });
   };
 
-  const onDelete = (id: number) => {
-    const entity = _.find(items, (i) => i.id === id);
+  const onDelete = (id: any) => {
+    const entity = _.find(state.items, (i) => i.id === id);
     setState({ ...state, entity, isDeleteModalOpen: true });
   };
 
@@ -157,13 +169,13 @@ const EntityPage: React.FC<EntityPageProps> = ({
   //===========================================================================
   //#region Table elements filter by search and pagination
 
-  const fuse = new Fuse(items, FUSE_OPTIONS);
+  const fuse = new Fuse(state.items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
         .search(state.searchText)
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
-    : items.slice(offset, offset + pageLimit);
+    : state.items.slice(offset, offset + pageLimit);
   //#endregion
   //===========================================================================
   return (
@@ -193,9 +205,11 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   label: "Role name",
                   helperText: "Insert a representarive name to the role",
                   helperTextInvalid: 'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
-                  required: true,
+                  inputControl: {
+                    required: true,
+                    validate: validateUsername,
+                  },
                   type: "TextInput",
-                  validateFunction: validateUsername,
                   textInputType: "text",
                 },
                 {
@@ -203,16 +217,18 @@ const EntityPage: React.FC<EntityPageProps> = ({
                   label: "Role description",
                   helperText: "Insert a description to the role",
                   helperTextInvalid: "",
-                  required: true,
+                  inputControl: {
+                    required: true,
+                    validate: validateString,
+                  },
                   type: "TextInput",
-                  validateFunction: validateString,
                   textInputType: "text",
                 },
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              create={create}
-              update={update}
+              create={createRole}
+              update={updateRole}
             />
           )}
           {state.isDeleteModalOpen && (
@@ -220,7 +236,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              rm={remove}
+              rm={deleteRole}
             />
           )}
           <Table
@@ -232,7 +248,7 @@ const EntityPage: React.FC<EntityPageProps> = ({
           />
           <div className="pagination-footer">
             <FooterToolbar
-              totalRecords={count}
+              totalRecords={state.items.length}
               pageLimit={pageLimit}
               currentPage={currentPage}
               posibleLimitsPerPage={POSIBLE_LIMITS_PER_PAGE}
@@ -246,13 +262,4 @@ const EntityPage: React.FC<EntityPageProps> = ({
   );
 };
 
-export default gqlHoC<EntityType>({
-  entityName: ENTITY_NAME,
-  readGql: createQueryToGetItems(
-    ENTITY_NAME,
-    ENTITY_PROPS
-  ),
-  createGql: createMutationToCreateItem(ENTITY_NAME, ENTITY_PROPS),
-  updateGql: createMutationToUpdateItem(ENTITY_NAME, ENTITY_PROPS),
-  removeGql: createMutationToDeleteItem(ENTITY_NAME, ENTITY_PROPS),
-})(EntityPage);
+export default EntityPage;

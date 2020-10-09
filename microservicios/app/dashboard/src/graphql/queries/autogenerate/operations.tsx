@@ -218,6 +218,20 @@ export type DeleteRoleMutation = (
   & Pick<Types.Mutation, 'deleteRole'>
 );
 
+export type GetUserAndRolesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetUserAndRolesQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+  )>, roles: Array<(
+    { __typename?: 'Role' }
+    & Pick<Types.Role, 'id' | 'name'>
+  )> }
+);
+
 export type GetUsersQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
