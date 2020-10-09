@@ -1,0 +1,89 @@
+query GetUsers {
+  users {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+}
+
+query GetUser($id: String!) {
+  user(id: $id) {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+}
+
+mutation CreateUser(
+  $username: String!
+  $email: String!
+  $enabled: Boolean!
+  $firstName: String!
+  $lastName: String!
+  $password: String!
+  $realmRoles: [String!]!
+) {
+  createUser(
+    data: {
+      username: $username
+      email: $email
+      enabled: $enabled
+      firstName: $firstName
+      lastName: $lastName
+      password: $password
+      realmRoles: $realmRoles
+    }
+  ) {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+}
+
+mutation UpdateUser(
+  $id: String!,
+  $username: String
+  $email: String
+  $enabled: Boolean
+  $firstName: String
+  $lastName: String
+  $password: String!
+  $realmRoles: [String!]
+) {
+  updateUser(
+    data: {
+      username: $username
+      email: $email
+      enabled: $enabled
+      firstName: $firstName
+      lastName: $lastName
+      password: $password
+      realmRoles: $realmRoles
+    },
+    id: $id
+  ) {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+}
+
+mutation DeleteUser($id: String!) {
+  deleteUser(id: $id)
+}

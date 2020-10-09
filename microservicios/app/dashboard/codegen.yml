@@ -1,0 +1,33 @@
+# Endpoint API or gql generated file
+schema: "src/graphql/schema.gql"
+overwrite: true
+
+generates:
+  # Get schemas from server
+  src/graphql/queries/autogenerate/schemas.tsx:
+    documents: 'src/graphql/queries/**/**.gql'
+    plugins:
+      - typescript
+  # Create operations based on queries 
+  src/graphql/queries/autogenerate/operations.tsx:
+    documents: 'src/graphql/queries/**/**.gql'
+    preset: import-types
+    presetConfig:
+      typesPath: ./schemas
+    plugins:
+      - typescript-operations
+
+  # 1. Export graphql documents 
+  # 2. React interface
+  src/graphql/queries/autogenerate/hooks.tsx:
+    documents: 'src/graphql/queries/**/**.gql'
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+    plugins:
+      - typescript-react-apollo
+    config:
+      # Optionals
+      withHOC: false
+      withComponent: false
+      withHooks: true

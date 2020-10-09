@@ -1,0 +1,36 @@
+query GetRoles {
+  roles {
+    id
+    name
+    description
+  }
+}
+
+
+query GetRole($id: Int!) {
+  role(id: $id) {
+    id
+    name
+    description
+  }
+}
+
+mutation CreateRole($name: String!, $description: String ) {
+  createRole(data: { name: $name, description: $description }) {
+    id
+    name
+    description
+  }
+}
+
+mutation UpdateRole($id: String!, $name: String, $description: String ) {
+  updateRole(data: { name: $name, description: $description }, id: $id) {
+    id
+    name
+    description
+  }
+}
+
+mutation DeleteRole($id: String!) {
+  deleteRole(id: $id)
+}

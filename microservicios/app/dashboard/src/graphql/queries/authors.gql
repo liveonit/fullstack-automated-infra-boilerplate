@@ -1,0 +1,39 @@
+query GetAuthors {
+  authors {
+    id
+    name
+    age
+    country
+  }
+}
+
+query GetAuthor($id: Int!) {
+  author(id: $id) {
+    id
+    name
+    age
+    country
+  }
+}
+
+mutation CreateAuthor($name: String!, $age: Int!, $country: String) {
+  createAuthor(data: { name: $name, age: $age, country: $country}) {
+    id,
+    age,
+    name,
+    country
+  }
+}
+
+mutation UpdateAuthor($id: Int!, $name: String, $age: Int, $country: String) {
+  updateAuthor(data: { name: $name, age: $age, country: $country }, id: $id) {
+    id,
+    age,
+    name,
+    country
+  }
+}
+
+mutation DeleteAuthor($id: Int!) {
+  deleteAuthor(id: $id)
+}

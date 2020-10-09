@@ -1,0 +1,24 @@
+query GetLogs($timeStart: Float, $timeEnd: Float) {
+  logs(timeStart: $timeStart, timeEnd: $timeEnd ) {
+    id
+    operation
+    operationType
+    payload
+    unixStartTime
+    executionTime
+    resultPayload
+  }
+}
+
+subscription SubLogs {
+  logsSubscription {
+    executionTime
+    id
+    operation
+    operationType
+    payload
+    resultPayload
+    unixStartTime
+  }
+}
+

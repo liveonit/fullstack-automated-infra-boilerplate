@@ -1,0 +1,10 @@
+FROM node:13-alpine
+
+# Create app directory
+RUN mkdir -p /app/dashboard
+
+WORKDIR /app/dashboard
+
+ENV PORT=80
+EXPOSE 80
+CMD ["yarn", "start"]

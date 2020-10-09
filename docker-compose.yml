@@ -44,8 +44,8 @@ services:
   api:
     image: ${OWNER}/${PROJECT_NAME}-api-development
     build: 
-      context: ./microservicios/api
-      dockerfile: Dockerfile.development
+      context: ./microservicios/app
+      dockerfile: ./api/Dockerfile.development
     container_name: ${PROJECT_NAME}_api_development
     restart: always
     depends_on:
@@ -57,7 +57,7 @@ services:
       WAIT_HOST_CONNECT_TIMEOUT: 30
     env_file: .env
     volumes:
-      - ./microservicios/api/src:/app/src
+      - ./microservicios/app:/app
     networks:
         - fs_network
     ports:
@@ -66,8 +66,8 @@ services:
   dashboard:
     image: ${OWNER}/${PROJECT_NAME}-dashboard-development
     build:
-      context: ./microservicios/dashboard
-      dockerfile: Dockerfile.development
+      context: ./microservicios/app
+      dockerfile: ./dashboard/Dockerfile.development
     env_file: .env
     container_name: ${PROJECT_NAME}_dashboard_development
     restart: unless-stopped
@@ -76,9 +76,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./microservicios/dashboard/src:/usr/src/app/src
-      - ./microservicios/dashboard/public:/usr/src/app/public
-      - ./microservicios/dashboard/tsconfig.json:/usr/src/app/tsconfig.json
+      - ./microservicios/app:/app
     networks:
       - fs_network
 
