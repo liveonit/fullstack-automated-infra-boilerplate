@@ -32,6 +32,7 @@ import {
   useUpdateUserMutation,
   useDeleteUserMutation,
 } from "../../../graphql/queries/autogenerate/hooks";
+import { UseTraceUpdate } from "../../../utils/Debug/UseTraceUpdate";
 
 const TAGS_COLORS = [
   "red",
@@ -160,6 +161,8 @@ const EntityPage: React.FC = () => {
   });
 
   console.count("cantidad de renders");
+  UseTraceUpdate("state", state);
+  UseTraceUpdate("props", {loading, createItem, updateItem, removeItem})
   //===========================================================================
   //#region events
 

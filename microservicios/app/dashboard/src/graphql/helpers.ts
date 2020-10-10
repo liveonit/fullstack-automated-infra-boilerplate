@@ -76,12 +76,10 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
     },
   })) || [];
 
-  const result = React.useMemo(() => ({
+  return {
     createItem,
     updateItem,
     removeItem,
     loading
-  }), [createItem, updateItem, removeItem, loading])
-
-  return result;
+  };
 }
