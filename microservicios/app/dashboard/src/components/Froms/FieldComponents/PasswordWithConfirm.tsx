@@ -65,9 +65,11 @@ const PasswordWithConfirm: React.FC<Props> = (props) => {
         }
       >
         <TextInput
-          {...props}
+          aria-label={label}
+          key={keyName + "i1"}
           value={password}
           onChange={(v) => onChangePassword(v)}
+          validated={validated}
           onBlur={() =>
             setState({
               ...state,
@@ -84,11 +86,12 @@ const PasswordWithConfirm: React.FC<Props> = (props) => {
         <div className="pf-c-form__group-label" style={{ paddingTop: "0.4rem"}}>
           <label className="pf-c-form__label">
             <span className="pf-c-form__label-text">Confirm Password</span>
-          </label>{" "}
+          </label>
         </div>
 
         <TextInput
-          {...props}
+          aria-label={label}
+          key={keyName + "i2"}
           value={state.confirmPass}
           onChange={(v) => {
             setState({

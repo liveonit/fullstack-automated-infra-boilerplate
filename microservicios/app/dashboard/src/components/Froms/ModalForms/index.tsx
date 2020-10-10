@@ -49,14 +49,15 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
   }, []);
 
   // To validate, the function starts at True and does an "and" that verifies that all fields remain "success"
-  const validateForm = () =>
-    fields.reduce(
-      (prev, { keyName, inputControl }) =>
+  const validateForm: () => boolean = () => {
+    const result = fields.reduce((prev, { keyName, inputControl }) => (
         prev &&
         inputControl.validate(state[keyName], inputControl.required) ===
-          "success",
-      true
-    );
+          "success"
+      )
+    , true);
+    return result;
+  };
 
   return (
     <Modal
@@ -95,11 +96,12 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
         {fields.map((f) =>
           f.type === "Password" ? (
             <PasswordWithConfirm
+              key={f.keyName.toString()}
               keyName={f.keyName.toString()}
               label={f.label}
               helperText={f.helperText}
               helperTextInvalid={f.helperTextInvalid}
-              validated={f.inputControl.validate(state[f.keyName], f.inputControl.required)}
+              validated={f.inputControl.validate(state[f.keyName])}
               onChangePassword={(v) =>
                 setState({
                   ...state,
@@ -116,7 +118,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                 <FormHelperText
                   icon={<ExclamationCircleIcon />}
                   isHidden={
-                    f.inputControl.validate(state[f.keyName], f.inputControl.required) !== "default"
+                    f.inputControl.validate(state[f.keyName]) !== "default"
                   }
                 >
                   {f.helperText}
@@ -125,11 +127,11 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
               helperTextInvalid={f.helperTextInvalid}
               helperTextInvalidIcon={<ExclamationCircleIcon />}
               fieldId={f.keyName.toString()}
-              validated={f.inputControl.validate(state[f.keyName], f.inputControl.required)}
+              validated={f.inputControl.validate(state[f.keyName])}
             >
               {f.type === "TextInput" ? (
                 <TextInput
-                  validated={f.inputControl.validate(state[f.keyName], f.inputControl.required)}
+                  validated={f.inputControl.validate(state[f.keyName])}
                   value={(state[f.keyName] || "") as string}
                   id={f.keyName.toString()}
                   type={f.textInputType}
@@ -149,7 +151,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   handleChangeSelected={(v) =>
                     setState({
                       ...state,
-                      [f.keyName]: v
+                      [f.keyName]: v,
                     })
                   }
                 />
@@ -160,7 +162,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   onChange={(v) =>
                     setState({
                       ...state,
-                      [f.keyName]: v
+                      [f.keyName]: v,
                     })
                   }
                 ></Toggle>
@@ -173,7 +175,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   handleChangeSelected={(v) =>
                     setState({
                       ...state,
-                      [f.keyName]: v
+                      [f.keyName]: v,
                     })
                   }
                 />

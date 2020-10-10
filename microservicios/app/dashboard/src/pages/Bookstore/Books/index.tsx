@@ -14,7 +14,6 @@ import DeleteModal from "../../../components/DeleteModal";
 import _ from "lodash";
 import {
   EntityProp,
-  getCachedItems,
 } from "../../../graphql";
 
 import {
@@ -23,7 +22,7 @@ import {
 } from "../../../components/Froms/Utils";
 
 
-import { Book } from "../../../graphql/queries/autogenerate/schemas";
+import { Author, Book } from "../../../graphql/queries/autogenerate/schemas";
 import {
   CreateBookMutationVariables,
   UpdateBookMutationVariables,
@@ -55,10 +54,11 @@ const FUSE_OPTIONS = {
 
 function transformRows(items: any[]) {
   if (items === undefined) return [];
-  const authors = getCachedItems(
-    "Author",
-    ["name"]
-  );
+  const authors: Author[] = []
+  // getCachedItems(
+  //   "Author",
+  //   ["name"]
+  // );
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
       if (column.key === "author") {
@@ -250,13 +250,14 @@ const EntityPage: React.FC = () => {
                     validate: validateString,
                   },
                   type: "SelectWithFilter",
-                  options: getCachedItems(
-                    "Author",
-                    ["name"]
-                  ).map((a: any) => ({
-                    id: a.id,
-                    value: a.name,
-                  })),
+                  options: []
+                  // options: getCachedItems(
+                  //   "Author",
+                  //   ["name"]
+                  // ).map((a: any) => ({
+                  //   id: a.id,
+                  //   value: a.name,
+                  // })),
                 },
               ]}
               onClose={onCloseAnyModal}

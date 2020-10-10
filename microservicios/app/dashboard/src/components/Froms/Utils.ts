@@ -40,13 +40,13 @@ export const validateCountry: ValidateFunction = (s, r) =>
   (s === "" || s === undefined) ? (r ? "error" : "default") : /^[a-zA-Z]+[a-zA-Z ]+?$/.test(s.toString()) ? "success" : "error";
 
 export const validateString: ValidateFunction = (s, r) =>
-  ((s === "" || s === undefined) && r) ? "error" : "success";
+  (s === "" || s === undefined) ? (r ? "error" : "default") : "success";
 
 export const validateId: ValidateFunction = (s, r) =>
   (s === "" || s === undefined) ? (r ? "error" : "default") : /^[1-9][0-9]*$/.test(s.toString()) ? "success" : "error";
 
 export const validateBoolean: ValidateFunction = (s, r) =>
-  s ? (r ? "error" : "default") : "success";
+  s ? "success" : (r ? "error" : "success");
 
 
 export const validateUsername: ValidateFunction = (s, r) =>
@@ -56,7 +56,8 @@ export const validateUsername: ValidateFunction = (s, r) =>
 export const validateEmail: ValidateFunction = (s, r) =>
   (s === "" || s === undefined) ? (r ? "error" : "default") : /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/.test(s.toString()) ? "success" : "error";
 
-export const validateAtLeastOneOptionRequired: ValidateFunction = (s, r) => ((s as string[]).length >= 1) ? "success" : r ? "error" : "default"
+export const validateAtLeastOneOptionRequired: ValidateFunction = (s, r) => 
+(s === undefined) ? (r ? "error" : "default") : ((s as string[]).length >= 1) ? "success" : r ? "error" : "default"
 
 
 

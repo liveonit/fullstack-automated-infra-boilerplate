@@ -1,7 +1,7 @@
 import React from "react";
 import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon, TagGroup, Tag } from "rsuite";
-import { sortable, classNames, Visibility  } from "@patternfly/react-table";
+import { sortable, classNames, Visibility } from "@patternfly/react-table";
 import { capitalize } from "../../../utils/general/capitalize";
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
@@ -12,9 +12,7 @@ import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
-import {
-  EntityProp
-} from "../../../graphql";
+import { EntityProp, useEntity } from "../../../graphql";
 import {
   validateAtLeastOneOptionRequired,
   validateBoolean,
@@ -28,9 +26,22 @@ import { hashCode } from "../../../utils/general/stringHash";
 
 import { Role, User } from "../../../graphql/queries/autogenerate/schemas";
 
-import { useGetUserAndRolesQuery, useCreateUserMutation, useUpdateUserMutation, useDeleteUserMutation } from "../../../graphql/queries/autogenerate/hooks";
+import {
+  useGetUserAndRolesQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} from "../../../graphql/queries/autogenerate/hooks";
 
-const TAGS_COLORS = ["red","orange","yellow","green","cyan","blue","violet"]
+const TAGS_COLORS = [
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "cyan",
+  "blue",
+  "violet",
+];
 
 //=============================================================================
 //#region Entity definition
@@ -55,7 +66,7 @@ export const ENTITY_PROPS: EntityProp[] = [
   { name: "firstName", type: "String", required: true },
   { name: "lastName", type: "String", required: true },
   { name: "enabled", type: "Boolean", required: true },
-  { name: "realmRoles", type: "[String!]", required: true }
+  { name: "realmRoles", type: "[String!]", required: true },
 ];
 
 export const COLUMNS = [
@@ -63,8 +74,10 @@ export const COLUMNS = [
     key: e.name,
     title: capitalize(e.name),
     transforms: [sortable],
-    ...(e.name === "id" && {columnTransforms: [classNames(Visibility.hidden || "")]})
-  })).filter(e => ((e.key !== "realmRoles") && (e.key !== 'password'))),
+    ...(e.name === "id" && {
+      columnTransforms: [classNames(Visibility.hidden || "")],
+    }),
+  })).filter((e) => e.key !== "realmRoles" && e.key !== "password"),
   { key: "realmRoles", title: "Roles", transforms: [sortable] },
 ];
 
@@ -81,7 +94,12 @@ function transformRows(items: any[]) {
           title: item?.realmRoles ? (
             <TagGroup>
               {item.realmRoles.map((r: any) => (
-                <Tag key={r} color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}>{r}</Tag>
+                <Tag
+                  key={r}
+                  color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}
+                >
+                  {r}
+                </Tag>
               ))}
             </TagGroup>
           ) : (
@@ -93,9 +111,8 @@ function transformRows(items: any[]) {
         const className = label ? "greenLabel" : "normalLabel";
         return {
           title: <Label className={className}>{label ? "YES" : "NO"}</Label>,
-        }; 
-      }
-      else return _.get(item, column.key);
+        };
+      } else return _.get(item, column.key);
     }),
   }));
 }
@@ -104,7 +121,6 @@ function transformRows(items: any[]) {
 //=============================================================================
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
-
 
 interface EntityPageState {
   currentPage: number;
@@ -118,7 +134,6 @@ interface EntityPageState {
 }
 
 const EntityPage: React.FC = () => {
-
   const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -133,41 +148,18 @@ const EntityPage: React.FC = () => {
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
 
-  const { data, loading } = useGetUserAndRolesQuery();
-  React.useEffect(() => {
-    if (data && data.users && data.roles) {
-      setState({ ...state, items: data.users, roles: data.roles });
+  const { loading, createItem, updateItem, removeItem } = useEntity<User>({
+    entityName: "User",
+    get: useGetUserAndRolesQuery,
+    create: useCreateUserMutation,
+    update: useUpdateUserMutation,
+    remove: useDeleteUserMutation,
+    onChange: ({ items, data }) => {
+      setState({ ...state, items, roles: data?.roles || [] })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
+  });
 
-  const [createUser, createUserResult] = useCreateUserMutation();
-  if (createUserResult.data?.createUser) {
-    const newItems: User[] = [
-      ...state.items,
-      createUserResult.data.createUser,
-    ];
-    setState({ ...state, items: newItems });
-  }
-
-  const [updateUser, updateUserResult] = useUpdateUserMutation();
-  if (updateUserResult.data?.updateUser) {
-    const updUser = updateUserResult.data.updateUser;
-    const newItems: User[] = state.items.map((i) =>
-      i.id !== updUser.id ? i : updUser
-    );
-    setState({ ...state, items: newItems });
-  }
-
-  const [deleteUser, deleteUserResult] = useDeleteUserMutation();
-  if (deleteUserResult.data?.deleteUser) {
-    const delUser = deleteUserResult.data.deleteUser;
-    const newItems: User[] = state.items.filter((i) => i.id !== delUser);
-    setState({ ...state, items: newItems });
-  }
-
-
-
+  console.count("cantidad de renders");
   //===========================================================================
   //#region events
 
@@ -248,7 +240,8 @@ const EntityPage: React.FC = () => {
                   keyName: "username",
                   label: "Username",
                   helperText: "Insert username",
-                  helperTextInvalid: 'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
+                  helperTextInvalid:
+                    'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
                   inputControl: {
                     required: true,
                     validate: validateUsername,
@@ -260,7 +253,8 @@ const EntityPage: React.FC = () => {
                   keyName: "password",
                   label: "Password",
                   helperText: "Insert passwrd",
-                  helperTextInvalid: 'Password must be at least 8 characters long and include uppercase lowercase and numbers',
+                  helperTextInvalid:
+                    "Password must be at least 8 characters long and include uppercase lowercase and numbers",
                   inputControl: {
                     required: true,
                     validate: validatePassword,
@@ -272,11 +266,10 @@ const EntityPage: React.FC = () => {
                   keyName: "firstName",
                   label: "First Name",
                   helperText: "Please enter User's first name",
-                  helperTextInvalid:
-                    "It has to be at least one word",
+                  helperTextInvalid: "It has to be at least one word",
                   inputControl: {
                     required: true,
-                  validate: validateString,
+                    validate: validateString,
                   },
                   type: "TextInput",
                   textInputType: "text",
@@ -285,11 +278,10 @@ const EntityPage: React.FC = () => {
                   keyName: "lastName",
                   label: "Last Name",
                   helperText: "Please enter User's last name",
-                  helperTextInvalid:
-                    "It has to be at least one word",
+                  helperTextInvalid: "It has to be at least one word",
                   inputControl: {
                     required: true,
-                  validate: validateString,
+                    validate: validateString,
                   },
                   type: "TextInput",
                   textInputType: "text",
@@ -302,7 +294,7 @@ const EntityPage: React.FC = () => {
                     "The email must be in the format: xxx@xxx.xxx",
                   inputControl: {
                     required: true,
-                  validate: validateEmail,
+                    validate: validateEmail,
                   },
                   type: "TextInput",
                   textInputType: "email",
@@ -336,8 +328,8 @@ const EntityPage: React.FC = () => {
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              create={createUser}
-              update={updateUser}
+              create={createItem}
+              update={updateItem}
             />
           )}
           {state.isDeleteModalOpen && (
@@ -345,7 +337,7 @@ const EntityPage: React.FC = () => {
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              rm={deleteUser}
+              rm={removeItem}
             />
           )}
           <Table
