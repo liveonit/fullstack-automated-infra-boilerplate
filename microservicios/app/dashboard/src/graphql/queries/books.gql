@@ -3,7 +3,25 @@ query GetBooks {
     id
     title
     isPublished
-    authorId
+    author {
+      name
+    }
+  }
+}
+
+
+query GetBooksAndAuthors {
+  books {
+    id
+    title
+    isPublished
+    author {
+      name
+    }
+  }
+  authors {
+    id
+    name
   }
 }
 

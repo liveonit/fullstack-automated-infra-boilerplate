@@ -1,7 +1,7 @@
 import React from "react";
 import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-import { sortable } from "@patternfly/react-table";
+import { classNames, sortable, Visibility } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
@@ -13,7 +13,7 @@ import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
 import {
-  EntityProp,
+  useEntity,
 } from "../../../graphql";
 
 import {
@@ -27,43 +27,31 @@ import {
   CreateBookMutationVariables,
   UpdateBookMutationVariables,
 } from "../../../graphql/queries/autogenerate/operations";
-import { useCreateBookMutation, useDeleteBookMutation, useGetBooksQuery, useUpdateBookMutation } from "../../../graphql/queries/autogenerate/hooks";
+import { CreateBookDocument, DeleteBookDocument, GetBooksAndAuthorsDocument, UpdateBookDocument } from "../../../graphql/queries/autogenerate/hooks";
 
 //=============================================================================
 //#region Entity definition
 
 export const ENTITY_NAME = "Book";
 
-
-export const ENTITY_PROPS: EntityProp[] = [
-  { name: "title", type: "String", required: true },
-  { name: "authorId", type: "Int", required: true },
-  { name: "isPublished", type: "Boolean", required: false },
-];
-
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
+  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
   { key: "title", title: "Title", transforms: [sortable] },
   { key: "author", title: "Author", transforms: [sortable] },
   { key: "isPublished", title: "Published", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map((e) => e.name),
+  keys: COLUMNS.map((c) => c.key)
 };
 
 function transformRows(items: any[]) {
-  if (items === undefined) return [];
-  const authors: Author[] = []
-  // getCachedItems(
-  //   "Author",
-  //   ["name"]
-  // );
+  if (!items) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
       if (column.key === "author") {
         return {
-          title: _.find(authors, { id: item.authorId })?.name,
+          title: item.author?.name || "no tiene author",
         };
       }
       if (column.key === "isPublished") {
@@ -91,6 +79,7 @@ interface EntityPageState {
   isDeleteModalOpen: boolean;
   entity?: Book;
   items: Book[];
+  authors: Author[];
 }
 
 const EntityPage: React.FC = () => {
@@ -101,43 +90,22 @@ const EntityPage: React.FC = () => {
     isCreateUpdateModalOpen: false,
     isDeleteModalOpen: false,
     entity: undefined,
-    items: []
+    items: [],
+    authors: []
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
 
-  const { data, loading } = useGetBooksQuery();
-  React.useEffect(() => {
-    if (data && data.books) {
-      setState({ ...state, items: data.books });
+  const { loading, createItem, updateItem, removeItem } = useEntity<Book>({
+    entityName: ENTITY_NAME,
+    get: GetBooksAndAuthorsDocument,
+    create: CreateBookDocument,
+    update: UpdateBookDocument,
+    remove: DeleteBookDocument,
+    onChange: ({ items, data }) => {
+      setState({ ...state, items, authors: data?.authors || [] })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
-
-  const [createBook, createBookResult] = useCreateBookMutation();
-  if (createBookResult.data?.createBook) {
-    const newItems: Book[] = [
-      ...state.items,
-      createBookResult.data.createBook,
-    ];
-    setState({ ...state, items: newItems });
-  }
-
-  const [updateBook, updateBookResult] = useUpdateBookMutation();
-  if (updateBookResult.data?.updateBook) {
-    const updBook = updateBookResult.data.updateBook;
-    const newItems: Book[] = state.items.map((i) =>
-      i.id !== updBook.id ? i : updBook
-    );
-    setState({ ...state, items: newItems });
-  }
-
-  const [deleteBook, deleteBookResult] = useDeleteBookMutation();
-  if (deleteBookResult.data?.deleteBook) {
-    const delBook = deleteBookResult.data.deleteBook;
-    const newItems: Book[] = state.items.filter((i) => i.id !== delBook);
-    setState({ ...state, items: newItems });
-  }
+  });
 
 
 
@@ -184,8 +152,8 @@ const EntityPage: React.FC = () => {
 
   //===========================================================================
   //#region Table elements filter by search and pagination
-
-  const fuse = new Fuse(state.items, FUSE_OPTIONS);
+  const fuseItems = state.items.map(i => ({ ...i, author: i?.author?.name || "" }))
+  const fuse = new Fuse(fuseItems, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
         .search(state.searchText)
@@ -250,28 +218,24 @@ const EntityPage: React.FC = () => {
                     validate: validateString,
                   },
                   type: "SelectWithFilter",
-                  options: []
-                  // options: getCachedItems(
-                  //   "Author",
-                  //   ["name"]
-                  // ).map((a: any) => ({
-                  //   id: a.id,
-                  //   value: a.name,
-                  // })),
-                },
+                  options: (state.authors || []).map((a: any) => ({
+                    id: a.id,
+                    value: a.name,
+                  })),
+                }
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              create={createBook}
-              update={updateBook}
+              create={createItem}
+              update={updateItem}
             />
           )}
-          {state.isDeleteModalOpen && (
+          {state.isDeleteModalOpen && removeItem && (
             <DeleteModal
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              rm={deleteBook}
+              rm={removeItem}
             />
           )}
           <Table

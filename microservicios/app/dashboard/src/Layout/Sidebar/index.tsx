@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageSidebar } from '@patternfly/react-core';
 
-import { Location, History } from 'history' 
+import { Location } from 'history' 
 import PageNav from './PageNav';
 interface Props  {
   isNavOpen: boolean,

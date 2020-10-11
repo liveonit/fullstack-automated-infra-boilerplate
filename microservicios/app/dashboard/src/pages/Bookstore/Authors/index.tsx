@@ -1,8 +1,8 @@
 import React from "react";
 import { ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon } from "rsuite";
-import { sortable } from "@patternfly/react-table";
-import { capitalize } from "../../../utils/general/capitalize";
+import { classNames, sortable, Visibility } from "@patternfly/react-table";
+
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
@@ -20,40 +20,32 @@ import {
 } from "../../../components/Froms/Utils";
 
 import {
-  useCreateAuthorMutation,
-  useUpdateAuthorMutation,
-  useDeleteAuthorMutation,
-  useGetAuthorsQuery,
+  CreateAuthorDocument,
+  UpdateAuthorDocument,
+  DeleteAuthorDocument,
+  GetAuthorsDocument,
 } from "../../../graphql/queries/autogenerate/hooks";
 import { Author } from "../../../graphql/queries/autogenerate/schemas";
 import {
   CreateAuthorMutationVariables,
   UpdateAuthorMutationVariables,
 } from "../../../graphql/queries/autogenerate/operations";
-import { EntityProp } from "../../../graphql/helpers";
+import { useEntity } from "../../../graphql/helpers";
 
 //=============================================================================
-//#region Entity definition
+//#region Table configuration
 
 export const ENTITY_NAME = "Author";
 
-export const ENTITY_PROPS: EntityProp[] = [
-  { name: "name", type: "String", required: true },
-  { name: "age", type: "Int", required: true },
-  { name: "country", type: "String", required: false },
-];
-
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
-  ...ENTITY_PROPS.map((e) => ({
-    key: e.name,
-    title: capitalize(e.name),
-    transforms: [sortable],
-  })),
+  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
+  { key: "name", title: "Name",  transforms: [sortable] },
+  { key: "age", title: "Age",  transforms: [sortable] },
+  { key: "country", title: "Country",  transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map((e) => e.name),
+  keys: COLUMNS.map((c) => c.key),
 };
 
 function transformRows(items: any[]) {
@@ -69,10 +61,10 @@ function transformRows(items: any[]) {
   }));
 }
 
+const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 //#endregion
 //=============================================================================
 
-const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
 interface EntityPageState {
   currentPage: number;
@@ -94,41 +86,20 @@ const EntityPage: React.FC = () => {
     entity: undefined,
     items: [],
   });
+
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
 
-  const { data, loading } = useGetAuthorsQuery();
-  React.useEffect(() => {
-    if (data && data.authors) {
-      setState({ ...state, items: data.authors });
+  const { loading, createItem, updateItem, removeItem } = useEntity<Author>({
+    entityName: ENTITY_NAME,
+    get: GetAuthorsDocument,
+    create: CreateAuthorDocument,
+    update: UpdateAuthorDocument,
+    remove: DeleteAuthorDocument,
+    onChange: ({ items }) => {
+      setState({ ...state, items })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
-
-  const [createAuthor, createAuthorResult] = useCreateAuthorMutation();
-  if (createAuthorResult.data?.createAuthor) {
-    const newItems: Author[] = [
-      ...state.items,
-      createAuthorResult.data.createAuthor,
-    ];
-    setState({ ...state, items: newItems });
-  }
-
-  const [updateAuthor, updateAuthorResult] = useUpdateAuthorMutation();
-  if (updateAuthorResult.data?.updateAuthor) {
-    const updAuthor = updateAuthorResult.data.updateAuthor;
-    const newItems: Author[] = state.items.map((i) =>
-      i.id !== updAuthor.id ? i : updAuthor
-    );
-    setState({ ...state, items: newItems });
-  }
-
-  const [deleteAuthor, deleteAuthorResult] = useDeleteAuthorMutation();
-  if (deleteAuthorResult.data?.deleteAuthor) {
-    const delAuthor = deleteAuthorResult.data.deleteAuthor;
-    const newItems: Author[] = state.items.filter((i) => i.id !== delAuthor);
-    setState({ ...state, items: newItems });
-  }
+  });
 
   //===========================================================================
   //#region events
@@ -252,16 +223,16 @@ const EntityPage: React.FC = () => {
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              create={createAuthor}
-              update={updateAuthor}
+              create={createItem}
+              update={updateItem}
             />
           )}
-          {state.isDeleteModalOpen && (
+          {state.isDeleteModalOpen && removeItem && (
             <DeleteModal
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              rm={deleteAuthor}
+              rm={removeItem}
             />
           )}
           <Table

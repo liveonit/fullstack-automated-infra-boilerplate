@@ -2,7 +2,7 @@ import React from "react";
 import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
 import { IconButton, Icon, TagGroup, Tag } from "rsuite";
 import { sortable, classNames, Visibility } from "@patternfly/react-table";
-import { capitalize } from "../../../utils/general/capitalize";
+
 import Table from "../../../components/Tables/GenericTable";
 import Fuse from "fuse.js";
 import { HeaderToolbar } from "../../../components/Tables/HeaderToolbar";
@@ -12,7 +12,7 @@ import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
-import { EntityProp, useEntity } from "../../../graphql";
+import { useEntity } from "../../../graphql";
 import {
   validateAtLeastOneOptionRequired,
   validateBoolean,
@@ -27,12 +27,11 @@ import { hashCode } from "../../../utils/general/stringHash";
 import { Role, User } from "../../../graphql/queries/autogenerate/schemas";
 
 import {
-  useGetUserAndRolesQuery,
-  useCreateUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
+  GetUserAndRolesDocument,
+  CreateUserDocument,
+  UpdateUserDocument,
+  DeleteUserDocument,
 } from "../../../graphql/queries/autogenerate/hooks";
-import { UseTraceUpdate } from "../../../utils/Debug/UseTraceUpdate";
 
 const TAGS_COLORS = [
   "red",
@@ -45,45 +44,23 @@ const TAGS_COLORS = [
 ];
 
 //=============================================================================
-//#region Entity definition
+//#region Table configuration
 
 export const ENTITY_NAME = "User";
 
-export type EntityType = {
-  id: string;
-  username: string;
-  enabled: boolean;
-  firstName: string;
-  lastName: string;
-  email: string;
-  realmRoles: string[];
-};
-
-export const ENTITY_PROPS: EntityProp[] = [
-  { name: "id", type: "String", required: false },
-  { name: "username", type: "String", required: true },
-  { name: "password", type: "String", required: true },
-  { name: "email", type: "String", required: true },
-  { name: "firstName", type: "String", required: true },
-  { name: "lastName", type: "String", required: true },
-  { name: "enabled", type: "Boolean", required: true },
-  { name: "realmRoles", type: "[String!]", required: true },
-];
-
 export const COLUMNS = [
-  ...ENTITY_PROPS.map((e) => ({
-    key: e.name,
-    title: capitalize(e.name),
-    transforms: [sortable],
-    ...(e.name === "id" && {
-      columnTransforms: [classNames(Visibility.hidden || "")],
-    }),
-  })).filter((e) => e.key !== "realmRoles" && e.key !== "password"),
-  { key: "realmRoles", title: "Roles", transforms: [sortable] },
+  { key: "id", title: "Id",  transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
+  { key: "username", title: "Username",  transforms: [sortable] },
+  { key: "password", title: "Password",  transforms: [sortable] },
+  { key: "email", title: "Email",  transforms: [sortable] },
+  { key: "firstName", title: "First Name",  transforms: [sortable] },
+  { key: "lastName", title: "Last Name",  transforms: [sortable] },
+  { key: "enabled", title: "Enabled",  transforms: [sortable] },
+  { key: "realmRoles", title: "Roles", transforms: [sortable] }
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map((e) => e.name),
+  keys: COLUMNS.map((c) => c.key),
 };
 
 function transformRows(items: any[]) {
@@ -118,10 +95,11 @@ function transformRows(items: any[]) {
   }));
 }
 
+const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
+
 //#endregion
 //=============================================================================
 
-const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
 interface EntityPageState {
   currentPage: number;
@@ -150,19 +128,16 @@ const EntityPage: React.FC = () => {
   const offset = (currentPage - 1) * pageLimit;
 
   const { loading, createItem, updateItem, removeItem } = useEntity<User>({
-    entityName: "User",
-    get: useGetUserAndRolesQuery,
-    create: useCreateUserMutation,
-    update: useUpdateUserMutation,
-    remove: useDeleteUserMutation,
+    entityName: ENTITY_NAME,
+    get: GetUserAndRolesDocument,
+    create: CreateUserDocument,
+    update: UpdateUserDocument,
+    remove: DeleteUserDocument,
     onChange: ({ items, data }) => {
       setState({ ...state, items, roles: data?.roles || [] })
     }
   });
 
-  console.count("cantidad de renders");
-  UseTraceUpdate("state", state);
-  UseTraceUpdate("props", {loading, createItem, updateItem, removeItem})
   //===========================================================================
   //#region events
 
@@ -335,7 +310,7 @@ const EntityPage: React.FC = () => {
               update={updateItem}
             />
           )}
-          {state.isDeleteModalOpen && (
+          {state.isDeleteModalOpen && removeItem && (
             <DeleteModal
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}

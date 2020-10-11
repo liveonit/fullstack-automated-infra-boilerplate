@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
 import * as Apollo from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
 export type GqlTypes = "Int" | "Float" | "String" | "Boolean" | "ID" | "[String!]"
 
@@ -17,11 +19,11 @@ export interface HookDetails {
 export interface UseEntityArgs<T> {
   entityName: string;
   onChange: (result: State<T>) => void;
-  get: (baseOptions?: any) => Apollo.QueryResult;
-  create?: (baseOptions?: any) => any[];
-  update?: (baseOptions?: any) => any[];
-  remove?: (baseOptions?: any) => any[];
-  subscribe?: (baseOptions?: any) => Apollo.SubscriptionResult;
+  get: Apollo.DocumentNode;
+  create?: Apollo.DocumentNode;
+  update?: Apollo.DocumentNode;
+  remove?: Apollo.DocumentNode;
+  subscribe?: Apollo.DocumentNode;
 }
 
 interface State<T> {
@@ -36,25 +38,41 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
     onChange(state)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
-  const { loading } = get({
+  const { loading } = useQuery(get, {
     onCompleted: (data: any) => {
       const entitiesName = entityName.toLowerCase() + "s";
       if (data && data[entitiesName]) {
         setState({ ...state, items: data[entitiesName] as ({ id: any } & T)[], data });
       }
-    }
+    },
+    
   });
 
-  const [createItem] = (create && create({
+  const [createItem] = (create && useMutation(create,{
     onCompleted: (data: any) => {
       if (data[`create${entityName}`]) {
         const newItems: ({ id: any } & T)[] = [...state.items, data[`create${entityName}`]];
         setState({ ...state, items: newItems });
       }
     },
+    update: (cache, { data }) => {
+      if (get) {
+        const result: any = cache.readQuery({ query: get });
+        const newItems = [
+          ...result[`${entityName.toLowerCase()}s`],
+          data[`create${entityName}`],
+        ];
+        cache.writeQuery({
+          query: get,
+          data: {
+            [`${entityName.toLowerCase()}s`]: newItems,
+          },
+        });
+      }
+    },
   })) || []
 
-  const [updateItem] = (update && update({
+  const [updateItem] = (update && useMutation(update, {
     onCompleted: (data: any) => {
       if (data[`update${entityName}`]) {
         const updUser = data[`update${entityName}`];
@@ -66,7 +84,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
     },
   })) || [];
 
-  const [removeItem] = (remove && remove({
+  const [removeItem] = (remove && useMutation(remove, {
     onCompleted: (data: any) => {
       if (data[`delete${entityName}`]) {
         const delUser = data[`delete${entityName}`];
@@ -74,6 +92,21 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items: newItems });
       }
     },
+    update: (cache, { data }) => {
+      cache.modify({
+        fields: {
+          [`${entityName.toLowerCase()}s`]: (
+            exsistingItems,
+            { readField }
+          ) => {
+            const newItems = exsistingItems.filter(
+              (i: any) => data[`delete${entityName}`] !== readField("id", i)
+            );
+            return newItems;
+          },
+        },
+      });
+    }
   })) || [];
 
   return {

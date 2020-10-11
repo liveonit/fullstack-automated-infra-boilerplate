@@ -72,7 +72,29 @@ export type GetBooksQuery = (
   { __typename?: 'Query' }
   & { books: Array<(
     { __typename?: 'Book' }
-    & Pick<Types.Book, 'id' | 'title' | 'isPublished' | 'authorId'>
+    & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
+    & { author?: Types.Maybe<(
+      { __typename?: 'Author' }
+      & Pick<Types.Author, 'name'>
+    )> }
+  )> }
+);
+
+export type GetBooksAndAuthorsQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetBooksAndAuthorsQuery = (
+  { __typename?: 'Query' }
+  & { books: Array<(
+    { __typename?: 'Book' }
+    & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
+    & { author?: Types.Maybe<(
+      { __typename?: 'Author' }
+      & Pick<Types.Author, 'name'>
+    )> }
+  )>, authors: Array<(
+    { __typename?: 'Author' }
+    & Pick<Types.Author, 'id' | 'name'>
   )> }
 );
 
@@ -218,6 +240,17 @@ export type DeleteRoleMutation = (
   & Pick<Types.Mutation, 'deleteRole'>
 );
 
+export type GetUsersQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+  )> }
+);
+
 export type GetUserAndRolesQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
@@ -229,17 +262,6 @@ export type GetUserAndRolesQuery = (
   )>, roles: Array<(
     { __typename?: 'Role' }
     & Pick<Types.Role, 'id' | 'name'>
-  )> }
-);
-
-export type GetUsersQueryVariables = Types.Exact<{ [key: string]: never; }>;
-
-
-export type GetUsersQuery = (
-  { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
   )> }
 );
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Nav, NavList, NavItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom'
-import { Location, History } from 'history' 
+import { Location } from 'history' 
 
 interface Props {
   location: Location

@@ -9,9 +9,14 @@ import { Spinner } from "@patternfly/react-core";
 
 import { sortable } from "@patternfly/react-table";
 import _ from "lodash";
-import { useGetLogsLazyQuery, useSubLogsSubscription } from "../../graphql/queries/autogenerate/hooks";
+import {
+  useGetLogsLazyQuery,
+  useSubLogsSubscription,
+} from "../../graphql/queries/autogenerate/hooks";
 import { Log } from "../../graphql/queries/autogenerate/schemas";
 
+//=============================================================================
+//#region Table configuration
 
 const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable] },
@@ -42,6 +47,8 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100, 250, 500, 1000];
 
+//#endregion
+//=============================================================================
 
 interface State {
   currentPage: number;
@@ -54,7 +61,6 @@ interface State {
 }
 
 const BookstoreAuditory: React.FC = () => {
-  
   const [state, setState] = React.useState<State>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -62,28 +68,31 @@ const BookstoreAuditory: React.FC = () => {
     endDate: Date.now(),
     searchText: "",
     items: [],
-    isSubscribe: true
+    isSubscribe: true,
   });
   const { currentPage, pageLimit, startDate, endDate } = state;
 
+  const [getLogs, { data, loading }] = useGetLogsLazyQuery({
+    onCompleted: () => {
+      if (data && data.logs) {
+        setState({ ...state, items: data.logs });
+      }
+    },
+  });
 
-  const [ getLogs, { data, loading }] = useGetLogsLazyQuery();
+  useSubLogsSubscription({
+    skip: !state.isSubscribe,
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (subscriptionData?.data?.logsSubscription) {
+        setState({ ...state, items: [ ...state.items, subscriptionData.data.logsSubscription] });
+      }
+    },
+  });
+
   React.useEffect(() => {
-    if (data && data.logs) {
-      setState({ ...state, items: data.logs });
-    }
+    getLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
-
-
-  const subscriptionResult = useSubLogsSubscription({ skip: !state.isSubscribe,});
-  if (subscriptionResult.data?.logsSubscription) {
-    const newItems: Log[] = [
-      ...state.items,
-      subscriptionResult.data.logsSubscription,
-    ];
-    setState({ ...state, items: newItems });
-  }
+  }, []);
 
   const onPageLimitChanged = (n: number) => {
     setState({
@@ -119,14 +128,14 @@ const BookstoreAuditory: React.FC = () => {
           ...state,
           startDate: startDate,
           endDate: endDate,
-          isSubscribe: false
+          isSubscribe: false,
         });
       } else {
         setState({
           ...state,
           startDate: Date.now() - 604800000,
           endDate: Date.now(),
-          isSubscribe: true
+          isSubscribe: true,
         });
       }
     }

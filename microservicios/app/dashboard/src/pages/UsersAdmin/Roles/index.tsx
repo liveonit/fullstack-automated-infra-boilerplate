@@ -12,17 +12,17 @@ import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
-import {
-  EntityProp
+import { 
+  useEntity
 } from "../../../graphql";
 
 import { validateString, validateUsername } from "../../../components/Froms/Utils";
 
 import { Role } from '../../../graphql/queries/autogenerate/schemas'
-import { useGetRolesQuery, useCreateRoleMutation, useUpdateRoleMutation, useDeleteRoleMutation } from '../../../graphql/queries/autogenerate/hooks'
+import { GetRolesDocument, CreateRoleDocument, UpdateRoleDocument, DeleteRoleDocument } from '../../../graphql/queries/autogenerate/hooks'
 
 //=============================================================================
-//#region Entity definition
+//#region Table configuration
 
 export const ENTITY_NAME = "Role";
 
@@ -32,11 +32,6 @@ export type EntityType = {
   description?: number;
 };
 
-export const ENTITY_PROPS: EntityProp[] = [
-  { name: "id", type: "String", required: false },
-  { name: "name", type: "String", required: true },
-  { name: "description", type: "String", required: false },
-];
 
 export const COLUMNS = [
   { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
@@ -45,7 +40,7 @@ export const COLUMNS = [
 ];
 
 const FUSE_OPTIONS = {
-  keys: ENTITY_PROPS.map((e) => e.name),
+  keys: COLUMNS.map((c) => c.key),
 };
 
 function transformRows(items: any[]) {
@@ -61,12 +56,9 @@ function transformRows(items: any[]) {
   }));
 }
 
+const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 //#endregion
 //=============================================================================
-
-const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
-
-
 
 interface EntityPageState {
   currentPage: number;
@@ -92,39 +84,17 @@ const EntityPage: React.FC = () => {
   const offset = (currentPage - 1) * pageLimit;
 
 
-  const { data, loading } = useGetRolesQuery();
-  React.useEffect(() => {
-    if (data && data.roles) {
-      setState({ ...state, items: data.roles });
+
+  const { loading, createItem, updateItem, removeItem } = useEntity<Role>({
+    entityName: ENTITY_NAME,
+    get: GetRolesDocument,
+    create: CreateRoleDocument,
+    update: UpdateRoleDocument,
+    remove: DeleteRoleDocument,
+    onChange: ({ items }) => {
+      setState({ ...state, items })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, loading]);
-
-  const [createRole, createRoleResult] = useCreateRoleMutation();
-  if (createRoleResult.data?.createRole) {
-    const newItems: Role[] = [
-      ...state.items,
-      createRoleResult.data.createRole,
-    ];
-    setState({ ...state, items: newItems });
-  }
-
-  const [updateRole, updateRoleResult] = useUpdateRoleMutation();
-  if (updateRoleResult.data?.updateRole) {
-    const updRole = updateRoleResult.data.updateRole;
-    const newItems: Role[] = state.items.map((i) =>
-      i.id !== updRole.id ? i : updRole
-    );
-    setState({ ...state, items: newItems });
-  }
-
-  const [deleteRole, deleteRoleResult] = useDeleteRoleMutation();
-  if (deleteRoleResult.data?.deleteRole) {
-    const delRole = deleteRoleResult.data.deleteRole;
-    const newItems: Role[] = state.items.filter((i) => i.id !== delRole);
-    setState({ ...state, items: newItems });
-  }
-
+  });
   //===========================================================================
   //#region events
 
@@ -227,16 +197,16 @@ const EntityPage: React.FC = () => {
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              create={createRole}
-              update={updateRole}
+              create={createItem}
+              update={updateItem}
             />
           )}
-          {state.isDeleteModalOpen && (
+          {state.isDeleteModalOpen && removeItem && (
             <DeleteModal
               entityName={ENTITY_NAME}
               onClose={onCloseAnyModal}
               entity={state.entity}
-              rm={deleteRole}
+              rm={removeItem}
             />
           )}
           <Table

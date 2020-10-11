@@ -17,6 +17,7 @@ import { Field } from "../Utils";
 import SelectWithFilter from "../FieldComponents/SelectWithFilter";
 import MultiSelectWithFilter from "../FieldComponents/MultiSelectWithFilter";
 import PasswordWithConfirm from "../FieldComponents/PasswordWithConfirm";
+import _ from "lodash";
 
 interface GenericModalProps<Entity, EntityCreateVars, EntityUpdateVars> {
   title: string;
@@ -135,23 +136,24 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   value={(state[f.keyName] || "") as string}
                   id={f.keyName.toString()}
                   type={f.textInputType}
-                  onChange={(v) =>
+                  onChange={(v) => {
                     setState({
                       ...state,
-                      [f.keyName]: v,
+                      [f.keyName]: f.textInputType === "number" ? parseFloat(v) : v ,
                     })
                   }
+                }
                 />
               ) : f.type === "SelectWithFilter" ? (
                 <SelectWithFilter
                   keyName={f.keyName.toString()}
                   label={f.label}
                   options={f.options || []}
-                  selected={(state[f.keyName] || "") as string}
+                  selected={_.find(f.options, ["id", state[f.keyName] ] )?.value}
                   handleChangeSelected={(v) =>
                     setState({
                       ...state,
-                      [f.keyName]: v,
+                      [f.keyName]: _.find(f.options, { value: v })?.id,
                     })
                   }
                 />
@@ -162,7 +164,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   onChange={(v) =>
                     setState({
                       ...state,
-                      [f.keyName]: v,
+                      [f.keyName]: !!v,
                     })
                   }
                 ></Toggle>

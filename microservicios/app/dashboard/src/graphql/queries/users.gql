@@ -10,6 +10,22 @@ query GetUsers {
   }
 }
 
+query GetUserAndRoles {
+  users {
+    id
+    username
+    enabled
+    firstName
+    lastName
+    email
+    realmRoles
+  }
+  roles {
+    id
+    name
+  }
+}
+
 query GetUser($id: String!) {
   user(id: $id) {
     id
