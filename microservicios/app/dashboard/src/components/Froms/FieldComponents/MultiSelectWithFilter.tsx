@@ -19,6 +19,7 @@ interface Props {
   selected?: string[];
   options: SelectionOption[];
   handleChangeSelected: (selected?: string[]) => void;
+  direction?: "up" | "down";
 }
 
 interface State {
@@ -30,7 +31,7 @@ interface State {
 }
 
 const MultiSelectWithFilter: React.FC<Props> = (props) => {
-  const { keyName, label, selected, options, handleChangeSelected } = props;
+  const { keyName, label, selected, options, handleChangeSelected, direction } = props;
   const [state, setState] = React.useState<State>({
     isOpen: false,
     isDisabled: false,
@@ -97,8 +98,8 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
         isDisabled={isDisabled}
         isCreatable={isCreatable}
         customBadgeText={state.customBadgeText}
-        menuAppendTo="parent"
-        style={{ overflow: "auto" }}
+        menuAppendTo={() => document.body}
+        direction={direction}
       >
         {options.map((option, index) => (
           <SelectOption

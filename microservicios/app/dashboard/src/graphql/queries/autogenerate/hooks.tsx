@@ -651,7 +651,9 @@ export const GetUsersDocument = gql`
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      name
+    }
   }
 }
     `;
@@ -689,7 +691,9 @@ export const GetUserAndRolesDocument = gql`
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      name
+    }
   }
   roles {
     id
@@ -731,7 +735,10 @@ export const GetUserDocument = gql`
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
     `;
@@ -762,15 +769,18 @@ export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<Types.GetUserQuery, Types.GetUserQueryVariables>;
 export const CreateUserDocument = gql`
-    mutation CreateUser($username: String!, $email: String!, $enabled: Boolean!, $firstName: String!, $lastName: String!, $password: String!, $realmRoles: [String!]!) {
-  createUser(data: {username: $username, email: $email, enabled: $enabled, firstName: $firstName, lastName: $lastName, password: $password, realmRoles: $realmRoles}) {
+    mutation CreateUser($username: String!, $email: String!, $enabled: Boolean!, $firstName: String!, $lastName: String!, $password: String!, $relatedRoleIds: [String!]!) {
+  createUser(data: {username: $username, email: $email, enabled: $enabled, firstName: $firstName, lastName: $lastName, password: $password, relatedRoleIds: $relatedRoleIds}) {
     id
     username
     enabled
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
     `;
@@ -795,7 +805,7 @@ export type CreateUserMutationFn = Apollo.MutationFunction<Types.CreateUserMutat
  *      firstName: // value for 'firstName'
  *      lastName: // value for 'lastName'
  *      password: // value for 'password'
- *      realmRoles: // value for 'realmRoles'
+ *      relatedRoleIds: // value for 'relatedRoleIds'
  *   },
  * });
  */
@@ -806,15 +816,18 @@ export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutati
 export type CreateUserMutationResult = Apollo.MutationResult<Types.CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<Types.CreateUserMutation, Types.CreateUserMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($id: String!, $username: String, $email: String, $enabled: Boolean, $firstName: String, $lastName: String, $password: String!, $realmRoles: [String!]) {
-  updateUser(data: {username: $username, email: $email, enabled: $enabled, firstName: $firstName, lastName: $lastName, password: $password, realmRoles: $realmRoles}, id: $id) {
+    mutation UpdateUser($id: String!, $username: String, $email: String, $enabled: Boolean, $firstName: String, $lastName: String, $password: String!, $relatedRoleIds: [String!]) {
+  updateUser(data: {username: $username, email: $email, enabled: $enabled, firstName: $firstName, lastName: $lastName, password: $password, relatedRoleIds: $relatedRoleIds}, id: $id) {
     id
     username
     enabled
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
     `;
@@ -840,7 +853,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Types.UpdateUserMutat
  *      firstName: // value for 'firstName'
  *      lastName: // value for 'lastName'
  *      password: // value for 'password'
- *      realmRoles: // value for 'realmRoles'
+ *      relatedRoleIds: // value for 'relatedRoleIds'
  *   },
  * });
  */

@@ -51,7 +51,7 @@ export type CreateUserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
-  realmRoles: Array<Scalars['String']>;
+  relatedRoleIds: Array<Scalars['String']>;
 };
 
 export type Log = {
@@ -247,7 +247,7 @@ export type UpdateUserInput = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
-  realmRoles?: Maybe<Array<Scalars['String']>>;
+  relatedRoleIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type User = {
@@ -264,5 +264,6 @@ export type User = {
   disableableCredentialTypes?: Maybe<Array<Scalars['String']>>;
   requiredActions?: Maybe<Array<Scalars['String']>>;
   notBefore?: Maybe<Scalars['Int']>;
-  realmRoles: Array<Scalars['String']>;
+  roles?: Maybe<Array<Role>>;
+  relatedRoleIds?: Maybe<Array<Scalars['String']>>;
 };

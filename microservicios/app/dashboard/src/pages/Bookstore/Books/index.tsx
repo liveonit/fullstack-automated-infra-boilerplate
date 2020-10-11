@@ -222,6 +222,7 @@ const EntityPage: React.FC = () => {
                     id: a.id,
                     value: a.name,
                   })),
+                  direction: "up"
                 }
               ]}
               onClose={onCloseAnyModal}

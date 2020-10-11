@@ -1,4 +1,5 @@
 import { InputType, Field } from "type-graphql";
+import { Role } from "../../../models/Role";
 
 @InputType()
 export class CreateUserInput {
@@ -21,6 +22,6 @@ export class CreateUserInput {
   email: string;
 
   @Field(() => [String])
-  realmRoles: string[];
+  relatedRoleIds: string[];
 
 }

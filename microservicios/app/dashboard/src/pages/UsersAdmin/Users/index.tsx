@@ -56,7 +56,7 @@ export const COLUMNS = [
   { key: "firstName", title: "First Name",  transforms: [sortable] },
   { key: "lastName", title: "Last Name",  transforms: [sortable] },
   { key: "enabled", title: "Enabled",  transforms: [sortable] },
-  { key: "realmRoles", title: "Roles", transforms: [sortable] }
+  { key: "roles", title: "Roles", transforms: [sortable] }
 ];
 
 const FUSE_OPTIONS = {
@@ -65,13 +65,14 @@ const FUSE_OPTIONS = {
 
 function transformRows(items: any[]) {
   if (items === undefined) return [];
+  console.log(items)
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "realmRoles") {
+      if (column.key === "roles") {
         return {
-          title: item?.realmRoles ? (
+          title: item?.roles ? (
             <TagGroup>
-              {item.realmRoles.map((r: any) => (
+              {item.roles.map((r: string) => (
                 <Tag
                   key={r}
                   color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}
@@ -182,13 +183,14 @@ const EntityPage: React.FC = () => {
   //===========================================================================
   //#region Table elements filter by search and pagination
 
-  const fuse = new Fuse(state.items, FUSE_OPTIONS);
+  const fuseItems = state.items.map(i => ({ ...i, roles: i?.roles?.map(r => r.name) }))
+  const fuse = new Fuse(fuseItems, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
         .search(state.searchText)
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
-    : state.items.slice(offset, offset + pageLimit);
+    : fuseItems.slice(offset, offset + pageLimit);
   //#endregion
   //===========================================================================
 
@@ -289,7 +291,7 @@ const EntityPage: React.FC = () => {
                   type: "ToggleSwitch",
                 },
                 {
-                  keyName: "realmRoles",
+                  keyName: "relatedRoleIds",
                   label: "Select user's roles",
                   helperText: "Please select the User's Role",
                   helperTextInvalid: "At least one role must be selected",

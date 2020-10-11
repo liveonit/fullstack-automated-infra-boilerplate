@@ -14,6 +14,7 @@ interface Props {
   selected?: string;
   options: SelectionOption[];
   handleChangeSelected: (selected?: string) => void;
+  direction?: "up" | "down";
 }
 
 interface State {
@@ -24,7 +25,7 @@ interface State {
 }
 
 const SelectWithFilter: React.FC<Props> = (props) => {
-  const { keyName, label, selected, options, handleChangeSelected } = props;
+  const { keyName, label, selected, options, handleChangeSelected, direction } = props;
   const [state, setState] = React.useState<State>({
     isOpen: false,
     isDisabled: false,
@@ -79,6 +80,7 @@ const SelectWithFilter: React.FC<Props> = (props) => {
         isDisabled={isDisabled}
         isCreatable={isCreatable}
         menuAppendTo={() => document.body}
+        direction={direction}
       >
         {options.map((option, index) => (
           <SelectOption

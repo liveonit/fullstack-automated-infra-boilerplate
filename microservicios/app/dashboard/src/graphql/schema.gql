@@ -43,7 +43,7 @@ input CreateUserInput {
   firstName: String!
   lastName: String!
   email: String!
-  realmRoles: [String!]!
+  relatedRoleIds: [String!]!
 }
 
 type Log {
@@ -118,7 +118,7 @@ input UpdateUserInput {
   firstName: String
   lastName: String
   email: String
-  realmRoles: [String!]
+  relatedRoleIds: [String!]
 }
 
 type User {
@@ -134,5 +134,6 @@ type User {
   disableableCredentialTypes: [String!]
   requiredActions: [String!]
   notBefore: Int
-  realmRoles: [String!]!
+  roles: [Role!]
+  relatedRoleIds: [String!]
 }

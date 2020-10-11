@@ -149,6 +149,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   keyName={f.keyName.toString()}
                   label={f.label}
                   options={f.options || []}
+                  direction={f.direction}
                   selected={_.find(f.options, ["id", state[f.keyName] ] )?.value}
                   handleChangeSelected={(v) =>
                     setState({
@@ -173,6 +174,7 @@ const CreateUpdateModal = <Entity, EntityCreateVars, EntityUpdateVars>(
                   keyName={f.keyName.toString()}
                   label={f.label}
                   options={f.options || []}
+                  direction={f.direction}
                   selected={(state[f.keyName] || []) as string[]}
                   handleChangeSelected={(v) =>
                     setState({

@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int } from "type-graphql";
-import PaginatedResponse from "../utils/PaginateEntity";
+
 import UserRepresentation from "keycloak-admin/lib/defs/userRepresentation";
 import { RequiredActionAlias } from "keycloak-admin/lib/defs/requiredActionProviderRepresentation";
+import { Role } from "./Role";
 
 // NOT IN DB - ONLY REPRESENTATION
 
@@ -43,6 +44,10 @@ export class User implements UserRepresentation {
   @Field(() => Int, {nullable: true})
   notBefore?: number;
 
-  @Field(() => [String])
-  realmRoles?: string[];
+  @Field(() => [Role], { nullable: true })
+  roles?: Role[];
+
+
+  @Field(() => [String], { nullable: true })
+  relatedRoleIds?: string[];
 }

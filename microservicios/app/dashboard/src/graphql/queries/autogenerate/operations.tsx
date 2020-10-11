@@ -247,7 +247,11 @@ export type GetUsersQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & { roles?: Types.Maybe<Array<(
+      { __typename?: 'Role' }
+      & Pick<Types.Role, 'name'>
+    )>> }
   )> }
 );
 
@@ -258,7 +262,11 @@ export type GetUserAndRolesQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & { roles?: Types.Maybe<Array<(
+      { __typename?: 'Role' }
+      & Pick<Types.Role, 'name'>
+    )>> }
   )>, roles: Array<(
     { __typename?: 'Role' }
     & Pick<Types.Role, 'id' | 'name'>
@@ -274,7 +282,11 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { user: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & { roles?: Types.Maybe<Array<(
+      { __typename?: 'Role' }
+      & Pick<Types.Role, 'id' | 'name'>
+    )>> }
   ) }
 );
 
@@ -285,7 +297,7 @@ export type CreateUserMutationVariables = Types.Exact<{
   firstName: Types.Scalars['String'];
   lastName: Types.Scalars['String'];
   password: Types.Scalars['String'];
-  realmRoles: Array<Types.Scalars['String']>;
+  relatedRoleIds: Array<Types.Scalars['String']>;
 }>;
 
 
@@ -293,7 +305,11 @@ export type CreateUserMutation = (
   { __typename?: 'Mutation' }
   & { createUser: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & { roles?: Types.Maybe<Array<(
+      { __typename?: 'Role' }
+      & Pick<Types.Role, 'id' | 'name'>
+    )>> }
   ) }
 );
 
@@ -305,7 +321,7 @@ export type UpdateUserMutationVariables = Types.Exact<{
   firstName?: Types.Maybe<Types.Scalars['String']>;
   lastName?: Types.Maybe<Types.Scalars['String']>;
   password: Types.Scalars['String'];
-  realmRoles?: Types.Maybe<Array<Types.Scalars['String']>>;
+  relatedRoleIds?: Types.Maybe<Array<Types.Scalars['String']>>;
 }>;
 
 
@@ -313,7 +329,11 @@ export type UpdateUserMutation = (
   { __typename?: 'Mutation' }
   & { updateUser: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'realmRoles'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & { roles?: Types.Maybe<Array<(
+      { __typename?: 'Role' }
+      & Pick<Types.Role, 'id' | 'name'>
+    )>> }
   ) }
 );
 

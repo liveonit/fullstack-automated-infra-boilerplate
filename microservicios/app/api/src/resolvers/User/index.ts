@@ -3,9 +3,9 @@ import { CreateUserInput } from "./types/CreateUserInput";
 import { UpdateUserInput } from "./types/UpdateUserInput";
 import { GqlLog } from "../../utils/middlewares/GqlLogMiddleware";
 import { User } from "../../models/User";
+import { Role } from "../../models/Role";
 import { getUsersWithRoles, kcConnect, getUserWithRoles, getRoles } from "../../utils/helpers/kcAdmin";
 import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
-import CredentialRepresentation from "keycloak-admin/lib/defs/credentialRepresentation";
 import { validatePassword } from "../../utils/helpers/validateFields";
 
 @Resolver()
@@ -24,7 +24,8 @@ export class UserResolver {
   async user(@Arg("id", t => String) id: string) {
     const kcAdmin = await kcConnect();
     const user = await kcAdmin.users.findOne({ id });
-    return user as User;
+    const roles = await kcAdmin.users.listRealmRoleMappings();
+    return { ...user, roles } as User;
   }
 
   @Mutation(() => User)
@@ -45,7 +46,7 @@ export class UserResolver {
       });
     }
     const roles = (await getRoles()).filter(
-      r => data.realmRoles.includes(r.name)).map(r =>
+      r => data.relatedRoleIds.includes(r.id)).map(r =>
         ({ id: r.id, name: r.name } as RoleMappingPayload));
     await kcAdmin.users.addRealmRoleMappings({ id, roles })
     const user = await getUserWithRoles(id);
@@ -68,7 +69,15 @@ export class UserResolver {
     }
     delete data.password
     await kcAdmin.users.update({ id }, data);
-    const user = await kcAdmin.users.findOne({ id });
+    if (data.relatedRoleIds) {
+      const roles = (await getRoles()).filter(
+        r => data.relatedRoleIds.includes(r.id)).map(r =>
+          ({ id: r.id, name: r.name } as RoleMappingPayload));
+      const allRoles = await kcAdmin.users.listRealmRoleMappings();
+      await kcAdmin.users.delRealmRoleMappings({ id, roles: allRoles as RoleMappingPayload[] })
+      await kcAdmin.users.addRealmRoleMappings({ id, roles })
+    }
+    const user = await getUserWithRoles(id);
     return user;
   }
 

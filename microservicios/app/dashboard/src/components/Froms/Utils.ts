@@ -27,7 +27,8 @@ export interface Field<T> {
   helperTextInvalid: string;
   inputControl: FormInputControl;
   textInputType?: "number" | "time" | "text" | "date" | "datetime-local" | "email" | "month" | "password" | "search" | "tel" | "url";
-  options?: SelectionOption[]
+  options?: SelectionOption[];
+  direction?: "up" | "down";
 } 
 
 export const validateAge: ValidateFunction = (s, r) =>

@@ -1,5 +1,4 @@
 import { ObjectType, Field } from "type-graphql";
-import PaginatedResponse from "../utils/PaginateEntity";
 import RoleRepresentation from "keycloak-admin/lib/defs/roleRepresentation";
 
 

@@ -6,7 +6,9 @@ query GetUsers {
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      name
+    }
   }
 }
 
@@ -18,7 +20,9 @@ query GetUserAndRoles {
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      name
+    }
   }
   roles {
     id
@@ -34,7 +38,10 @@ query GetUser($id: String!) {
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
 
@@ -45,7 +52,7 @@ mutation CreateUser(
   $firstName: String!
   $lastName: String!
   $password: String!
-  $realmRoles: [String!]!
+  $relatedRoleIds: [String!]!
 ) {
   createUser(
     data: {
@@ -55,7 +62,7 @@ mutation CreateUser(
       firstName: $firstName
       lastName: $lastName
       password: $password
-      realmRoles: $realmRoles
+      relatedRoleIds: $relatedRoleIds
     }
   ) {
     id
@@ -64,7 +71,10 @@ mutation CreateUser(
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
 
@@ -76,7 +86,7 @@ mutation UpdateUser(
   $firstName: String
   $lastName: String
   $password: String!
-  $realmRoles: [String!]
+  $relatedRoleIds: [String!]
 ) {
   updateUser(
     data: {
@@ -86,7 +96,7 @@ mutation UpdateUser(
       firstName: $firstName
       lastName: $lastName
       password: $password
-      realmRoles: $realmRoles
+      relatedRoleIds: $relatedRoleIds
     },
     id: $id
   ) {
@@ -96,7 +106,10 @@ mutation UpdateUser(
     firstName
     lastName
     email
-    realmRoles
+    roles {
+      id
+      name
+    }
   }
 }
 

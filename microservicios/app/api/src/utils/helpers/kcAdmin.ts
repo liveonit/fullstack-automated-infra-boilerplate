@@ -47,9 +47,9 @@ export const getUsersWithRoles = async () => {
   const kcAdmin = await kcConnect();
   const users = await kcAdmin.users.find();
   const userWithRoles = await Promise.all(users.map(async u => {
-    const realmRoles = (await kcAdmin.users.listRealmRoleMappings({ id: u.id })).map(r => r.name)
+    const roles = (await kcAdmin.users.listRealmRoleMappings({ id: u.id }))
     delete u.access;
-    return { ...u, realmRoles } as User
+    return { ...u, roles } as User
   }));
   return userWithRoles;
 }
