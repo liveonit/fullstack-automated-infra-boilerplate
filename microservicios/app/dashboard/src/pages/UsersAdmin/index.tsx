@@ -3,7 +3,7 @@ import React from "react";
 import SimpleTabs from "../../components/SimpleTabs/SimpleTabs";
 import Roles from "./Roles";
 import Users from "./Users";
-export function UsersAdmin() {
+const UsersAdmin = () => {
   return (
     <>
         <SimpleTabs

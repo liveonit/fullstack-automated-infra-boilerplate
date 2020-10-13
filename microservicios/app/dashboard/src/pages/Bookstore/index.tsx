@@ -3,7 +3,8 @@ import React from "react";
 import SimpleTabs from "../../components/SimpleTabs/SimpleTabs";
 import Books from "./Books";
 import Authors from "./Authors";
-export function BookStore() {
+
+const BookStore = () => {
   return (
     <>
         <SimpleTabs

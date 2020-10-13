@@ -223,6 +223,7 @@ export const GetBooksAndAuthorsDocument = gql`
     id
     title
     isPublished
+    authorId
     author {
       id
       name
@@ -266,6 +267,10 @@ export const GetBookDocument = gql`
     title
     isPublished
     authorId
+    author {
+      id
+      name
+    }
   }
 }
     `;

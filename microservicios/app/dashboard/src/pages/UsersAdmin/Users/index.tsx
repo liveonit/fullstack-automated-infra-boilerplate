@@ -65,7 +65,6 @@ const FUSE_OPTIONS = {
 
 function transformRows(items: any[]) {
   if (items === undefined) return [];
-  console.log(items)
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
       if (column.key === "roles") {
@@ -113,7 +112,7 @@ interface EntityPageState {
   roles: Role[];
 }
 
-const EntityPage: React.FC = () => {
+const UsersPage: React.FC = () => {
   const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -343,4 +342,4 @@ const EntityPage: React.FC = () => {
   );
 };
 
-export default EntityPage;
+export default UsersPage;

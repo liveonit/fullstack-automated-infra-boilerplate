@@ -70,7 +70,7 @@ interface EntityPageState {
   items: Role[];
 }
 
-const EntityPage: React.FC = () => {
+const RolesPage: React.FC = () => {
   const [state, setState] = React.useState<EntityPageState>({
     currentPage: 1,
     pageLimit: POSIBLE_LIMITS_PER_PAGE[POSIBLE_LIMITS_PER_PAGE.length - 1],
@@ -232,4 +232,4 @@ const EntityPage: React.FC = () => {
   );
 };
 
-export default EntityPage;
+export default RolesPage;

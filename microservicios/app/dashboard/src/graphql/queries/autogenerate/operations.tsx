@@ -87,7 +87,7 @@ export type GetBooksAndAuthorsQuery = (
   { __typename?: 'Query' }
   & { books: Array<(
     { __typename?: 'Book' }
-    & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
+    & Pick<Types.Book, 'id' | 'title' | 'isPublished' | 'authorId'>
     & { author?: Types.Maybe<(
       { __typename?: 'Author' }
       & Pick<Types.Author, 'id' | 'name'>
@@ -108,6 +108,10 @@ export type GetBookQuery = (
   & { book: (
     { __typename?: 'Book' }
     & Pick<Types.Book, 'id' | 'title' | 'isPublished' | 'authorId'>
+    & { author?: Types.Maybe<(
+      { __typename?: 'Author' }
+      & Pick<Types.Author, 'id' | 'name'>
+    )> }
   ) }
 );
 

@@ -16,6 +16,7 @@ query GetBooksAndAuthors {
     id
     title
     isPublished
+    authorId
     author {
       id
       name
@@ -33,6 +34,10 @@ query GetBook($id: Int!) {
     title
     isPublished
     authorId
+    author {
+      id
+      name
+    }
   }
 }
 
