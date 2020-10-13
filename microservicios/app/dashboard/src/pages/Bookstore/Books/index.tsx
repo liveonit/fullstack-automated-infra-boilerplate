@@ -79,7 +79,7 @@ interface EntityPageState {
   isCreateUpdateModalOpen: boolean;
   isDeleteModalOpen: boolean;
   entity?: Book;
-  items: (Book)[];
+  items: Book[];
   authors: Author[];
 }
 
@@ -104,9 +104,10 @@ const Books: React.FC = () => {
     update: UpdateBookDocument,
     remove: DeleteBookDocument,
     onChange: ({ items, data }) => {
-      const newItems = items.filter((i) => _.find(data?.authors, { id: i.author?.id }))
+      const newItems = items
+        .filter((i) => _.find(data?.authors, { id: i.author?.id }))
         .map((i) => ({ ...i, authorName: i?.author?.name || "" }));
-      setState({ ...state, items: newItems , authors: data?.authors || [] });
+      setState({ ...state, items: newItems, authors: data?.authors || [] });
     },
   });
 
@@ -150,9 +151,10 @@ const Books: React.FC = () => {
 
   //#endregion
   //===========================================================================
-
+  
   //===========================================================================
   //#region Table elements filter by search and pagination
+
   const fuse = new Fuse(state.items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
@@ -160,6 +162,7 @@ const Books: React.FC = () => {
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
     : state.items.slice(offset, offset + pageLimit);
+
   //#endregion
   //===========================================================================
 

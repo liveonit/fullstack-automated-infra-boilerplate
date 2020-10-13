@@ -48,7 +48,7 @@ export const validateId: ValidateFunction = (s, r) =>
   !s ? (r ? "error" : "default") : /^[1-9][0-9]*$/.test(s.toString()) ? "success" : "error";
 
 export const validateBoolean: ValidateFunction = (s, r) =>
-  !s ? (r ? "error" : "default") : "success";
+  !s ? (r ? "error" : "success") : "success";
 
 
 export const validateUsername: ValidateFunction = (s, r) =>
