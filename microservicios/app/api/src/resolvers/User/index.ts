@@ -36,7 +36,7 @@ export class UserResolver {
     delete data.password
     delete data.relatedRoleIds
     const { id } = await kcAdmin.users.create(data);
-    if (validatePassword(data.password)) {
+    if (validatePassword(data.password, true) === 'success') {
       await kcAdmin.users.resetPassword({
         id,
         credential: {
@@ -61,23 +61,32 @@ export class UserResolver {
     const{ password, relatedRoleIds } = data
     delete data.password
     delete data.relatedRoleIds
-    if (validatePassword(password)) {
+    if (validatePassword(password, true) === 'success' ) {
+      console.count("====================== llego aca ===================================")
       await kcAdmin.users.resetPassword({
         id,
         credential: {
           temporary: false,
           type: 'password',
-          value: data.password,
+          value: password,
         },
       });
     }
+    console.count("====================== llego aca ===================================")
     await kcAdmin.users.update({ id }, data);
-    if (data.relatedRoleIds) {
+    console.count("====================== llego aca ===================================")
+    if (relatedRoleIds) {
+      console.log("relatedRoleIds",relatedRoleIds);
+      console.log("roles", await getRoles());
       const roles = (await getRoles()).filter(
         r => relatedRoleIds.includes(r.id)).map(r =>
           ({ id: r.id, name: r.name } as RoleMappingPayload));
-      const allRoles = await kcAdmin.users.listRealmRoleMappings();
+      const allRoles = await kcAdmin.users.listRealmRoleMappings({ id });
+      console.log("roles", roles);
+      console.log("allRoles", allRoles);
+      console.count("====================== llego aca ===================================")
       await kcAdmin.users.delRealmRoleMappings({ id, roles: allRoles as RoleMappingPayload[] })
+      console.count("====================== llego aca ===================================")
       await kcAdmin.users.addRealmRoleMappings({ id, roles })
     }
     const user = await getUserWithRoles(id);

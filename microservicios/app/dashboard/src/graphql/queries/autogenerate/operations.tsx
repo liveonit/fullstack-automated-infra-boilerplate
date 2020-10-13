@@ -259,10 +259,10 @@ export type GetUsersQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'relatedRoleIds'>
     & { roles?: Types.Maybe<Array<(
       { __typename?: 'Role' }
-      & Pick<Types.Role, 'name'>
+      & Pick<Types.Role, 'id' | 'name'>
     )>> }
   )> }
 );
@@ -274,10 +274,10 @@ export type GetUserAndRolesQuery = (
   { __typename?: 'Query' }
   & { users: Array<(
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'relatedRoleIds'>
     & { roles?: Types.Maybe<Array<(
       { __typename?: 'Role' }
-      & Pick<Types.Role, 'name'>
+      & Pick<Types.Role, 'id' | 'name'>
     )>> }
   )>, roles: Array<(
     { __typename?: 'Role' }
@@ -294,7 +294,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { user: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'relatedRoleIds'>
     & { roles?: Types.Maybe<Array<(
       { __typename?: 'Role' }
       & Pick<Types.Role, 'id' | 'name'>

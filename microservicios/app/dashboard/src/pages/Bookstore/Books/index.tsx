@@ -12,22 +12,24 @@ import ModalForm from "../../../components/Froms/ModalForms";
 import DeleteModal from "../../../components/DeleteModal";
 
 import _ from "lodash";
-import {
-  useEntity,
-} from "../../../graphql";
+import { useEntity } from "../../../graphql";
 
 import {
   validateString,
   validateBoolean,
 } from "../../../components/Froms/Utils";
 
-
 import { Author, Book } from "../../../graphql/queries/autogenerate/schemas";
 import {
   CreateBookMutationVariables,
   UpdateBookMutationVariables,
 } from "../../../graphql/queries/autogenerate/operations";
-import { CreateBookDocument, DeleteBookDocument, GetBooksAndAuthorsDocument, UpdateBookDocument } from "../../../graphql/queries/autogenerate/hooks";
+import {
+  CreateBookDocument,
+  DeleteBookDocument,
+  GetBooksAndAuthorsDocument,
+  UpdateBookDocument,
+} from "../../../graphql/queries/autogenerate/hooks";
 
 //=============================================================================
 //#region Entity definition
@@ -35,25 +37,25 @@ import { CreateBookDocument, DeleteBookDocument, GetBooksAndAuthorsDocument, Upd
 export const ENTITY_NAME = "Book";
 
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
+  {
+    key: "id",
+    title: "Id",
+    transforms: [sortable],
+    columnTransforms: [classNames(Visibility.hidden || "")],
+  },
   { key: "title", title: "Title", transforms: [sortable] },
-  { key: "author", title: "Author", transforms: [sortable] },
+  { key: "authorName", title: "Author", transforms: [sortable] },
   { key: "isPublished", title: "Published", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
-  keys: COLUMNS.map((c) => c.key)
+  keys: COLUMNS.map((c) => c.key),
 };
 
 function transformRows(items: any[]) {
   if (!items) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "author") {
-        return {
-          title: item.author?.name || "no tiene author",
-        };
-      }
       if (column.key === "isPublished") {
         let label = _.get(item, column.key, false);
         const className = label ? "greenLabel" : "normalLabel";
@@ -70,7 +72,6 @@ function transformRows(items: any[]) {
 
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 
-
 interface EntityPageState {
   currentPage: number;
   pageLimit: number;
@@ -78,7 +79,7 @@ interface EntityPageState {
   isCreateUpdateModalOpen: boolean;
   isDeleteModalOpen: boolean;
   entity?: Book;
-  items: Book[];
+  items: (Book)[];
   authors: Author[];
 }
 
@@ -91,7 +92,7 @@ const Books: React.FC = () => {
     isDeleteModalOpen: false,
     entity: undefined,
     items: [],
-    authors: []
+    authors: [],
   });
   const { currentPage, pageLimit } = state;
   const offset = (currentPage - 1) * pageLimit;
@@ -103,11 +104,11 @@ const Books: React.FC = () => {
     update: UpdateBookDocument,
     remove: DeleteBookDocument,
     onChange: ({ items, data }) => {
-      setState({ ...state, items, authors: data?.authors || [] })
-    }
+      const newItems = items.filter((i) => _.find(data?.authors, { id: i.author?.id }))
+        .map((i) => ({ ...i, authorName: i?.author?.name || "" }));
+      setState({ ...state, items: newItems , authors: data?.authors || [] });
+    },
   });
-
-
 
   //===========================================================================
   //#region events
@@ -152,8 +153,7 @@ const Books: React.FC = () => {
 
   //===========================================================================
   //#region Table elements filter by search and pagination
-  const fuseItems = state.items.map(i => ({ ...i, author: i?.author?.name || "" }))
-  const fuse = new Fuse(fuseItems, FUSE_OPTIONS);
+  const fuse = new Fuse(state.items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
         .search(state.searchText)
@@ -167,7 +167,12 @@ const Books: React.FC = () => {
     <>
       {loading ? (
         <Bullseye>
-          <Loader size="lg" speed="slow" content="loading..." className="spinner" />
+          <Loader
+            size="lg"
+            speed="slow"
+            content="loading..."
+            className="spinner"
+          />
         </Bullseye>
       ) : (
         <>
@@ -183,7 +188,11 @@ const Books: React.FC = () => {
             }
           />
           {state.isCreateUpdateModalOpen && (
-            <ModalForm<Book,CreateBookMutationVariables, UpdateBookMutationVariables>
+            <ModalForm<
+              Book,
+              CreateBookMutationVariables,
+              UpdateBookMutationVariables
+            >
               title={state.entity ? "Update Book" : "Create Book"}
               modalVariant={ModalVariant.small}
               fields={[
@@ -224,8 +233,8 @@ const Books: React.FC = () => {
                     id: a.id,
                     value: a.name,
                   })),
-                  direction: "up"
-                }
+                  direction: "up",
+                },
               ]}
               onClose={onCloseAnyModal}
               entity={state.entity}

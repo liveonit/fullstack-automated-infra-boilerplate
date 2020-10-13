@@ -1,6 +1,6 @@
 import React from "react";
-import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
-import { IconButton, Icon, TagGroup, Tag } from "rsuite";
+import { Bullseye, Label, ModalVariant } from "@patternfly/react-core";
+import { IconButton, Icon, TagGroup, Tag, Loader } from "rsuite";
 import { sortable, classNames, Visibility } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
@@ -49,14 +49,19 @@ const TAGS_COLORS = [
 export const ENTITY_NAME = "User";
 
 export const COLUMNS = [
-  { key: "id", title: "Id",  transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
-  { key: "username", title: "Username",  transforms: [sortable] },
-  { key: "password", title: "Password",  transforms: [sortable] },
-  { key: "email", title: "Email",  transforms: [sortable] },
-  { key: "firstName", title: "First Name",  transforms: [sortable] },
-  { key: "lastName", title: "Last Name",  transforms: [sortable] },
-  { key: "enabled", title: "Enabled",  transforms: [sortable] },
-  { key: "roles", title: "Roles", transforms: [sortable] }
+  {
+    key: "id",
+    title: "Id",
+    transforms: [sortable],
+    columnTransforms: [classNames(Visibility.hidden || "")],
+  },
+  { key: "username", title: "Username", transforms: [sortable] },
+  { key: "password", title: "Password", transforms: [sortable] },
+  { key: "email", title: "Email", transforms: [sortable] },
+  { key: "firstName", title: "First Name", transforms: [sortable] },
+  { key: "lastName", title: "Last Name", transforms: [sortable] },
+  { key: "enabled", title: "Enabled", transforms: [sortable] },
+  { key: "roles", title: "Roles", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
@@ -100,7 +105,6 @@ const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 //#endregion
 //=============================================================================
 
-
 interface EntityPageState {
   currentPage: number;
   pageLimit: number;
@@ -121,7 +125,7 @@ const UsersPage: React.FC = () => {
     isDeleteModalOpen: false,
     entity: undefined,
     items: [],
-    roles: []
+    roles: [],
   });
 
   const { currentPage, pageLimit } = state;
@@ -134,8 +138,8 @@ const UsersPage: React.FC = () => {
     update: UpdateUserDocument,
     remove: DeleteUserDocument,
     onChange: ({ items, data }) => {
-      setState({ ...state, items, roles: data?.roles || [] })
-    }
+      setState({ ...state, items, roles: data?.roles || [] });
+    },
   });
 
   //===========================================================================
@@ -182,7 +186,10 @@ const UsersPage: React.FC = () => {
   //===========================================================================
   //#region Table elements filter by search and pagination
 
-  const fuseItems = state.items.map(i => ({ ...i, roles: i?.roles?.map(r => r.name) }))
+  const fuseItems = state.items.map((i) => ({
+    ...i,
+    roles: i?.roles?.map((r) => r.name),
+  }));
   const fuse = new Fuse(fuseItems, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
@@ -196,7 +203,14 @@ const UsersPage: React.FC = () => {
   return (
     <>
       {loading ? (
-        <Spinner />
+        <Bullseye>
+          <Loader
+            size="lg"
+            speed="slow"
+            content="loading..."
+            className="spinner"
+          />
+        </Bullseye>
       ) : (
         <>
           <HeaderToolbar

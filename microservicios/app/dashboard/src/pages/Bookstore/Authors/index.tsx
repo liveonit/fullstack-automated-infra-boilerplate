@@ -1,5 +1,5 @@
 import React from "react";
-import { Bullseye, ModalVariant, Spinner } from "@patternfly/react-core";
+import { Bullseye, ModalVariant } from "@patternfly/react-core";
 import { IconButton, Icon, Loader } from "rsuite";
 import { classNames, sortable, Visibility } from "@patternfly/react-table";
 
@@ -104,6 +104,7 @@ const AuthorsPage: React.FC = () => {
       setState({ ...state, items });
     },
   });
+
 
   //===========================================================================
   //#region events

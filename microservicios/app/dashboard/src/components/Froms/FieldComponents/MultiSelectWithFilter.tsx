@@ -5,6 +5,7 @@ import {
   SelectOptionObject,
   SelectVariant,
 } from "@patternfly/react-core";
+import _ from "lodash";
 
 export interface SelectionOption {
   id: number | string;
@@ -16,9 +17,9 @@ export interface SelectionOption {
 interface Props {
   keyName: string;
   label: string;
-  selected?: string[];
+  selected: (string | number)[];
   options: SelectionOption[];
-  handleChangeSelected: (selected?: string[]) => void;
+  handleChangeSelected: (selected?: (string | number)[]) => void;
   direction?: "up" | "down";
 }
 
@@ -31,7 +32,14 @@ interface State {
 }
 
 const MultiSelectWithFilter: React.FC<Props> = (props) => {
-  const { keyName, label, selected, options, handleChangeSelected, direction } = props;
+  const {
+    keyName,
+    label,
+    selected,
+    options,
+    handleChangeSelected,
+    direction,
+  } = props;
   const [state, setState] = React.useState<State>({
     isOpen: false,
     isDisabled: false,
@@ -68,16 +76,24 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
   ) => {
     if (isPlaceholder) clearSelection();
     else {
-      if (selected?.includes(selection.toString())) {
-        handleChangeSelected(
-          (selected || []).filter((item) => item !== selection)
-        );
-      } else {
-        handleChangeSelected([...(selected || []), selection.toString()]);
+      const itemId: string | number | undefined = _.find(options, {
+        value: selection.toString(),
+      })?.id;
+      if (itemId && _.find(selected, (s) => s === itemId)) {
+        const result = selected.filter((i) => i === itemId);
+        handleChangeSelected(result);
         setState({
           ...state,
-          customBadgeText: setBadgeText((selected?.length || -2) + 1),
+          customBadgeText: setBadgeText((selected?.length || 0) - 1),
         });
+      } else {
+        if (itemId) {
+          handleChangeSelected([...(selected || []), itemId]);
+          setState({
+            ...state,
+            customBadgeText: setBadgeText((selected?.length || -2) + 1),
+          });
+        }
       }
     }
   };

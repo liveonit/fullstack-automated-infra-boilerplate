@@ -664,7 +664,9 @@ export const GetUsersDocument = gql`
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
+      id
       name
     }
   }
@@ -704,7 +706,9 @@ export const GetUserAndRolesDocument = gql`
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
+      id
       name
     }
   }
@@ -748,6 +752,7 @@ export const GetUserDocument = gql`
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
       id
       name
