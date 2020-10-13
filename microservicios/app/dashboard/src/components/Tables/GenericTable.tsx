@@ -7,7 +7,7 @@ import {
   Table as PatternflyTable,
   TableVariant,
   TableHeader,
-  TableBody, ICell
+  TableBody, ICell, IActions
 } from "@patternfly/react-table";
 
 import { onSort } from "./onSort";
@@ -32,28 +32,29 @@ const Table: React.FC<TableProps> = ({ columns, items, onEdit, onDelete, transfo
     setState({ rows: items, sortBy: {} });
   }, [items]);
 
+  const actions: IActions = []
+  onEdit && actions.push({
+    title: "Edit",
+    onClick: (a, b, rowData) => {
+      onEdit && (isNaN(_.get(rowData, "cells.0"))
+      ? onEdit(_.get(rowData, "cells.0").toString())
+      : onEdit(parseInt(_.get(rowData, "cells.0"))))
+    }
+  });
+
+  onDelete && actions.push({
+    title: "Delete",
+    onClick: (a, b, rowData) => {
+      onDelete && (isNaN(_.get(rowData, "cells.0"))
+      ? onDelete(_.get(rowData, "cells.0").toString())
+      : onDelete(parseInt(_.get(rowData, "cells.0"))))
+  }
+});
   return (
     <PatternflyTable
-      aria-label="Logs Table"
+      aria-label="Table"
       sortBy={state.sortBy}
-      actions={[
-        {
-          title: "Edit",
-          onClick: (a, b, rowData) => {
-            onEdit && (isNaN(_.get(rowData, "cells.0"))
-            ? onEdit(_.get(rowData, "cells.0").toString())
-            : onEdit(parseInt(_.get(rowData, "cells.0"))))
-        }
-      },
-        {
-          title: "Delete",
-          onClick: (a, b, rowData) => {
-            onDelete && (isNaN(_.get(rowData, "cells.0"))
-            ? onDelete(_.get(rowData, "cells.0").toString())
-            : onDelete(parseInt(_.get(rowData, "cells.0"))))
-        }
-        },
-      ]}
+      {...(actions.length > 0 && { actions })}
       onSort={(_, index, direction) =>
         setState(
           onSort({

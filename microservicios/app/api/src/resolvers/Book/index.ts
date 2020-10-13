@@ -46,9 +46,11 @@ export class BookResolver {
   async updateBook(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateBookInput) {
     const book = await Book.findOne({ where: { id } });
     if (!book) throw new Error("Book not found!");
+    book.author = await Author.findOne({ where: { id: data.authorId } })
+    delete data.authorId
     Object.assign(book, data);
-    await book.save();
-    return book;
+    const updBook = await book.save();
+    return updBook;
   }
 
   @Mutation(() => Int)

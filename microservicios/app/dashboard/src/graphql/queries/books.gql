@@ -4,6 +4,7 @@ query GetBooks {
     title
     isPublished
     author {
+      id
       name
     }
   }
@@ -16,6 +17,7 @@ query GetBooksAndAuthors {
     title
     isPublished
     author {
+      id
       name
     }
   }
@@ -39,7 +41,10 @@ mutation CreateBook($title: String!, $isPublished: Boolean, $authorId: Int!) {
     id
     title
     isPublished
-    authorId
+    author {
+      id
+      name
+    }
   }
 }
 
@@ -48,7 +53,10 @@ mutation UpdateBook($id: Int!, $title: String, $isPublished: Boolean, $authorId:
     id
     title
     isPublished
-    authorId
+    author {
+      id
+      name
+    }
   }
 }
 

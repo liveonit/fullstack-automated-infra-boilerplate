@@ -7,7 +7,7 @@ import { FooterToolbar } from "../../components/Tables/FooterToolbar";
 import Fuse from "fuse.js";
 import { Spinner } from "@patternfly/react-core";
 
-import { sortable } from "@patternfly/react-table";
+import { classNames, ICell, sortable, Visibility } from "@patternfly/react-table";
 import _ from "lodash";
 import {
   useGetLogsLazyQuery,
@@ -18,8 +18,8 @@ import { Log } from "../../graphql/queries/autogenerate/schemas";
 //=============================================================================
 //#region Table configuration
 
-const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable] },
+const COLUMNS: ({ key: string } & ICell)[] = [
+  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
   { key: "unixStartTime", title: "Timestamp", transforms: [sortable] },
   { key: "operation", title: "Operation", transforms: [sortable] },
   { key: "operationType", title: "Operation Type", transforms: [sortable] },
@@ -40,6 +40,10 @@ function transformRows(items: any[]) {
         return {
           title: new Date(item.unixStartTime).toLocaleString(),
         };
+      } else if (column.key === "payload" || column.key === "resultPayload") {
+        return {
+          title: <p style={{ maxWidth: "20rem" }}>{_.get(item, column.key)}</p>,
+        }
       } else return _.get(item, column.key);
     }),
   }));
@@ -78,6 +82,7 @@ const BookstoreAuditory: React.FC = () => {
         setState({ ...state, items: data.logs });
       }
     },
+    fetchPolicy: "cache-and-network"
   });
 
   useSubLogsSubscription({

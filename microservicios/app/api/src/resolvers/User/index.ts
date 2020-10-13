@@ -32,8 +32,9 @@ export class UserResolver {
   @UseMiddleware([GqlLog])
   async createUser(@Arg("data") data: CreateUserInput) {
     const kcAdmin = await kcConnect();
-    const pass = data.password
+    const{ password, relatedRoleIds } = data
     delete data.password
+    delete data.relatedRoleIds
     const { id } = await kcAdmin.users.create(data);
     if (validatePassword(data.password)) {
       await kcAdmin.users.resetPassword({
@@ -41,12 +42,12 @@ export class UserResolver {
         credential: {
           temporary: false,
           type: 'password',
-          value: pass,
+          value: password,
         },
       });
     }
     const roles = (await getRoles()).filter(
-      r => data.relatedRoleIds.includes(r.id)).map(r =>
+      r => relatedRoleIds.includes(r.id)).map(r =>
         ({ id: r.id, name: r.name } as RoleMappingPayload));
     await kcAdmin.users.addRealmRoleMappings({ id, roles })
     const user = await getUserWithRoles(id);
@@ -57,7 +58,10 @@ export class UserResolver {
   @UseMiddleware([GqlLog])
   async updateUser(@Arg("id") id: string, @Arg("data") data: UpdateUserInput) {
     const kcAdmin = await kcConnect();
-    if (validatePassword(data.password)) {
+    const{ password, relatedRoleIds } = data
+    delete data.password
+    delete data.relatedRoleIds
+    if (validatePassword(password)) {
       await kcAdmin.users.resetPassword({
         id,
         credential: {
@@ -67,11 +71,10 @@ export class UserResolver {
         },
       });
     }
-    delete data.password
     await kcAdmin.users.update({ id }, data);
     if (data.relatedRoleIds) {
       const roles = (await getRoles()).filter(
-        r => data.relatedRoleIds.includes(r.id)).map(r =>
+        r => relatedRoleIds.includes(r.id)).map(r =>
           ({ id: r.id, name: r.name } as RoleMappingPayload));
       const allRoles = await kcAdmin.users.listRealmRoleMappings();
       await kcAdmin.users.delRealmRoleMappings({ id, roles: allRoles as RoleMappingPayload[] })

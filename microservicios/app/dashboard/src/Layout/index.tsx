@@ -32,7 +32,7 @@ export const Layout: React.FC<LayoutProps & RouteComponentProps> = ({children, l
       isManagedSidebar={false}
     >
       <>
-      <PageSection variant={PageSectionVariants.light}>
+      <PageSection variant={PageSectionVariants.light} className="--seccion-principal">
         {children}
       </PageSection>
       

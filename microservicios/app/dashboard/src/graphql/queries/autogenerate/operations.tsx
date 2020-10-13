@@ -75,7 +75,7 @@ export type GetBooksQuery = (
     & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
     & { author?: Types.Maybe<(
       { __typename?: 'Author' }
-      & Pick<Types.Author, 'name'>
+      & Pick<Types.Author, 'id' | 'name'>
     )> }
   )> }
 );
@@ -90,7 +90,7 @@ export type GetBooksAndAuthorsQuery = (
     & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
     & { author?: Types.Maybe<(
       { __typename?: 'Author' }
-      & Pick<Types.Author, 'name'>
+      & Pick<Types.Author, 'id' | 'name'>
     )> }
   )>, authors: Array<(
     { __typename?: 'Author' }
@@ -122,7 +122,11 @@ export type CreateBookMutation = (
   { __typename?: 'Mutation' }
   & { createBook: (
     { __typename?: 'Book' }
-    & Pick<Types.Book, 'id' | 'title' | 'isPublished' | 'authorId'>
+    & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
+    & { author?: Types.Maybe<(
+      { __typename?: 'Author' }
+      & Pick<Types.Author, 'id' | 'name'>
+    )> }
   ) }
 );
 
@@ -138,7 +142,11 @@ export type UpdateBookMutation = (
   { __typename?: 'Mutation' }
   & { updateBook: (
     { __typename?: 'Book' }
-    & Pick<Types.Book, 'id' | 'title' | 'isPublished' | 'authorId'>
+    & Pick<Types.Book, 'id' | 'title' | 'isPublished'>
+    & { author?: Types.Maybe<(
+      { __typename?: 'Author' }
+      & Pick<Types.Author, 'id' | 'name'>
+    )> }
   ) }
 );
 

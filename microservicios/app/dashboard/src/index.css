@@ -1,3 +1,7 @@
 #root {
   height: 100%; 
 }
+
+span.rs-loader-spin:after {
+  border-top-color: var(--pf-global--palette--blue-300)
+}

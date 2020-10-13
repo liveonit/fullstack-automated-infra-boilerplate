@@ -1,6 +1,6 @@
 import React from "react";
-import { ModalVariant, Spinner } from "@patternfly/react-core";
-import { IconButton, Icon } from "rsuite";
+import { Bullseye, ModalVariant, Spinner } from "@patternfly/react-core";
+import { IconButton, Icon, Loader } from "rsuite";
 import { classNames, sortable, Visibility } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
@@ -38,10 +38,15 @@ import { useEntity } from "../../../graphql/helpers";
 export const ENTITY_NAME = "Author";
 
 export const COLUMNS = [
-  { key: "id", title: "Id", transforms: [sortable], columnTransforms: [classNames(Visibility.hidden || "")] },
-  { key: "name", title: "Name",  transforms: [sortable] },
-  { key: "age", title: "Age",  transforms: [sortable] },
-  { key: "country", title: "Country",  transforms: [sortable] },
+  {
+    key: "id",
+    title: "Id",
+    transforms: [sortable],
+    columnTransforms: [classNames(Visibility.hidden || "")],
+  },
+  { key: "name", title: "Name", transforms: [sortable] },
+  { key: "age", title: "Age", transforms: [sortable] },
+  { key: "country", title: "Country", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
@@ -64,7 +69,6 @@ function transformRows(items: any[]) {
 const POSIBLE_LIMITS_PER_PAGE = [10, 25, 50, 100];
 //#endregion
 //=============================================================================
-
 
 interface EntityPageState {
   currentPage: number;
@@ -97,8 +101,8 @@ const EntityPage: React.FC = () => {
     update: UpdateAuthorDocument,
     remove: DeleteAuthorDocument,
     onChange: ({ items }) => {
-      setState({ ...state, items })
-    }
+      setState({ ...state, items });
+    },
   });
 
   //===========================================================================
@@ -160,7 +164,14 @@ const EntityPage: React.FC = () => {
   return (
     <>
       {loading ? (
-        <Spinner />
+        <Bullseye>
+          <Loader
+            size="lg"
+            speed="slow"
+            content="loading..."
+            className="spinner"
+          />
+        </Bullseye>
       ) : (
         <>
           <HeaderToolbar

@@ -1,6 +1,6 @@
 import React from "react";
-import { Label, ModalVariant, Spinner } from "@patternfly/react-core";
-import { IconButton, Icon } from "rsuite";
+import { Label, ModalVariant, Bullseye } from "@patternfly/react-core";
+import { IconButton, Icon, Loader } from "rsuite";
 import { classNames, sortable, Visibility } from "@patternfly/react-table";
 
 import Table from "../../../components/Tables/GenericTable";
@@ -166,7 +166,9 @@ const EntityPage: React.FC = () => {
   return (
     <>
       {loading ? (
-        <Spinner />
+        <Bullseye>
+          <Loader size="lg" speed="slow" content="loading..." className="spinner" />
+        </Bullseye>
       ) : (
         <>
           <HeaderToolbar

@@ -186,6 +186,7 @@ export const GetBooksDocument = gql`
     title
     isPublished
     author {
+      id
       name
     }
   }
@@ -223,6 +224,7 @@ export const GetBooksAndAuthorsDocument = gql`
     title
     isPublished
     author {
+      id
       name
     }
   }
@@ -299,7 +301,10 @@ export const CreateBookDocument = gql`
     id
     title
     isPublished
-    authorId
+    author {
+      id
+      name
+    }
   }
 }
     `;
@@ -336,7 +341,10 @@ export const UpdateBookDocument = gql`
     id
     title
     isPublished
-    authorId
+    author {
+      id
+      name
+    }
   }
 }
     `;

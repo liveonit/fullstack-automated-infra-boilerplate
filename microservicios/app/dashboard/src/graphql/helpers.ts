@@ -45,7 +45,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items: data[entitiesName] as ({ id: any } & T)[], data });
       }
     },
-    
+    fetchPolicy: "cache-and-network"
   });
 
   const [createItem] = (create && useMutation(create,{

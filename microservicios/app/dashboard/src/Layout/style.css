@@ -11,3 +11,8 @@
   --pf-c-toolbar--BackgroundColor: var(--pf-c-page__header-nav--BackgroundColor);
   --pf-c-toolbar--RowGap: 0;
 }
+
+.--seccion-principal {
+  max-width: calc(100%-10rem);
+  overflow: scroll;
+}
