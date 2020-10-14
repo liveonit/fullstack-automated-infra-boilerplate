@@ -61,7 +61,7 @@ export const COLUMNS = [
   { key: "firstName", title: "First Name", transforms: [sortable] },
   { key: "lastName", title: "Last Name", transforms: [sortable] },
   { key: "enabled", title: "Enabled", transforms: [sortable] },
-  { key: "roles", title: "Roles", transforms: [sortable] },
+  { key: "rolesName", title: "Roles", transforms: [sortable] },
 ];
 
 const FUSE_OPTIONS = {
@@ -72,11 +72,11 @@ function transformRows(items: any[]) {
   if (items === undefined) return [];
   return items.map((item) => ({
     cells: COLUMNS.map((column) => {
-      if (column.key === "roles") {
+      if (column.key === "rolesName") {
         return {
-          title: item?.roles ? (
+          title: item?.rolesName ? (
             <TagGroup>
-              {item.roles.map((r: string) => (
+              {item.rolesName.map((r: string) => (
                 <Tag
                   key={r}
                   color={TAGS_COLORS[hashCode(r) % TAGS_COLORS.length]}
@@ -138,7 +138,11 @@ const UsersPage: React.FC = () => {
     update: UpdateUserDocument,
     remove: DeleteUserDocument,
     onChange: ({ items, data }) => {
-      setState({ ...state, items, roles: data?.roles || [] });
+      const newItems = items.map((i) => ({
+        ...i,
+        rolesName: i?.roles?.filter(r => _.find(data?.roles, { id: r.id })).map(r => r.name),
+      }));
+      setState({ ...state, items: newItems, roles: data?.roles || [] });
     },
   });
 
@@ -186,17 +190,13 @@ const UsersPage: React.FC = () => {
   //===========================================================================
   //#region Table elements filter by search and pagination
 
-  const fuseItems = state.items.map((i) => ({
-    ...i,
-    roles: i?.roles?.map((r) => r.name),
-  }));
-  const fuse = new Fuse(fuseItems, FUSE_OPTIONS);
+  const fuse = new Fuse(state.items, FUSE_OPTIONS);
   const tableItems = state.searchText
     ? fuse
         .search(state.searchText)
         .map((m) => m.item)
         .slice(offset, offset + pageLimit)
-    : fuseItems.slice(offset, offset + pageLimit);
+    : state.items.slice(offset, offset + pageLimit);
   //#endregion
   //===========================================================================
 

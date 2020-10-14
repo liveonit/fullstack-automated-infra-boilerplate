@@ -76,6 +76,7 @@ mutation CreateUser(
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
       id
       name
@@ -111,6 +112,7 @@ mutation UpdateUser(
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
       id
       name

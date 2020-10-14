@@ -45,7 +45,7 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
     isDisabled: false,
     isCreatable: false,
     hasOnCreateOption: false,
-    customBadgeText: 0,
+    customBadgeText: selected.length,
   });
 
   const onToggle = (isOpen: boolean) => {

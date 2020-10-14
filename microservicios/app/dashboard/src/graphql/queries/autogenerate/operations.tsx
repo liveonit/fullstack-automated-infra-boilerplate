@@ -317,7 +317,7 @@ export type CreateUserMutation = (
   { __typename?: 'Mutation' }
   & { createUser: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'relatedRoleIds'>
     & { roles?: Types.Maybe<Array<(
       { __typename?: 'Role' }
       & Pick<Types.Role, 'id' | 'name'>
@@ -341,7 +341,7 @@ export type UpdateUserMutation = (
   { __typename?: 'Mutation' }
   & { updateUser: (
     { __typename?: 'User' }
-    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email'>
+    & Pick<Types.User, 'id' | 'username' | 'enabled' | 'firstName' | 'lastName' | 'email' | 'relatedRoleIds'>
     & { roles?: Types.Maybe<Array<(
       { __typename?: 'Role' }
       & Pick<Types.Role, 'id' | 'name'>

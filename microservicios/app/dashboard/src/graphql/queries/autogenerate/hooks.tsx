@@ -795,6 +795,7 @@ export const CreateUserDocument = gql`
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
       id
       name
@@ -842,6 +843,7 @@ export const UpdateUserDocument = gql`
     firstName
     lastName
     email
+    relatedRoleIds
     roles {
       id
       name

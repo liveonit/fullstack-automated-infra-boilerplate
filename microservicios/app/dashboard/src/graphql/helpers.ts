@@ -48,6 +48,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items, data:_.omit(data, [entitiesName])  });
       }
     },
+    onError: (err) => console.error(err),
     fetchPolicy: "cache-first"
   });
 
@@ -58,6 +59,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items: newItems });
       }
     },
+    onError: (err) => console.error(err),
     update: (cache, { data }) => {
       if (get) {
         const result: any = cache.readQuery({ query: get });
@@ -83,7 +85,8 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         );
         setState({ ...state, items: newItems });
       }
-    }
+    },
+    onError: (err) => console.error(err),
   })) || [];
 
   const [removeItem] = (remove && useMutation(remove, {
@@ -94,6 +97,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items: newItems });
       }
     },
+    onError: (err) => console.error(err),
     update: (cache, { data }) => {
       cache.modify({
         fields: {
