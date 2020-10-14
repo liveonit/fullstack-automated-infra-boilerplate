@@ -71,32 +71,28 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
 
   const onSelect = (
     event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    selection: string | SelectOptionObject,
-    isPlaceholder?: boolean | undefined
+    selection: string | SelectOptionObject
   ) => {
-    if (isPlaceholder) clearSelection();
-    else {
       const itemId: string | number | undefined = _.find(options, {
         value: selection.toString(),
       })?.id;
       if (itemId && _.find(selected, (s) => s === itemId)) {
-        const result = selected.filter((i) => i === itemId);
+        const result = selected.filter((i) => i !== itemId);
         handleChangeSelected(result);
         setState({
           ...state,
-          customBadgeText: setBadgeText((selected?.length || 0) - 1),
+          customBadgeText: setBadgeText(result.length),
         });
       } else {
         if (itemId) {
           handleChangeSelected([...(selected || []), itemId]);
           setState({
             ...state,
-            customBadgeText: setBadgeText((selected?.length || -2) + 1),
+            customBadgeText: setBadgeText(selected.length + 1),
           });
         }
       }
-    }
-  };
+    };
 
   const { isDisabled, isCreatable } = state;
   return (
@@ -107,7 +103,7 @@ const MultiSelectWithFilter: React.FC<Props> = (props) => {
         onToggle={onToggle}
         onSelect={onSelect}
         onClear={clearSelection}
-        selections={selected}
+        selections={selected.map(s => _.find(options, { id: s })?.value)}
         isOpen={state.isOpen}
         aria-labelledby={keyName}
         placeholderText={label}

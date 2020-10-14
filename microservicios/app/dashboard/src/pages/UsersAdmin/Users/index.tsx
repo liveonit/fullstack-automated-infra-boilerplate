@@ -234,7 +234,7 @@ const UsersPage: React.FC = () => {
                   label: "Username",
                   helperText: "Insert username",
                   helperTextInvalid:
-                    'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
+                    'Text must be at least 4 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
                   inputControl: {
                     required: true,
                     validate: validateUsername,
@@ -245,11 +245,14 @@ const UsersPage: React.FC = () => {
                 {
                   keyName: "password",
                   label: "Password",
-                  helperText: "Insert passwrd",
+                  helperText:
+                    ("Insert passwrd. " + !state.entity
+                      ? "If it remains empty the password will not change."
+                      : "Must not be empty."),
                   helperTextInvalid:
                     "Password must be at least 8 characters long and include uppercase lowercase and numbers",
                   inputControl: {
-                    required: true,
+                    required: !state.entity,
                     validate: validatePassword,
                   },
                   type: "Password",
@@ -317,6 +320,7 @@ const UsersPage: React.FC = () => {
                     id: a.id,
                     value: a.name,
                   })),
+                  direction: "up",
                 },
               ]}
               onClose={onCloseAnyModal}

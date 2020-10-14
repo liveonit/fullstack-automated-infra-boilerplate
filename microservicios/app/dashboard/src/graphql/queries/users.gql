@@ -90,7 +90,7 @@ mutation UpdateUser(
   $enabled: Boolean
   $firstName: String
   $lastName: String
-  $password: String!
+  $password: String
   $relatedRoleIds: [String!]
 ) {
   updateUser(

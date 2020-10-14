@@ -22,10 +22,8 @@ export class UserResolver {
 
   @Query(() => User)
   async user(@Arg("id", t => String) id: string) {
-    const kcAdmin = await kcConnect();
-    const user = await kcAdmin.users.findOne({ id });
-    const roles = await kcAdmin.users.listRealmRoleMappings();
-    return { ...user, roles } as User;
+    const user = await getUserWithRoles(id);
+    return user;
   }
 
   @Mutation(() => User)
@@ -62,7 +60,6 @@ export class UserResolver {
     delete data.password
     delete data.relatedRoleIds
     if (validatePassword(password, true) === 'success' ) {
-      console.count("====================== llego aca ===================================")
       await kcAdmin.users.resetPassword({
         id,
         credential: {
@@ -72,21 +69,13 @@ export class UserResolver {
         },
       });
     }
-    console.count("====================== llego aca ===================================")
     await kcAdmin.users.update({ id }, data);
-    console.count("====================== llego aca ===================================")
     if (relatedRoleIds) {
-      console.log("relatedRoleIds",relatedRoleIds);
-      console.log("roles", await getRoles());
       const roles = (await getRoles()).filter(
         r => relatedRoleIds.includes(r.id)).map(r =>
           ({ id: r.id, name: r.name } as RoleMappingPayload));
       const allRoles = await kcAdmin.users.listRealmRoleMappings({ id });
-      console.log("roles", roles);
-      console.log("allRoles", allRoles);
-      console.count("====================== llego aca ===================================")
       await kcAdmin.users.delRealmRoleMappings({ id, roles: allRoles as RoleMappingPayload[] })
-      console.count("====================== llego aca ===================================")
       await kcAdmin.users.addRealmRoleMappings({ id, roles })
     }
     const user = await getUserWithRoles(id);

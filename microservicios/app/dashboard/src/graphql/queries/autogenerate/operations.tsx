@@ -332,7 +332,7 @@ export type UpdateUserMutationVariables = Types.Exact<{
   enabled?: Types.Maybe<Types.Scalars['Boolean']>;
   firstName?: Types.Maybe<Types.Scalars['String']>;
   lastName?: Types.Maybe<Types.Scalars['String']>;
-  password: Types.Scalars['String'];
+  password?: Types.Maybe<Types.Scalars['String']>;
   relatedRoleIds?: Types.Maybe<Array<Types.Scalars['String']>>;
 }>;
 

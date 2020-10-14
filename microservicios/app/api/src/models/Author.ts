@@ -14,9 +14,9 @@ export class Author extends BaseEntity {
   @Column()
   name: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @Column()
-  country: string;
+  country?: string;
 
   @Field(() => Int)
   @Column()

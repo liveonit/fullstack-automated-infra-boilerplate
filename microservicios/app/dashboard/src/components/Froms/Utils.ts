@@ -52,7 +52,7 @@ export const validateBoolean: ValidateFunction = (s, r) =>
 
 
 export const validateUsername: ValidateFunction = (s, r) =>
-  !s ? (r ? "error" : "default") : /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/.test(s.toString()) ? "success" : "error";
+  !s ? (r ? "error" : "default") : /^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/.test(s.toString()) ? "success" : "error";
 
 
 export const validateEmail: ValidateFunction = (s, r) =>

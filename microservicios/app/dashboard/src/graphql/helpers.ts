@@ -40,7 +40,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 
-  const { loading, refetch } = useQuery(get, {
+  const { loading } = useQuery(get, {
     onCompleted: (data: any) => {
       const entitiesName = entityName.toLowerCase() + "s";
       const items: ({ id: any } & T)[] = data[entitiesName]
@@ -48,6 +48,7 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
         setState({ ...state, items, data:_.omit(data, [entitiesName])  });
       }
     },
+    fetchPolicy: "cache-first"
   });
 
   const [createItem] = (create && useMutation(create, {
@@ -111,7 +112,6 @@ export const useEntity = <T>({ entityName, get, create, update, remove, subscrib
   })) || [];
 
   return {
-    getItems: refetch,
     createItem,
     updateItem,
     removeItem,

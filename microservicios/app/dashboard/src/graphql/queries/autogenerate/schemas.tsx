@@ -13,7 +13,7 @@ export type Author = {
   __typename?: 'Author';
   id: Scalars['Int'];
   name: Scalars['String'];
-  country: Scalars['String'];
+  country?: Maybe<Scalars['String']>;
   age: Scalars['Int'];
   books?: Maybe<Array<Book>>;
 };
@@ -242,7 +242,7 @@ export type UpdateRoleInput = {
 
 export type UpdateUserInput = {
   username?: Maybe<Scalars['String']>;
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
   enabled?: Maybe<Scalars['Boolean']>;
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;

@@ -175,7 +175,7 @@ const RolesPage: React.FC = () => {
                   keyName: "name",
                   label: "Role name",
                   helperText: "Insert a representarive name to the role",
-                  helperTextInvalid: 'Text must be at least 8 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
+                  helperTextInvalid: 'Text must be at least 4 characters long and must not begin or end with "." or "_" and does not contain spaces or special characters other than "-" or "_"',
                   inputControl: {
                     required: true,
                     validate: validateUsername,

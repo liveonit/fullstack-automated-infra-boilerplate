@@ -48,8 +48,9 @@ export const getUsersWithRoles = async () => {
   const users = await kcAdmin.users.find();
   const userWithRoles = await Promise.all(users.map(async u => {
     const roles = (await kcAdmin.users.listRealmRoleMappings({ id: u.id }))
+    const relatedRoleIds = roles.map(r => r.id)
     delete u.access;
-    return { ...u, roles } as User
+    return { ...u, roles, relatedRoleIds } as User
   }));
   return userWithRoles;
 }
@@ -57,9 +58,10 @@ export const getUsersWithRoles = async () => {
 export const getUserWithRoles = async (id: string) => {
   const kcAdmin = await kcConnect();
   const user = await kcAdmin.users.findOne({ id });
-  const realmRoles = (await kcAdmin.users.listRealmRoleMappings({ id })).map(r => r.name);
+  const roles = await kcAdmin.users.listRealmRoleMappings({ id });
+  const relatedRoleIds = roles.map(r => r.id);
   delete user.access;
-  return { ...user, realmRoles } as User;
+  return { ...user, roles, relatedRoleIds } as User;
 }
 
 if (require.main === module) {

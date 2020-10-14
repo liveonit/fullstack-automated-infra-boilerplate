@@ -166,6 +166,7 @@ const Books: React.FC = () => {
   //#endregion
   //===========================================================================
 
+  console.count("canti rend")
   return (
     <>
       {loading ? (
@@ -228,7 +229,7 @@ const Books: React.FC = () => {
                   helperText: "Please select the Book's Author",
                   helperTextInvalid: "Author must be selected",
                   inputControl: {
-                    required: false,
+                    required: true,
                     validate: validateString,
                   },
                   type: "SelectWithFilter",

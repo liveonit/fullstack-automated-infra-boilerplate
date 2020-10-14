@@ -6,7 +6,7 @@
 type Author {
   id: Int!
   name: String!
-  country: String!
+  country: String
   age: Int!
   books: [Book!]
 }
@@ -28,7 +28,7 @@ input CreateAuthorInput {
 input CreateBookInput {
   title: String
   authorId: Int!
-  isPublished: Boolean = true
+  isPublished: Boolean
 }
 
 input CreateRoleInput {
@@ -113,7 +113,7 @@ input UpdateRoleInput {
 
 input UpdateUserInput {
   username: String
-  password: String!
+  password: String
   enabled: Boolean
   firstName: String
   lastName: String

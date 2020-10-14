@@ -8,6 +8,6 @@ export class CreateBookInput {
   @Field(type => Int)
   authorId: number;
 
-  @Field({ defaultValue: true })
-  isPublished: boolean;
+  @Field({ nullable: true })
+  isPublished?: boolean;
 }

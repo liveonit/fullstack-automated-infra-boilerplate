@@ -834,7 +834,7 @@ export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutati
 export type CreateUserMutationResult = Apollo.MutationResult<Types.CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<Types.CreateUserMutation, Types.CreateUserMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($id: String!, $username: String, $email: String, $enabled: Boolean, $firstName: String, $lastName: String, $password: String!, $relatedRoleIds: [String!]) {
+    mutation UpdateUser($id: String!, $username: String, $email: String, $enabled: Boolean, $firstName: String, $lastName: String, $password: String, $relatedRoleIds: [String!]) {
   updateUser(data: {username: $username, email: $email, enabled: $enabled, firstName: $firstName, lastName: $lastName, password: $password, relatedRoleIds: $relatedRoleIds}, id: $id) {
     id
     username
