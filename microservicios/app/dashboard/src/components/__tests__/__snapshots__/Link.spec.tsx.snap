@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Link Renders link to Google 1`] = `
+"<a href=\\"http://google.com\\" className={[undefined]}>
+  Link to Google
+</a>"
+`;
+
+exports[`Link Renders link to Google with classname 1`] = `
+"<a href=\\"http://google.com\\" className=\\"my-link-class\\">
+  Link to Google
+</a>"
+`;
