@@ -10,7 +10,7 @@ type DbOptions = PostgresConnectionOptions | MysqlConnectionOptions | SqliteConn
 
 type DbType = "mysql" | "postgres" | "mariadb" | "sqlite"
 
-const isDbType = (value: string = ""): value is DbType  => {
+const isDbType = (value = ""): value is DbType  => {
   switch(value) {
     case "mysql":
     case "mariadb":
@@ -29,7 +29,7 @@ const development: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.API_DB_USER || "default_username",
   password: process.env.API_DB_PASSWORD || "default_pass",
-  database: process.env.API_DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name",
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
   logging: ["error", "query", "schema"],
@@ -42,10 +42,9 @@ const staging: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.API_DB_USER || "default_username",
   password: process.env.API_DB_PASSWORD || "default_pass",
-  database: process.env.API_DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name",
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
-  
 }
 
 const production: DbOptions = {
@@ -55,7 +54,7 @@ const production: DbOptions = {
   port: parseInt((process.env.DB_PORT || "3306"), 10),
   username: process.env.API_DB_USER || "default_username",
   password: process.env.API_DB_PASSWORD || "default_pass",
-  database: process.env.API_DB_NAME || "default_db_name", 
+  database: process.env.API_DB_NAME || "default_db_name",
   synchronize: false,
   entities: [path.resolve(__dirname, './models/**/*{.js,.ts}')],
 }
@@ -68,12 +67,12 @@ const configs = (environment: Env): DbOptions => {
       return staging;
     case 'development':
       return development;
-    default: 
+    default:
       return development;
   }
 }
 
-const currentConfig: DbOptions = configs(isEnv(process.env.NODE_ENV) ? process.env.NODE_ENV : 'development')  
+const currentConfig: DbOptions = configs(isEnv(process.env.NODE_ENV) ? process.env.NODE_ENV : 'development')
 
 export const connectDb: () => Promise<Connection> = async (): Promise<Connection> => {
   try {

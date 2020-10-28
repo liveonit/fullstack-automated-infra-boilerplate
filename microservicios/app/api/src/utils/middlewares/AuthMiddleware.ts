@@ -17,9 +17,8 @@ export const idAuthMiddleware: MiddlewareFn<MyContext> = async ({ context }, nex
   }
 
   try {
-    const payload = verifyKeycloakToken(authorization);
-    console.log(payload);
-    context.payload = payload as any;
+    const payload: UserRepresentation = await verifyKeycloakToken(authorization);
+    context.payload = payload;
   } catch (err) {
     console.log(err);
     throw Error("unauthorized")

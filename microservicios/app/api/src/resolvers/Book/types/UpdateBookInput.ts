@@ -5,7 +5,7 @@ export class UpdateBookInput {
   @Field({ nullable: true })
   title?: string;
 
-  @Field(type => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   authorId?: number;
 
   @Field({ nullable: true })

@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg, UseMiddleware, Int } from "type-graphql";
+import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
 import { CreateRoleInput } from "./types/CreateRoleInput";
 import { UpdateRoleInput } from "./types/UpdateRoleInput";
 import { kcConnect, getRoles } from "../../utils/helpers/kcAdmin";
@@ -17,14 +17,14 @@ export class RoleResolver {
   }
 
   @Query(() => Role)
-  async role(@Arg("id", t => Int) id: string) {
+  async role(@Arg("id", () => Int) id: string): Promise<Role> {
     const kcAdmin = await kcConnect();
     const role = await kcAdmin.roles.findOneById({ id });
     return role as Role;
   }
 
   @Mutation(() => Role)
-  async createRole(@Arg("data") data: CreateRoleInput) {
+  async createRole(@Arg("data") data: CreateRoleInput): Promise<Role> {
     const kcAdmin = await kcConnect();
     const { roleName } = await kcAdmin.roles.create(data);
     console.log(roleName)
@@ -34,7 +34,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => Role)
-  async updateRole(@Arg("id") id: string, @Arg("data") data: UpdateRoleInput) {
+  async updateRole(@Arg("id") id: string, @Arg("data") data: UpdateRoleInput): Promise<Role> {
     const kcAdmin = await kcConnect();
     await kcAdmin.roles.updateById({ id }, data);
     const role = await kcAdmin.roles.findOneById({ id });
@@ -42,7 +42,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => String)
-  async deleteRole(@Arg("id") id: string) {
+  async deleteRole(@Arg("id") id: string): Promise<string> {
     const kcAdmin = await kcConnect();
     await kcAdmin.roles.delById({ id });
     return id;

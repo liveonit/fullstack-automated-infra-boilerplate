@@ -1,7 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
 import { Author } from "./Author";
-import PaginatedResponse from "../utils/PaginateEntity";
 
 @Entity()
 @ObjectType()
@@ -23,7 +22,7 @@ export class Book extends BaseEntity {
   authorId: number;
 
   @Field(() => Author, { nullable: true })
-  @ManyToOne(type => Author, author => author.books)
+  @ManyToOne(() => Author, author => author.books)
   public author?: Author
 
 }

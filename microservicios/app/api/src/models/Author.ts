@@ -1,7 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
 import { Book } from "./Book";
-import PaginatedResponse from "../utils/PaginateEntity";
 
 @Entity()
 @ObjectType()
@@ -23,6 +22,6 @@ export class Author extends BaseEntity {
   age: number;
 
   @Field(() => [Book], { nullable: true })
-  @OneToMany(type => Book, book => book.author )
+  @OneToMany(() => Book, book => book.author )
   public books?: Book[]
 }

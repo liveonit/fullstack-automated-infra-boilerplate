@@ -1,7 +1,7 @@
 import { MiddlewareFn } from "type-graphql";
 import { Log } from '../../models/Log'
 
-export const GqlLog: MiddlewareFn = async ({ context, info, args }, next) => {
+export const GqlLog: MiddlewareFn = async ({ info, args }, next) => {
   const start = Date.now();
   let result;
   try {
@@ -26,6 +26,5 @@ export const GqlLog: MiddlewareFn = async ({ context, info, args }, next) => {
       resultPayload: JSON.parse(log.resultPayload)
     });
     Log.create(log).save()
-    return result;
   }
 };

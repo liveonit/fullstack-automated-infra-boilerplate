@@ -1,6 +1,7 @@
 import { ObjectType, Field, ClassType } from "type-graphql";
 
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function PaginatedResponse<TItem>(TItemClass: ClassType<TItem>) {
   @ObjectType({ isAbstract: true })
   abstract class PaginatedResponseClass {
@@ -13,10 +14,9 @@ export default function PaginatedResponse<TItem>(TItemClass: ClassType<TItem>) {
 
   @Field(() => Number)
   offset: number;
-  
+
   @Field(() => [TItemClass])
   items: TItem[]
   }
   return PaginatedResponseClass;
-  
 }

@@ -9,7 +9,7 @@ import { Author } from "../../models/Author";
 export class BookResolver {
 
   @Query(() => String)
-  hello() {
+  hello(): string {
     return "world";
   }
 
@@ -28,7 +28,7 @@ export class BookResolver {
 
   @Mutation(() => Book)
   @UseMiddleware([GqlLog])
-  async createBook(@Arg("data") data: CreateBookInput) {
+  async createBook(@Arg("data") data: CreateBookInput): Promise<Book> {
     const book = Book.create(data);
     await book.save();
     book.author = await Author.findOne({ where: { id: data.authorId } })
@@ -37,13 +37,13 @@ export class BookResolver {
 
   @Query(() => Book)
   @UseMiddleware([GqlLog])
-  book(@Arg("id", t=> Int) id: number) {
-    return Book.findOne({ where: { id } });
+  async book(@Arg("id", () => Int) id: number): Promise<Book> {
+    return await Book.findOne({ where: { id } });
   }
 
   @Mutation(() => Book)
   @UseMiddleware([GqlLog])
-  async updateBook(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateBookInput) {
+  async updateBook(@Arg("id", () => Int) id: number, @Arg("data") data: UpdateBookInput): Promise<Book> {
     const book = await Book.findOne({ where: { id } });
     if (!book) throw new Error("Book not found!");
     book.author = await Author.findOne({ where: { id: data.authorId } })
@@ -55,7 +55,7 @@ export class BookResolver {
 
   @Mutation(() => Int)
   @UseMiddleware([GqlLog])
-  async deleteBook(@Arg("id", type => Int) id: number) {
+  async deleteBook(@Arg("id", () => Int) id: number): Promise<number> {
     const book = await Book.findOne({ where: { id } });
     if (!book) throw new Error("Book not found!");
     await book.remove();

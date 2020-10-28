@@ -73,12 +73,16 @@ const cache = new InMemoryCache({
 
 let clientAux;
 if (getToken() !== "") {
+  console.log("config with token")
   clientAux = new ApolloClient({
     link: errorLink.concat(authLink.concat(link)),
     cache,
   });
-} else clientAux = new ApolloClient({
+} else {
+  console.log("config without token")
+  clientAux = new ApolloClient({
   link: errorLink.concat(link),
   cache,
 });
+}
 export const client = clientAux;

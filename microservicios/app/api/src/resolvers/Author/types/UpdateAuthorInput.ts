@@ -8,6 +8,6 @@ export class UpdateAuthorInput {
   @Field({ nullable: true })
   country?: string;
 
-  @Field(type => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   age?: number;
 }

@@ -9,6 +9,6 @@ export class CreateAuthorInput {
   @Field({ nullable: true })
   country?: string;
 
-  @Field(type => Int)
+  @Field(() => Int)
   age: number;
 }

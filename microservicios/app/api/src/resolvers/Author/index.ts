@@ -18,13 +18,13 @@ export class AuthorResolver {
   }
 
   @Query(() => Author)
-  author(@Arg("id", t => Int) id: number) {
-    return Author.findOne({ where: { id }, relations: ['books'] });
+  async author(@Arg("id", () => Int) id: number): Promise<Author> {
+    return await Author.findOne({ where: { id }, relations: ['books'] });
   }
 
   @Mutation(() => Author)
   @UseMiddleware([GqlLog])
-  async createAuthor(@Arg("data") data: CreateAuthorInput) {
+  async createAuthor(@Arg("data") data: CreateAuthorInput): Promise<Author> {
     const author = Author.create(data);
     await author.save();
     return author;
@@ -32,7 +32,7 @@ export class AuthorResolver {
 
   @Mutation(() => Author)
   @UseMiddleware([GqlLog])
-  async updateAuthor(@Arg("id", type => Int) id: number, @Arg("data") data: UpdateAuthorInput) {
+  async updateAuthor(@Arg("id", () => Int) id: number, @Arg("data") data: UpdateAuthorInput): Promise<Author> {
     const author = await Author.findOne({ where: { id } });
     if (!author) throw new Error("Author not found!");
     Object.assign(author, data);
@@ -42,7 +42,7 @@ export class AuthorResolver {
 
   @Mutation(() => Number)
   @UseMiddleware([GqlLog])
-  async deleteAuthor(@Arg("id", type => Int) id: number) {
+  async deleteAuthor(@Arg("id", () => Int) id: number): Promise<number> {
     const author = await Author.findOne({ where: { id } });
     if (!author) throw new Error("Author not found!");
     await author.remove();

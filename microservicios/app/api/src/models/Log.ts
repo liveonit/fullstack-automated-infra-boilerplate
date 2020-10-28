@@ -1,6 +1,5 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, AfterInsert } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
-import PaginatedResponse from "../utils/PaginateEntity";
 import { pubsub } from '../'
 @Entity()
 @ObjectType()
@@ -34,7 +33,7 @@ export class Log extends BaseEntity {
   resultPayload: string;
 
   @AfterInsert()
-  pushNotificationNewLog() {
+  pushNotificationNewLog(): void {
     pubsub.publish("NEW_LOG", this);
   }
 }

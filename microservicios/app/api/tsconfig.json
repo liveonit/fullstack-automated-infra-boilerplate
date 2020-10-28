@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "esnext",
+    "module": "es6",
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
     "allowJs": true,
     "outDir": "dist",
     "sourceMap": true,

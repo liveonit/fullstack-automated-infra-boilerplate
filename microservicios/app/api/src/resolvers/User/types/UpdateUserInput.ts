@@ -1,5 +1,4 @@
 import { InputType, Field } from "type-graphql";
-import { Role } from "../../../models/Role";
 
 @InputType()
 export class UpdateUserInput {

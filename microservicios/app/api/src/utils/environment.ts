@@ -1,6 +1,6 @@
 export type Env = "development" | "staging" | "production"
 
-export const isEnv = (value: string = ""): value is Env  => {
+export const isEnv = (value = ""): value is Env  => {
   switch(value) {
     case "develoment":
     case "staging":

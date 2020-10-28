@@ -20,6 +20,7 @@ import { createServer } from 'http';
 import { ApolloServer } from 'apollo-server-express'
 
 import { PubSub, PubSubEngine } from 'graphql-subscriptions';
+import { keycloakCustomAuthChecker } from "./utils/helpers/Auth";
 
 export const pubsub: PubSubEngine = new PubSub();
 
@@ -32,14 +33,16 @@ async function main() {
 
 
   // Conexion con la base de datos
-  const connection = await connectDb();
+  await connectDb();
 
 
   // Compilado de graphql `schema` a partir de los resolver y clases con decoradores
   const schema = await buildSchema({
     resolvers: [BookResolver, AuthorResolver, LogResolver, UserResolver, RoleResolver],
     emitSchemaFile: path.resolve(__dirname, "../../dashboard/src/graphql/schema.gql"),
-    pubSub: pubsub
+    pubSub: pubsub,
+    authChecker: keycloakCustomAuthChecker,
+    // authMode: "null", uncomment If we need silent auth guards and don't want to return authorization errors to users
   })
 
 
@@ -55,12 +58,18 @@ async function main() {
     schema, subscriptions: {
       path: "/graphql",
     },
+    context: ({ req }) => {
+      const context = {
+        req
+      };
+      return context;
+    },
   })
 
   // enpoint para verificar que el servidor http y express esta funcionando correctametne
   app.get('/healthz', (req, res) => { res.send('Everything is fine!!!') })
 
-  // Apollo server cuenta con la siguiente funcion que agrega a la app 
+  // Apollo server cuenta con la siguiente funcion que agrega a la app
   // de express el servidor apollo en el path que le pasemos, este caso `/graphql`
   apolloServer.applyMiddleware({ app, path: '/graphql' });
 
