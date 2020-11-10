@@ -1,4 +1,4 @@
-import "reflect-metadata";
+require("reflect-metadata");
 
 import { connectDb } from './dbconfig'
 
