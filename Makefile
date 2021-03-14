@@ -3,23 +3,20 @@
 include .env
 
 template:
-	docker-compose up -d templating
+	docker-compose up templating
 
-up_dev:
-	make template
+up_dev: template
 	docker-compose up -d db
 	sleep 30
 	make develop_db_run_api_migrations
-	docker-compose up -d
+	docker-compose up -d --build --force-recreate
 
 down_dev:
 	docker-compose down
 
 tear_down_dev:
 	docker-compose down -v
-
-create_config:
-	docker-compose up -d templates
+	sudo rm -rf config_files
 
 build_api_prodduction:
 	cd microservicios/api && npm run build && docker build -t ibarretorey/fs-api:production . && cd -

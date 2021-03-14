@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, AfterInsert } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
-import { pubsub } from '../'
+import { pubsub } from '..'
 @Entity()
 @ObjectType()
 export class Log extends BaseEntity {

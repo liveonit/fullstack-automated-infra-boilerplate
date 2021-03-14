@@ -1,0 +1,12 @@
+FROM node:13-alpine
+
+# Create app directory
+RUN mkdir -p /api
+
+WORKDIR /api
+
+COPY package.json .
+RUN npm install
+
+
+CMD [ "npm", "run", "development" ]

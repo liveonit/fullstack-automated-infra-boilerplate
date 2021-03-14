@@ -1,9 +1,12 @@
 FROM node:13-alpine
 
 # Create app directory
-RUN mkdir -p /app/dashboard
+RUN mkdir -p /dashboard
 
-WORKDIR /app/dashboard
+WORKDIR /dashboard
+
+COPY package.json .
+RUN npm install
 
 ENV PORT=80
 EXPOSE 80
