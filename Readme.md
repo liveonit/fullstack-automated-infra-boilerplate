@@ -4,7 +4,7 @@
 
 ## Resumen
 
-Este boilerplate es un acumulado de varios proyectos que he ido implementando en mi tiempo libre,
+Este boilerplate es un acumulado de algunos proyectos que he ido implementando en mi tiempo libre,
 para tener un codigo flexible que que sirva como cimientos para la construccion de diferentes
 sofrwares a medida.
 Algunas partes de este gran boilerplate, se encuentran en repositorios individuales mas pequeños
@@ -27,19 +27,17 @@ en minikube y en [stage staging](###STAGE-STAGING) como desplegarlo en un kluste
 - [Nodejs](https://nodejs.org/en/about/) (>12.x)
 - [NPM](https://docs.npmjs.com/about-npm/)
 - [Docker](https://docs.docker.com/) (>18.06.0) y [docker-compose](https://docs.docker.com/compose/) (>1.26.0)
-
+- [GNU Make](https://www.gnu.org/software/make/) **se facilita la ejecucion de comandos**
 ### Para coorer en modo test
 
 - [Nodejs](https://nodejs.org/en/about/) (>12.x)
 - [NPM](https://docs.npmjs.com/about-npm/)
 - [Docker](https://docs.docker.com/) (>18.06.0) y [minikube](pendiente) <!-- TODO: agregar link minikube y establecer version junto co requisitos minikube -->
-
+- [GNU Make](https://www.gnu.org/software/make/) **se facilita la ejecucion de comandos**
 ### Para coorer en modo staging
 <!-- TODO: resolver requisitos para modo staging -->
 - [Ansible](https://docs.ansible.com/ansible/latest/index.html)
 - [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox), [vagrant](https://www.vagrantup.com/docs/index.html)
-
-**Ademas en cualquiera de los modos que se corran, con** [GNU Make](https://www.gnu.org/software/make/) **se facilita la ejecucion de comandos**
 
 ## Implementacion
 
@@ -52,50 +50,16 @@ git clone https://github.com/ibarretorey/fullstack-automated-infra-boilerplate.g
 cd fullstack-automated-infra-boilerplate
 ```
 
-Una vez dentro configura las vairables del archivo .env que se enuentra de ejemplo. Si se encuentra en un proyecto
-deberia encriptarlo y no publicarlo en git.
-**ACLARACION: este .env es para pruebas y lo dejo como ejemplo para ver las variables que se pueden configurar**
+Una vez dentro es necesario configurar las variables de entorno dentro de un archivo `.env`, si aun no cuenta con el
+archivo lo puede crear a partir del template `.env.example`, en este template tendra las variables que necesita configurar.
 
-Una vez configuradas las variables ejecutar
-
-1. En caso de contar con GNU MAKE
-
-Dentro del directorio raiz del proyecto ejecutar
+Una vez configuradas las variables posicionarse en el directorio raíz del repositorio y ejecutar
 
 ```bash
-make template
+make up_dev
 ```
 
-2. En caso de no contar con GNU MAKE
-
-```bash
-docker-compose up templating #crea los archivos de configuracion de los servicios en base al .env y los guarda en config files
-docker-compose up -d db # levanta la base de datos y crea las bases para api y keycloak
-
-cd microservicios/db && npm install && \
-    DB_HOST=${DOMAIN}\
-    DB_PORT=${EXTERNAL_DB_PORT}\
-    API_DB_USER=${API_DB_USER}\
-    API_DB_PASSWORD=${API_DB_PASSWORD}\
-    API_DB_NAME=${API_DB_NAME}\
-    npm run typeorm migration:run && cd - # ejecuta las migraciones de la base de datos,
-    # las mismas se encuentran en microservicios/db/src/migrtions/* y se crearon con typeorm
-```
-
-Luego de tener los archivos de configuracion y la base con las migraciones de la api, ejecutar
-
-```
-docker-compose up -d
-```
-
-para levantar el resto de los servicios.
-
-Si dejo la variable en DOMAIN `localhost` deberia poder acceder:
-- Al dashboard: http://localhost/
-- A keycloak: http://localhost/auth
-- A graphql: http://localhost/graphql
-
-#### A modo de trubleshooting
+### A modo de trubleshooting
 
 Puede diagnosticar los contendores con
 

@@ -1,4 +1,4 @@
-.Phony: template develop_db_run_api_migrations
+.Phony: template db_run_api_migrations
 
 include .env
 
@@ -8,7 +8,7 @@ template:
 up_dev: template
 	docker-compose up -d db
 	sleep 30
-	make develop_db_run_api_migrations
+	make db_run_api_migrations
 	docker-compose up -d --build --force-recreate
 
 down_dev:
@@ -58,7 +58,7 @@ minikube_db_run_migrations:
 	make k8s_create_update_envs
 	cd ./microservicios/db && DB_HOST=${DOMAIN} DB_PORT=${EXTERNAL_DB_PORT} DB_USER=${DB_USER} DB_PASSWORD=${DB_PASSWORD} API_DB_NAME=${API_DB_NAME} npm run typeorm migration:run && cd -
 
-develop_db_run_api_migrations:
+db_run_api_migrations:
 	cd ./microservicios/db && \
 	npm install && \
 	DB_HOST=${DOMAIN} DB_PORT=${EXTERNAL_DB_PORT} \
