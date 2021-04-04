@@ -69,6 +69,7 @@ services:
     build:
       context: ./microservicios/dashboard
       dockerfile: Dockerfile.development
+    restart: always
     env_file: .env
     container_name: ${PROJECT_NAME}_dashboard_development
     restart: unless-stopped
