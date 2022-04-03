@@ -15,16 +15,14 @@ services:
       - ./config_files:/tmp/rendered:rw
 
   db:
-    image: mariadb:10.1
+    image: mariadb
     container_name: ${PROJECT_NAME}_db_development
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
       - ./config_files/db:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "/usr/bin/mysql --host=localhost --port=3306 --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e 'Select 1;'' || exit 1"]
-      timeout: 10s
-      retries: 15
+        test: ["CMD", "mysqladmin", "ping", "--silent"]
     env_file: .env
     networks:
         - fs_network
@@ -32,14 +30,6 @@ services:
       - "${EXTERNAL_DB_PORT}:${DB_PORT}"
     expose:
       - 3306
-    
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8080
-    networks:
-        - fs_network
 
   api:
     image: ${OWNER}/${PROJECT_NAME}-api-development
@@ -85,21 +75,31 @@ services:
 
   keycloak:
     image: jboss/keycloak:${KEYCLOAK_VERSION}
-    container_name: keycloak
+    build: 
+      context: ./microservicios/keycloak/server
+      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME}-keycloak
     restart: unless-stopped
-    depends_on:
-      - db
     volumes:
-      - ./config_files/keycloak/standalone.xml:${JBOSS_HOME}/standalone/configuration/standalone.xml
       - ./config_files/keycloak/realm-export.json:${KEYCLOAK_IMPORT}
-      - ./config_files/keycloak/patternfly/:${JBOSS_HOME}/themes/patternfly/
-    env_file: .env
+      - ./microservicios/keycloak/themes/default_theme:/opt/jboss/keycloak/themes/default_theme
     environment:
-      DB_SCHEMA: public
-      DB_ADDR: ${DB_HOST}
+      KEYCLOAK_IMPORT: ${KEYCLOAK_IMPORT}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
+      DB_ADDR: ${KEYCLOAK_DB_HOST}
       DB_DATABASE: ${KEKCLOAK_DB_NAME}
       DB_USER: ${KEKCLOAK_DB_USER}
       DB_PASSWORD: ${KEKCLOAK_DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+      DB_SCHEMA: public
+      PROXY_ADDRESS_FORWARDING: 'true'
+      KEYCLOAK_WELCOME_THEME: default_theme
+      KEYCLOAK_DEFAULT_THEME: default_theme
+      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+    depends_on:
+      - db
     ports:
       - '8080:8080'
       - '8443:8443'

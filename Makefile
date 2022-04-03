@@ -7,8 +7,9 @@ template:
 
 up_dev: template
 	docker-compose up -d db
-	sleep 30
+	sleep 15
 	make db_run_api_migrations
+	cd microservicios/keycloak/server && git checkout ${KEYCLOAK_VERSION} && cd -
 	docker-compose up -d --build --force-recreate
 
 down_dev:
